@@ -1,0 +1,191 @@
+﻿@*@using PM2.Service.Code030
+    @model Staffing_sdbo001*@
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderStyles {
+    @*<style>
+        #sdbo001_input input{
+            width:280px;
+        }
+    </style>*@
+}
+@section Body {
+    <form id="sdbo001From" action="###" method="post" style="height: 100%; width: 100%">
+        <input type="hidden" name="bo00101" value="" />
+        <input type="hidden" name="bo00151" value="" />
+        <div data-options="region:'north'">
+            <div class="header">
+                <div class="left-layout">
+                    <a href="javascript:;" class="btn-back">返回</a>
+                    <h1>人员权限设置</h1>
+                </div>
+                <div class="center-layout"></div>
+                <div class="right-layout">
+                    <a href="javascript:;" id="btn_edit" class="easyui-linkbutton">编辑</a>
+                    <a href="javascript:;" id="btn_save" class="easyui-linkbutton">保存</a>
+                </div>
+            </div>
+        </div>
+        <div data-options="region:'center'">
+            <div class="easyui-layout">
+                <div data-options="region:'west',split:true,width:230">
+                    <div class="easyui-layout">
+                        <div data-options="region:'north'">
+                            <div class="tree-search">
+                                <div class="search-layout"><input class="easyui-searchbox" style="width:100%" /></div>
+                                <div class="other-layout">
+                                    <input type="radio" /> <label>执行中</label>
+                                    <input type="radio" /> <label>已外部精算</label>
+                                    <input type="radio" /> <label>全部</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-options="region:'center'">
+                            <div class="nano">
+                                <div class="nano-content">
+                                    <ul id="szrl001Tree" style="margin:10px;"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div data-options="region:'center'">
+                    <div class="nano">
+                        <div id="sdbo001_input" class="nano-content">
+                            <div class="control-group">
+                                <div class="control-group-content">
+                                    <div class="control-easyui">
+                                        <div class="control-easyui"><input style="width:220px;"   id="bo00102" name="bo00102" class="easyui-textbox" readonly="readonly" data-options="label:'作番号：'" />@*@Html.EditorFor(x => x.bo00102, new { dataoptions = "label:'作番号：'" })*@</div>
+                                    </div>
+                                    <div class="control-easyui">
+                                        <div class="control-easyui"><input style="width:220px;" id="bo00103" name="bo00103" class="easyui-textbox" readonly="readonly" data-options="label:'作番名称：'" /></div>@*@Html.EditorFor(x => x.bo00103, new { dataoptions = "label:'作番名称：'" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group hasborder">
+                                <div class="control-group-title">作番现场审批者</div>
+                                <div class="control-group-content">
+                                    <div class="control-easyui"><div class="control-easyui"><input style="width:220px;" id="bo00104" name="bo00104" class=" zip_1" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00104, new { dataoptions = "label:'本部长：'" })*@</div>
+                                    <div class="control-easyui"><div class="control-easyui"><input style="width:220px;" id="bo00105" name="bo00105" class=" zip_1" data-options="label:'所长：'" /></div>@*@Html.EditorFor(x => x.bo00105, new { dataoptions = "label:'所长：'" })*@</div><br />
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">工事长</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00106" name="bo00106" class=" zip_1" data-options="label:'建筑：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'建筑：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00107" name="bo00107" class=" zip_1" data-options="label:'机械：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'机械：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00108" name="bo00108" class=" zip_1" data-options="label:'电气：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'电气：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00109" name="bo00109" class=" zip_1" data-options="label:'成套：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'成套：'" })*@</div><br />
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">科长</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00110" name="bo00110" class=" zip_1" data-options="label:'建筑：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'建筑：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00111" name="bo00111" class=" zip_1" data-options="label:'机械：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'机械：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00112" name="bo00112" class=" zip_1" data-options="label:'电气：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'电气：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input style="width:220px;"  id="bo00113" name="bo00113" class=" zip_1" data-options="label:'成套：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'成套：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">担当</div>
+                                        <div class="control-group-content">
+                                            <div class="table-layout hasborder">
+                                                <table  cellpadding="0" cellspacing="0" border="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <td>建筑</td>
+                                                            <td>机械</td>
+                                                            <td>电气</td>
+                                                            <td>成套</td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><input class=" zip_1" id="bo00114" name="bo00114" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00119" name="bo00119" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00124" name="bo00124" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00129" name="bo00129" value=""></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><input class=" zip_1" id="bo00115" name="bo00115" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00120" name="bo00120" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00125" name="bo00125" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00130" name="bo00130" value=""></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><input class=" zip_1" id="bo00116" name="bo00116" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00121" name="bo00121" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00126" name="bo00126" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00131" name="bo00131" value=""></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><input class=" zip_1" id="bo00117" name="bo00117" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00122" name="bo00122" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00127" name="bo00127" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00132" name="bo00132" value=""></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><input class=" zip_1" id="bo00118" name="bo00118" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00123" name="bo00123" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00128" name="bo00128" value=""></td>
+                                                            <td><input class=" zip_1" id="bo00133" name="bo00133" value=""></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group hasborder">
+                                <div class="control-group-title">非作番部门审批者</div>
+                                <div class="control-group-content">
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">采购部</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00134" name="bo00134" class=" zip_2" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00135" name="bo00135" class=" zip_2" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00136" name="bo00136" class=" zip_2" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00137" name="bo00137" class=" zip_2" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">工程管理室</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00139" name="bo00139" class=" zip_2" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00140" name="bo00140" class=" zip_2" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00141" name="bo00141" class=" zip_2" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">财务部</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00142" name="bo00142" class=" zip_2" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00143" name="bo00143" class=" zip_2" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00144" name="bo00144" class=" zip_2" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;" id="bo00145" name="bo00145" class=" zip_2" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">营业部</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;"  id="bo00146" name="bo00146" class=" zip_2" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;"  id="bo00147" name="bo00147" class=" zip_2" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;"  id="bo00148" name="bo00148" class=" zip_2" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input  style="width:220px;"  id="bo00149" name="bo00149" class=" zip_2" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+@section FooterScript {
+    <script src="@this.Url.Content("~/Content/Areas/AreasCode030/sdbo001/javaScript/_sdbo001Index.js")"></script>
+}

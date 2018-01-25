@@ -1,0 +1,181 @@
+﻿@using PM2.Service.Code030
+@model Staffing_sdbo004
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section Body {
+    <form   id="sdbo004From" action="###" method="post" style="height: 100%; width: 100%">
+        <div data-options="region:'north'">
+            <div class="header">
+                <div class="left-layout">
+                    <a href="javascript:;" class="btn-back">返回</a>
+                    <h1>人员权限设置</h1>
+                </div>
+                <div class="center-layout"></div>
+                <div class="right-layout">
+                    <a href="javascript:;" id="btn_edit" class="easyui-linkbutton">编辑</a>
+                    <a href="javascript:;" id="btn_save" class="easyui-linkbutton">保存</a>
+                </div>
+            </div>
+        </div>
+        <div data-options="region:'center'">
+            <div class="easyui-layout">
+                <div data-options="region:'west',split:true,width:230">
+                    <div class="easyui-layout">
+                        <div data-options="region:'north'">
+                            <div class="tree-search">
+                                <div class="search-layout"><input class="easyui-searchbox" style="width:100%" /></div>
+                                <div class="other-layout">
+                                    <input type="radio" /> <label>执行中</label>
+                                    <input type="radio" /> <label>已外部精算</label>
+                                    <input type="radio" /> <label>全部</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-options="region:'center'">
+                            <div class="nano">
+                                <div class="nano-content">
+                                    <ul id="szrl001Tree" style="margin:10px;"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div data-options="region:'center'">
+                    <div class="nano">
+                        <div class="nano-content">
+                            <div class="control-group">
+                                <div class="control-group-content"><div class="control-easyui"><div class="control-easyui"><input id="bo00102" name="bo00102" class="easyui-textbox" data-options="label:'作番号：'" />@*@Html.EditorFor(x => x.bo00102, new { dataoptions = "label:'作番号：'" })*@</div>
+                                    </div>
+                                    <div class="control-easyui">
+                                        <div class="control-easyui"><input id="bo00103" name="bo00103" class="easyui-textbox" data-options="label:'作番名称：'" /></div>@*@Html.EditorFor(x => x.bo00103, new { dataoptions = "label:'作番名称：'" })*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group hasborder">
+                                <div class="control-group-title">作番现场审批者</div>
+                                <div class="control-group-content">
+                                    <div class="control-easyui"><div class="control-easyui"><input id="bo00104" name="bo00104" class="easyui-textbox" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00104, new { dataoptions = "label:'本部长：'" })*@</div>
+                                    <div class="control-easyui"><div class="control-easyui"><input id="bo00105" name="bo00105" class="easyui-textbox" data-options="label:'所长：'" /></div>@*@Html.EditorFor(x => x.bo00105, new { dataoptions = "label:'所长：'" })*@</div><br />
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">工事长</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00134" name="bo00134" class="easyui-textbox" data-options="label:'建筑：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'建筑：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00138" name="bo00138" class="easyui-textbox" data-options="label:'机械：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'机械：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00142" name="bo00142" class="easyui-textbox" data-options="label:'电气：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'电气：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00146" name="bo00146" class="easyui-textbox" data-options="label:'成套：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'成套：'" })*@</div><br />
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">科长</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00134" name="bo00134" class="easyui-textbox" data-options="label:'建筑：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'建筑：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00138" name="bo00138" class="easyui-textbox" data-options="label:'机械：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'机械：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00142" name="bo00142" class="easyui-textbox" data-options="label:'电气：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'电气：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00146" name="bo00146" class="easyui-textbox" data-options="label:'成套：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'成套：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">担当</div>
+                                        <div class="control-group-content">
+                                            <div class="table-layout hasborder">
+                                                <table cellpadding="0" cellspacing="0" border="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <td>建筑</td>
+                                                            <td>机械</td>
+                                                            <td>电气</td>
+                                                            <td>成套</td>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>@Html.EditorFor(x => x.bo00114)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00119)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00124)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00129)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Html.EditorFor(x => x.bo00115)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00120)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00125)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00130)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Html.EditorFor(x => x.bo00116)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00121)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00126)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00131)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Html.EditorFor(x => x.bo00117)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00122)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00127)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00132)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Html.EditorFor(x => x.bo00118)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00123)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00128)</td>
+                                                            <td>@Html.EditorFor(x => x.bo00133)</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group hasborder">
+                                <div class="control-group-title">非作番部门审批者</div>
+                                <div class="control-group-content">
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">采购部</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00134" name="bo00134" class="easyui-textbox" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00138" name="bo00138" class="easyui-textbox" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00142" name="bo00142" class="easyui-textbox" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00146" name="bo00146" class="easyui-textbox" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">工程管理室</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00134" name="bo00134" class="easyui-textbox" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00138" name="bo00138" class="easyui-textbox" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00142" name="bo00142" class="easyui-textbox" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">财务部</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00134" name="bo00134" class="easyui-textbox" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00138" name="bo00138" class="easyui-textbox" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00142" name="bo00142" class="easyui-textbox" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00146" name="bo00146" class="easyui-textbox" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-group hasborder inline-layout">
+                                        <div class="control-group-title">营业部</div>
+                                        <div class="control-group-content">
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00134" name="bo00134" class="easyui-textbox" data-options="label:'本部长：'" /></div>@*@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00138" name="bo00138" class="easyui-textbox" data-options="label:'部长：'" /></div>@*@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00142" name="bo00142" class="easyui-textbox" data-options="label:'科长：'" /></div>@*@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长：'" })*@</div><br />
+                                            <div class="control-easyui"><div class="control-easyui"><input id="bo00146" name="bo00146" class="easyui-textbox" data-options="label:'担当：'" /></div>@*@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当：'" })*@</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-group"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+@section FooterScript {
+    <script src="@this.Url.Content("~/Content/Areas/AreasCode030/sdbo004/javaScript/_sdbo004Index.js")"></script>
+}

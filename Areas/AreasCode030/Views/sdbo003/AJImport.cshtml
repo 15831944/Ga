@@ -1,0 +1,358 @@
+﻿@{
+    ViewBag.Title = "A~J-导入";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+}
+@section HeaderStyles{
+    <link href="~/Content/Areas/AreasCode030/szrl100/css/szrl100.css" rel="stylesheet" />
+    <style type="text/css">
+        table.form084-table tr {
+            height: 40px;
+        }
+
+        table.form084-table td input {
+            width: 250px;
+        }
+    </style>
+}
+@section Body{
+    <div class="easyui-layout">
+        <div data-options="region:'north', collapsible: false" style="height: 35px;">
+            <div class="tree-search">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" id="aj_import" onclick="importExcel2()">确定</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="cancel2()">取消</a>
+            </div>
+        </div>
+        <div data-options="region:'center'">
+            <form id="form111_edit3" method="post" enctype="multipart/form-data" novalidate style="margin:0;padding:2px 50px">
+                <div style="display:none;">
+                    <input id="rl11101" type="hidden" name="rl11101" />
+                </div>
+                <table class="form084-table table-panel">
+                    <thead>
+                        <tr style="height: 1px;">
+                            <th style="width: 80px;"></th>
+                            <th style="width: 300px;"></th>
+                            <th style="width: 80px;"></th>
+                            <th style="width: 300px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text" colspan="4">
+                                <label>1、数据源为一个EXCEL文件，请选择一个合法的EXCEL文件（包括路径和文件名）</label>
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>文件名：</label>
+                            </td>
+                            <td class="form084-table-td2" colspan="3">
+                                <input type="hidden" id="input_hd_filepath_edit3" name="ExcelFilePath" />
+                                <input id="excelFilePath2" type="text" name="ExcelFilePath_2" class="easyui-filebox" required="required" style="width: 640px;" data-options="buttonText: '选择文件'" />
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text" colspan="4">
+                                <label>2、在您选择的EXCEL文件中选择一个工作表</label>
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>工作表：</label>
+                            </td>
+                            <td class="form084-table-td2" colspan="3">
+                                <input id="excelWorkbook2" type="text" required="required" editable="false" name="ExcelWookSheet" class="easyui-combobox" style="width: 640px;" data-options="valueField:'id',textField:'text'" />
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text" colspan="4">
+                                <label>3、填写该工作表中的各字相对应的列名（如A、B等）</label>
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>目录代码：</label>
+                            </td>
+                            <td class="form084-table-td2">
+                                <input id="rl08406_edit2" type="text" name="rl08402" class="easyui-textbox" required="required" data-title="一级目录" />
+                            </td>
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>一级目录：</label>
+                            </td>
+                            <td class="form084-table-td2">
+                                <input id="rl08406_edit2" type="text" name="rl08403" class="easyui-textbox" required="required" data-title="二级目录" />
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>税込金額——計（税込）：</label>
+                            </td>
+                            <td class="form084-table-td2">
+                                <input id="rl08406_edit2" type="text" name="rl08410" class="easyui-textbox" required="required" data-title="材料编码" />
+                            </td>
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>税率：</label>
+                            </td>
+                            <td class="form084-table-td2">
+                                <input id="rl08406_edit2" type="text" name="rl08411" class="easyui-textbox" required="required" data-title="件品名及摘要" />
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>税抜金額——計（税抜）：</label>
+                            </td>
+                            <td class="form084-table-td2">
+                                <input id="rl08406_edit2" type="text" name="rl08414" class="easyui-textbox" required="required" data-title="报价名称" />
+                            </td>
+                            <td class="form084-table-td1 form084-table-text">
+                                <label></label>
+                            </td>
+                            <td class="form084-table-td2">
+                            </td>
+                        </tr>
+
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text" colspan="4">
+                                <label>4、填写该工作表中数据范围：如（A1:J10）</label>
+                            </td>
+                        </tr>
+                        <tr class="form084-table-tr">
+                            <td class="form084-table-td1 form084-table-text">
+                                <label>数据范围：</label>
+                            </td>
+                            <td class="form084-table-td2" colspan="3">
+                                <input id="dataRange_edit2" type="text" name="DataRange" class="easyui-textbox" style="width: 640px;" required="required" validType="excelDataRange" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+}
+@section FooterScript{
+    <script type="text/javascript">
+        //// 取消按钮事件，关闭导入窗口
+        //function cancel() {
+        //    var win = window.parent;
+        //    win.closeMaterialImportDialog();
+        //}
+
+        //function uploadFile() {
+
+        //}
+
+        // 确定按钮事件，导入EXCEL数据到数据库
+        function importExcel2() {
+            $('#form111_edit3').form('submit', {
+                url: "/AreasCode030/sdbo003/ImportDataByExcel2",
+                onSubmit: function (param) {
+                    //checkForm_Edit2();
+                },
+                success: function (data) {
+                    var obj = $.parseJSON(data);
+                    console.log(obj);
+                    if (obj.success) {
+                        console.log(obj.Pamrms);
+                        if (obj.Pamrms) {
+                            for (var item in obj.Pamrms)
+                            {
+                                top.aj_import_appenrow(obj.Pamrms[item]);
+                            }
+                        }
+                       // handleImportExcel(obj);
+                        top.$('#importContainer_aj').window('close');
+                        top.$.messager.alert('友情提示', "导入成功!", 'info');
+                        return false;
+                    }
+                    else {
+                        handleImportError(obj);
+                        return false;
+                    }
+                }
+
+            });
+
+
+
+
+
+            //var formId = 'form111_edit2', url = '/AreasCode030/sdbo003/ImportDataByExcel';
+            //rlform1101.submitForm(formId, url, checkForm_Edit2, handleImportExcel, handleImportError);
+        }
+   
+
+
+
+
+
+
+
+
+
+        // 导入EXCEL成功
+        function handleImportExcel(result) {
+            if (result && result.success) {
+                clearExcelInfo2();
+                rlform1101.messenger.showMessage('导入成功！');
+                window.parent.refreshDatagrid_index();
+            }
+        }
+
+        // 清空EXCEL文件和工作表信息
+        function clearExcelInfo2() {
+            // 清空EXCEL文件和工作表信息
+            $('#excelFilePath2').filebox('reset').filebox('setValue', '');
+            $('#input_hd_filepath_edit3').val('');
+            $('#excelWorkbook2').combobox('clear');
+
+        }
+
+        // 导入EXCEL失败
+        function handleImportError() {
+            clearExcelInfo2();
+        }
+
+        // 加载EXCEL的工作表名称
+
+        function loadExcelSheets(returnInfo) {
+           // if (!rlform1101.isNullOrWhitespace(returnInfo)) {
+                uploadFile_edit2_szrl084(function (data) {
+                    $('#input_hd_filepath_edit3').val(data);
+                    $.post('/AreasCode030/szrl111/GetExcelSheets', { fileName: data }, function (data) {
+                        $('#excelWorkbook2').combobox('loadData', data);
+                        //$('#input_hd_filepath_edit3').val('returnInfo');
+                    });
+                });
+            //}
+        }
+
+        //// 导入前检查
+        //function checkForm_Edit2() {
+        //    var tid = '#rl1110', valueArr = [], reg = /^[A-Z]$/;
+        //    for (var i = 2; i < 10; i++) {
+        //        var id = tid + i.toString() + '_edit2';
+        //        var value = $.trim($(id).textbox('getValue')),
+        //            title = $(id).data('title');
+        //        if (!reg.test(value)) {
+        //            rlform1101.messenger.showMessage('“' + title + '”的格式不正确，格式应如A、B等单个大小字母！');
+        //            return false;
+        //        }
+        //        for (var k = 0; k < valueArr.length; k++) {
+        //            if (valueArr[k].value === value) {
+        //                var title2 = $(valueArr[k].id).data('title');
+        //                rlform1101.messenger.showMessage('“' + title + '”的值和“' + title2 + '”的值不能相同！');
+        //                existFlag = true;
+        //                return false;
+        //            }
+        //        }
+        //        if (!isGoodColumnName(value, title)) {
+        //            return false;
+        //        }
+        //        valueArr.push({ id: id, value: value });
+        //    }
+        //    return true;
+        //}
+
+        //// 列名是否有效
+        //function isGoodColumnName(name, title) {
+        //    var value = $('#dataRange_edit2').val(),
+        //        c1 = value.substring(0, 1),
+        //        index = value.indexOf(':'),
+        //        c2 = value.substring(index + 1, index + 2);
+        //    if (name >= c1 && name <= c2) {
+        //        return true;
+        //    }
+        //    rlform1101.messenger.showMessage('“' + title + '”的值应在“' + c1 + '”和“' + c2 + '”之间！');
+        //    return false;
+        //}
+
+        // 上传EXCEL文件到服务器
+        function uploadFile_edit2_szrl084(uploadSuccessAction) {
+            var url = '/AreasCode030/szrl111/UploadExcel';
+
+            var formData = new FormData($("#form111_edit3")[0]);
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                //async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (returnInfo) {
+                    if (rlform1101.isFunc(uploadSuccessAction)) {
+                        uploadSuccessAction(returnInfo);
+                    }
+                },
+                error: function (returnInfo) {
+                }
+            });
+        }
+
+
+
+        $(function () {
+            $('#excelFilePath2').filebox({
+                onChange: function (newValue, oldValue) {
+                    loadExcelSheets(newValue);
+                }
+            });
+
+            //$.extend($.fn.validatebox.defaults.rules, {
+            //    excelDataRange: {
+            //        validator: function (value, param) {
+            //            var reg = /^[A-Z][1-9]\d*:[A-Z][1-9]\d*$/;
+            //            var result = reg.test(value);
+            //            if (result) {
+            //                var c1 = value.substring(0, 1),
+            //                    index = value.indexOf(':'),
+            //                    c2 = value.substring(index + 1, index + 2);
+            //                result = c1 <= c2;
+            //                if (result) {
+            //                    var n1 = value.substring(1, index),
+            //                        n2 = value.substring(index + 2, value.length);
+            //                    result = parseInt(n1) <= parseInt(n2);
+            //                }
+            //            }
+            //            return result;
+            //        },
+            //        message: '格式应如（A1:J10）'
+            //    },
+            //    excelColumnName: {
+            //        validator: function (value, param) {
+            //            var reg = /^[A-Z]$/;
+            //            var result = reg.test(value);
+            //            if (!result) {
+            //                return result;
+            //            }
+            //            var tid = '#rl1110', valueArr = [];
+            //            for (var i = 2; i < 10; i++) {
+            //                var id = tid + i.toString();
+            //                var value = $(id).textbox('getValue'),
+            //                    existFlag = false;
+            //                for (var k = 0; k < valueArr.length; k++) {
+            //                    if (valueArr[k] === value) {
+            //                        existFlag = true;
+            //                        break;
+            //                    }
+            //                }
+            //                if (!flag) {
+            //                    valueArr.push(value);
+            //                }
+            //                else {
+            //                    return false;
+            //                }
+            //            }
+            //            return true;
+            //        },
+            //        message: '格式应如（A、B等单个大写字母），或已存在相同的列名'
+            //    }
+            //});
+        });
+    </script>
+}

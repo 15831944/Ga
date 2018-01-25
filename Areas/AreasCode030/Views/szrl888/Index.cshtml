@@ -1,0 +1,103 @@
+﻿@model PM2.Models.Code030.szrl888
+
+@{
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section Body {
+<table id="szrl888_ux_Grid" class="easyui-datagrid"></table>
+}
+@section FooterScript {
+    <script>
+        $("#szrl888_ux_Grid").datagrid({
+            url: "/AreasCode030/szrl888/info",
+            method: 'POST',
+            title: '压力测试',
+            fit: false,
+            iconCls: 'icon-save',//图标  
+            loadMsg: "正在加载，请稍等...",
+            fitColumns: true,
+            singleSelect: true,
+            idField: "rl88801",
+            sortable: true,
+            remoteSort: false,
+            rownumbers: true,
+            pagination: true,
+            scrollbarSize: 0,
+            pageSize: 10,
+            pageList: [10, 20, 30],//可以设置每页记录条数的列表  
+            pagePosition: 'bottom',
+            onClickRow: function (rowIndex, record) {
+                _seRrecord = record;
+            },
+            toolbar: [
+                {
+                    id: "icon_edit",
+                    text: '修改',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        var row = $('#szrl888_ux_Grid').datagrid('getSelected');
+                        var _voucherId = row.rl88801;
+                        EditVoucher(_voucherId);
+                    }
+                }
+                ,
+                '-',
+                {
+                    id: "icon_remove",
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        var row = $('#szrl888_ux_Grid').datagrid('getSelected');
+                        var _voucherId = row.rl88801;
+                        DeleteVoucher(_voucherId);
+                    }
+                }
+                ,
+                '-',
+                {
+                    id: "icon_add",
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        window.location.href = "/AreasCode030/szrl888/add";
+                    }
+                }
+            ],
+            columns: [[
+                { field: 'rl88801', title: '主键', width: 150 },
+                { field: 'rl88802', title: 'rl88802', width: 150 },
+                { field: 'rl88803', title: 'rl88803', width: 150, align: 'left' },
+                { field: 'rl88804', title: 'rl88804', width: 150, align: 'left' },
+                { field: 'rl88805', title: 'rl88805', width: 150, align: 'left' },
+                { field: 'rl88806', title: 'rl88806', width: 150 },
+                { field: 'rl88807', title: 'rl88807', width: 150, align: 'left' },
+                { field: 'rl88808', title: 'rl88808', width: 150, align: 'left' },
+                { field: 'rl88809', title: 'rl88809', width: 150, align: 'left' },
+                { field: 'rl88810', title: 'rl88810', width: 150 }
+            ]]
+        });
+        function EditVoucher(_voucherId) {
+            window.open("/AreasCode030/szrl888/edit?vid=" + _voucherId)
+           // window.location.href = "/AreasCode030/szrl888/edit?vid=" + _voucherId;
+        }
+        function DeleteVoucher(_voucherId) {
+            $.ajax({
+                url: "/AreasCode030/szrl888/remove",
+                data: {
+                    vid: _voucherId,
+                },
+                type: "post",
+                success: function (obj) {
+                    var data = $.parseJSON(obj);
+                    if (data.success) {
+                        $.messager.alert('友情提示', "删除成功!", 'info');
+                        $('#szrl888_ux_Grid').datagrid('reload');
+                    }
+                    else {
+                        $.messager.alert('友情提示', data.Message, 'error');
+                    }
+                }
+            });
+        }
+    </script>
+}

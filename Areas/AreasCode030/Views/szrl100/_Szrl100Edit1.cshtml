@@ -1,0 +1,286 @@
+﻿@using PM2.Code
+@model PM2.Models.Code030.szrl100Model.szrl100
+
+    <table class="form100-table table-panel">
+        <thead>
+            <tr style="height: 10px;">
+                <th style="width: 160px;"></th>
+                <th style="width: 170px;"></th>
+                <th style="width: 120px;"></th>
+                <th style="width: 170px;"></th>
+                <th style="width: 180px;"></th>
+                <th style="width: 170px;"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"><label>企业编码：</label></td>
+                <td class="form100-table-td2">
+                    @*@Html.EditorFor(x => x.rl10002)*@
+                    <input type="hidden" name="rl10001" id="rl10001" />
+                    <input type="hidden" name="rl10042" id="rl10042" />
+                    <input type="hidden" name="rl10002" id="rl10002" />
+                    <input type="text" id="SupplierCode" name="SupplierCode" class="easyui-textbox" disabled="disabled" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">G&G代码：</td>
+                <td class="form100-table-td2">
+                    @*@Html.EditorFor(x => x.rl10041)*@
+                    <input type="text" id="rl10041" name="rl10041" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">G&G代码企业关联与否：</td>
+                <td class="form100-table-td2">
+                    @*@Html.EditorFor(x => x.rl10004_list)*@
+                    <select id="rl10004" class="easyui-combobox" name="rl10004" data-options="editable: false" >
+                        <option value="0">不关联</option>
+                        <option value="1">一般</option>
+                        <option value="2">关联公司</option>
+                        <option value="3">母公司</option>
+                    </select>
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">企业名：</td>
+                <td class="form100-table-td2">
+                    @Html.EditorFor(x => x.rl10003, new { dataoptions = "required: true" })
+                </td>
+                <td class="form100-table-td1 form100-table-text">曾用名：</td>
+                <td class="form100-table-td2">
+                    @Html.EditorFor(x => x.rl10005)
+                </td>
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2"></td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">企业类型：</td>
+                <td class="form100-table-td2" colspan="5" id="td_form100_rl10006">
+                    <input type="checkbox" name="rl10006_1" value="工事分包商" id="rl10006_1" /><label>工事分包商</label>
+                    <input type="checkbox" name="rl10006_2" value="非工事分包商" /><label>非工事分包商</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="form100-table-td1 form100-table-text">种类分别：</td>
+                <td class="form100-table-td2" colspan="5" id="td_form100_rl10007">
+                    <input type="checkbox" name="rl10007_1" value="设备" /><label>设备</label>
+                    <input type="checkbox" name="rl10007_2" value="材料" /><label>材料</label>
+                    <input type="checkbox" name="rl10007_3" value="工事" /><label>工事</label>
+                    <input type="checkbox" name="rl10007_4" value="服务" /><label>服务</label>
+                    <input type="checkbox" name="rl10007_5" value="设计" /><label>设计</label>
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">产品类型：</td>
+                <td class="form100-table-td2">
+                    @Html.EditorFor(x => x.rl10008, new { dataoptions = "required: true" })
+                </td>
+                <td class="form100-table-td1 form100-table-text">联系地址：</td>
+                <td class="form100-table-td2">
+                    @Html.EditorFor(x => x.rl10009, new { dataoptions = "required: true" })
+                </td>
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2"></td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">公司电话：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="rl10010" class="easyui-textbox" required="true" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">公司传真：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="rl10011" class="easyui-textbox" required="true" />
+                </td>
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2"></td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">联系人1：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPerson1" class="easyui-textbox" id="form100_input_person1" data-message="联系人1" required="true" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">联系电话1：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPhone1" class="easyui-textbox" id="form100_input_phone1" data-message="联系电话1" required="true" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">电子邮箱1：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="Email1" class="easyui-textbox" validType='email' id="form100_input_email1" data-message="电子邮箱1" required="true" />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">联系人2：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPerson2" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">联系电话2：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPhone2" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">电子邮箱2：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="Email2" class="easyui-textbox" validType='email' />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">联系人3：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPerson3" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">联系电话3：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPhone3" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">电子邮箱3：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="Email3" class="easyui-textbox" validType='email' />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">联系人4：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPerson4" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">联系电话4：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPhone4" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">电子邮箱4：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="Email4" class="easyui-textbox" validType='email' />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">联系人5：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPerson5" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">联系电话5：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="ContactPhone5" class="easyui-textbox" />
+                </td>
+                <td class="form100-table-td1 form100-table-text">电子邮箱5：</td>
+                <td class="form100-table-td2">
+                    <input type="text" name="Email5" class="easyui-textbox" validType='email' />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"><label class="label_radio_rl10015">建筑业企业资质</label>：</td>
+                <td class="form100-table-td2">
+                    <input type="radio" name="rl10015" value="true" data-message="建筑业企业资质" id="rl10015" /><label>有</label>
+                    <input type="radio" name="rl10015" value="false" /><label>无</label>
+                </td>
+                <td class="form100-table-td1 form100-table-text"><label class="label_radio_rl10016">安全生产许可证</label>：</td>
+                <td class="form100-table-td2">
+                    <input type="radio" name="rl10016" value="true" data-message="安全生产许可证" id="rl10016" /><label>有</label>
+                    <input type="radio" name="rl10016" value="false" /><label>无</label>
+                </td>
+                <td class="form100-table-td1 form100-table-text">安全生产许可证有效期：</td>
+                <td class="form100-table-td2">
+                    <input type="datetime" id="rl10017" name="rl10017" class="easyui-datebox" editable="false" />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"><label class="label_radio_rl10018">特别资质</label>：</td>
+                <td class="form100-table-td2">
+                    <input type="radio" name="rl10018" value="true" data-message="特别资质" id="rl10018" /><label>有</label>
+                    <input type="radio" name="rl10018" value="false" /><label>无</label>
+                </td>
+                <td class="form100-table-td1 form100-table-text"><label class="label_radio_rl10019">质量认证</label>：</td>
+                <td class="form100-table-td2">
+                    <input type="radio" name="rl10019" value="true"  data-message="质量认证" id="rl10019"/><label>有</label>
+                    <input type="radio" name="rl10019" value="false" /><label>无</label>
+                </td>
+                <td class="form100-table-td1 form100-table-text">质量认证有效期：</td>
+                <td class="form100-table-td2">
+                    <input type="datetime" id="rl10020" name="rl10020" class="easyui-datebox" editable="false" />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">特别资质明细：</td>
+                <td class="form100-table-td2" colspan="5">
+                    <input type="text" name="SpecialCertDetail1" class="easyui-textbox SpecialCertDetailJudge"  style="width: 1000px;"/>
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2" colspan="5">
+                    <input type="text" name="SpecialCertDetail2" class="easyui-textbox SpecialCertDetailJudge" style="width: 1000px;" />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2" colspan="5">
+                    <input type="text" name="SpecialCertDetail3" class="easyui-textbox SpecialCertDetailJudge" style="width: 1000px;" />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">质量认证明细：</td>
+                <td class="form100-table-td2" colspan="5">
+                    <div id="rl10022Container">
+                        <input type="checkbox" name="rl10022_1" value="ISO9001" /><label>ISO9001</label>
+                        <input type="checkbox" name="rl10022_2" value="ISO9002" /><label>ISO9002</label>
+                        <input type="checkbox" name="rl10022_3" value="ISO14001" /><label>ISO14001</label>
+                        <input type="checkbox" name="rl10022_4" value="OHSAS18001" /><label>OHSAS18001</label>
+                    </div>
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2" colspan="5">
+                    其他：<input id="rl10023" type="text" name="rl10023" style="width: 960px;" class="easyui-textbox"/>
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"><label class="label_radio_rl10024">财务数据更新</label>：</td>
+                <td class="form100-table-td2">
+                    <input type="radio" name="rl10024" value="true" data-message="财务数据更新" /><label>有</label>
+                    <input type="radio" name="rl10024" value="false" /><label>无</label>
+                </td>
+                <td class="form100-table-td1 form100-table-text">维护最后日期：</td>
+                <td class="form100-table-td2">
+                    <input type="datetime" id="rl10025" name="rl10025" class="easyui-datebox" editable="false" disabled="disabled" />
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"><label class="label_radio_rl10026">可否采用</label>：</td>
+                <td class="form100-table-td2">
+                    <input type="radio" name="rl10026" value="true" data-message="可否采用" /><label>可用</label>
+                    <input type="radio" name="rl10026" value="false" /><label>不可用</label>
+                </td>
+            </tr>
+            <tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text">是否黑名单：</td>
+                <td class="form100-table-td2">
+                    <input type="checkbox" name="rl10027" value="true" /><label>是</label>
+                </td>
+            </tr>
+            @*<tr class="form100-table-tr">
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2"></td>
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2"></td>
+                <td class="form100-table-td1 form100-table-text"></td>
+                <td class="form100-table-td2"></td>
+            </tr>*@
+
+            <tr>
+                <td></td>
+                <td colspan="5">
+                    @*<iframe id="iframe_buildingIncCert" frameborder="0" border="0" scrolling="no" style="width:1100px;height:280px;" src="/AreasCode030/szrl100/BuildingIncCertList?id=@ViewBag.SupplierId"></iframe>*@
+                    @Html.Partial("_BuildingIncCertList")
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td colspan="5">
+                    @Html.Partial("_Szrl100EditBottom", null, this.ViewData)
+                </td>
+            </tr>
+        </tbody>
+
+
+    </table>
+<div style="height: 30px;"></div>
+<input type="hidden" id="input_hd_modelinfo_current" value="@ViewBag.SupplierInfo" />
+<input type="hidden" id="myLenLimit" value="@ViewBag.LenLimit" />
+   
+
+

@@ -1,0 +1,50 @@
+﻿@model PM2.Models.Code030.szrl888
+@{
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section Body {
+    <form id="szrl888From" method="post" action="/AreasCode030/szrl888/fn_add" style="height: 100%; width: 100%">
+        <div style="margin-left:20px;">
+            rl88802 @Html.EditorFor(x => x.rl88802)<br />
+            rl88803 @Html.EditorFor(x => x.rl88803)<br />
+            rl88804 @Html.EditorFor(x => x.rl88804)<br />
+            rl88805 @Html.EditorFor(x => x.rl88805)<br />
+            rl88806 @Html.EditorFor(x => x.rl88806)<br />
+            rl88807 @Html.EditorFor(x => x.rl88807)<br />
+            rl88808 @Html.EditorFor(x => x.rl88808)<br />
+            rl88809 @Html.EditorFor(x => x.rl88809)<br />
+            rl88810 @Html.EditorFor(x => x.rl88810)<br />
+        </div>
+        <a href="javascript:;" id="btnSave" class="easyui-linkbutton">保存</a>
+    </form>
+}
+@section FooterScript {
+    <script>
+        $('#btnSave').linkbutton({
+            onClick: function () {
+                $('#szrl888From').form('submit', {
+                    url: "/AreasCode030/szrl888/fn_add",
+                    onSubmit: function (_param) {
+                     
+                    },
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            window.location.href = "/AreasCode030/szrl888/index";
+                           // $.messager.alert('友情提示', '保存成功!', 'info');
+                            bottomRight();
+                        }
+                    }
+                });
+            }
+        });
+
+        function bottomRight() {
+            $.messager.show({
+                title: '提示',
+                msg: '保存成功',
+                showType: 'show'
+            });
+        }
+    </script>
+}

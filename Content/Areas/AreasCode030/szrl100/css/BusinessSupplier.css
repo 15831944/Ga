@@ -1,0 +1,9 @@
+﻿body, div, a, span, ul, li {
+    padding: 0px;
+    margin: 0px;
+}
+
+.table-panel{
+    height: 26px;
+    line-height: 26px;
+}

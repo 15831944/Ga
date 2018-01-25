@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "验收登记";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode019/FileUpload/javaScript/sdpk007_ux_Upload.js"></script>
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script type="text/javascript">
+
+    </script>
+}
+
+@section Body{
+    <div data-options="region:'center',collapsible: false">
+        @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+    </div>
+}
+@section FooterScript{
+    <script type="text/javascript">
+        function disabledAttachFiles_szrl033() {
+            var operateFlag = '@ViewBag.ViewFlag' === '1';
+            if (operateFlag) {
+                var jContainer = $('#attachFileContainer');
+                var jBtn1 = $('#sdpk007_ux_AddBt'),
+                    jBtn3 = $('#sdpk007_ux_DelBt');
+                jBtn1.linkbutton('disable');
+                jBtn3.linkbutton('disable');
+            }
+        }
+
+        $(function () {
+            window.sdpk007uxWinClass.Init('@ViewBag.id', true);
+            window.sdpk007uxWinClass.Load();
+
+            disabledAttachFiles_szrl033();
+        });
+    </script>
+
+
+}
