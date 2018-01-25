@@ -1,0 +1,105 @@
+using Gmail.DDD.DataContext;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration;
+
+namespace PM2.Models.Code031.Mapping
+{
+    public class szrl126Map : EntityConfigurationBase<szrl126>
+    {
+        public szrl126Map()
+        {
+            // Primary Key
+            this.HasKey(t => t.rl12601);
+
+            // Properties
+            this.Property(t => t.rl12601)
+                .IsRequired()
+                .HasMaxLength(40);
+
+            this.Property(t => t.rl12602)
+                .IsRequired()
+                .HasMaxLength(40);
+
+            this.Property(t => t.rl12604)
+                .IsRequired()
+                .HasMaxLength(40);
+
+            this.Property(t => t.rl12606)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            this.Property(t => t.rl12607)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12608)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12609)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            this.Property(t => t.rl12610)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            this.Property(t => t.rl12611)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12612)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12613)
+                .IsRequired()
+                .HasMaxLength(40);
+
+            this.Property(t => t.rl12615)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12616)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12617)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12618)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12619)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            this.Property(t => t.rl12620)
+                .IsRequired()
+                .HasMaxLength(40);
+
+            // Table & Column Mappings
+            this.ToTable("szrl126");
+            this.Property(t => t.rl12601).HasColumnName("rl12601");
+            this.Property(t => t.rl12602).HasColumnName("rl12602");
+            this.Property(t => t.rl12603).HasColumnName("rl12603");
+            this.Property(t => t.rl12604).HasColumnName("rl12604");
+            this.Property(t => t.rl12605).HasColumnName("rl12605");
+            this.Property(t => t.rl12606).HasColumnName("rl12606");
+            this.Property(t => t.rl12607).HasColumnName("rl12607");
+            this.Property(t => t.rl12608).HasColumnName("rl12608");
+            this.Property(t => t.rl12609).HasColumnName("rl12609");
+            this.Property(t => t.rl12610).HasColumnName("rl12610");
+            this.Property(t => t.rl12611).HasColumnName("rl12611");
+            this.Property(t => t.rl12612).HasColumnName("rl12612");
+            this.Property(t => t.rl12613).HasColumnName("rl12613");
+            this.Property(t => t.rl12614).HasColumnName("rl12614");
+            this.Property(t => t.rl12615).HasColumnName("rl12615");
+            this.Property(t => t.rl12616).HasColumnName("rl12616");
+            this.Property(t => t.rl12617).HasColumnName("rl12617");
+            this.Property(t => t.rl12618).HasColumnName("rl12618");
+            this.Property(t => t.rl12619).HasColumnName("rl12619");
+            this.Property(t => t.rl12620).HasColumnName("rl12620");
+            this.Property(t => t.rl12621).HasColumnName("rl12621");
+
+            this.HasRequired(x => x.szrl125)
+                .WithMany(y => y.szrl126s)
+                .HasForeignKey(x => x.rl12602);
+        }
+    }
+}

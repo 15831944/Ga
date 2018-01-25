@@ -1,0 +1,83 @@
+﻿using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Mvc;
+using PM2.Code.NPOI;
+using Gmail.DDD.Helper;
+using PM2.Models.Code030;
+using Gmail.DDD.JsonConvert;
+using Newtonsoft.Json.Linq;
+using PM2.Repository.Code030;
+using Gmail.DDD.Repositorys;
+using Gmail.DDD.DBContextScope; 
+using PM2.Models.Code030.Szrl105Model;
+using PM2.Models.Code030.szrl100Model;
+using NPOI.HSSF.UserModel;
+using System.Web;
+using System.IO;
+using System.Data; 
+
+namespace PM2.Service.Code030
+{
+    public class szrl105ExcelExport : IExcelExportServer
+    {
+        private IExcelUnitWork _unit;
+        private IDbContextScopeFactory _scopeFactory;
+        private IEFRepository<szrl132> _szrl132Repository;//验收处理变更
+        private IEFRepository<Szrl105> _szrl105Repository;//szrl105.采购合同登记
+
+        public szrl105ExcelExport(
+               IDbContextScopeFactory scopeFactory,
+               IEFRepository<szrl132> szrl132Repository,
+               IEFRepository<Szrl105> szrl105Repository 
+            )
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl132Repository = szrl132Repository;
+            this._szrl105Repository = szrl105Repository;
+        }
+        public IOperateResult Export(IRequestGetter vParams)
+        {
+            string excelid = vParams.GetValue<string>("excelid"); //模板id
+            excelid = "51F6CCAB-8470-47DA-A209-7D2C1C8ADED3";     //到时候注释
+            var _132model = new szrl132();
+            using (IDbContextScope scope = this._scopeFactory.CreateScope())
+            {
+                 _132model = this._szrl132Repository.GetModels(a => a.rl13201 == excelid).ToList().FirstOrDefault();
+            }
+            if (_132model != null)
+            {
+                #region 合同封面
+                string _url = "~/Content/Areas/AreasCode030/szrl105/Excel/" + excelid + "/" + _132model.rl13204 + ".xls";
+                string path = HttpHelper.Request.MapPath(_url);
+                ExcelUnitWorkFactory unitFactory = new ExcelUnitWorkFactory();
+                this._unit = unitFactory.Create(path, 0);
+                
+                #endregion
+
+                #region 请款书
+                _url = "~/Content/Areas/AreasCode030/szrl105/Excel/" + excelid + "/" + _132model.rl13205 + ".xls";
+                #endregion
+                #region 验收证明书
+                _url = "~/Content/Areas/AreasCode030/szrl105/Excel/" + excelid + "/" + _132model.rl13206 + ".xls";
+                #endregion
+                #region 特别条件书
+                _url = "~/Content/Areas/AreasCode030/szrl105/Excel/" + excelid + "/" + _132model.rl13207 + ".xls";
+                #endregion
+                #region 一半条件书
+                _url = "~/Content/Areas/AreasCode030/szrl105/Excel/" + excelid + "/" + _132model.rl13208 + ".xls";
+                #endregion 
+                return new Excel_OperateResult(this._unit, "xxxxx");
+            }
+            else
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "");
+            } 
+        }
+         
+    }
+}

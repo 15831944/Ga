@@ -1,0 +1,333 @@
+﻿@{
+    ViewBag.Title = "材料库";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script type="text/javascript">
+    </script>
+}
+
+@section Body{
+
+    @*<div data-options="region:'north', collapsible: false" style="height: 65px;">
+
+        </div>*@
+    <div data-options="region:'west',split:true,width:250, title: '分类列表'">
+        <div class="easyui-layout">
+            @*<div data-options="region:'north'">
+                    <div class="tree-search">
+                        <div class="search-layout"><input id="input_searchbox_index_szrl111" class="easyui-searchbox" style="width:100%" data-options="searcher: searchMaterialDir_szrl111" /></div>
+                    </div>
+                </div>*@
+            <div data-options="region:'center'">
+                <div class="nano">
+                    <div class="nano-content">
+                        <iframe id="materialDirTreeIframe" frameborder="0" src="/AreasCode030/szrl111/MaterialDirTree?f=1&all=1" scrolling="no" style="width:100%;height:90%;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center', title: '材料列表', collapsible: false">
+        <div class="easyui-layout">
+            <div data-options="region:'north'">
+                <div class="tree-search">
+                    <table>
+                        <tr>
+                            <td>查询条件</td>
+                            <td style="height: 30px;">
+                                <input type="text" id="input_condition_search" class="easyui-textbox" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div data-options="region:'center', collapsible: false">
+                <table id="dg" class="easyui-datagrid" data-type="1"
+                       url="/AreasCode030/szrl111/GetMaterialList"
+                       toolbar="#toolbar" pagination="true" fit="true"
+                       rownumbers="true" fitColumns="false" singleSelect="true">
+                    <thead>
+                        <tr>
+                            @*<th field="rl11101" width="50">ID</th>*@
+                            @*<th field="rl11102" width="150">材料分类</th>*@
+                            <th field="rl11103" width="150">材料编码</th>
+                            <th field="rl11104" width="150">材料名称</th>
+                            <th field="rl11105" width="150">规格型号</th>
+                            <th field="rl11106" width="150">品牌</th>
+                            <th field="rl11107" width="150">产地</th>
+                            <th field="rl11108" width="150">属性</th>
+                            <th field="MeasureUnitName" width="150">计量单位</th>
+                            <th field="rl11110" width="150">备注</th>
+                            @*<th field="rl11111" width="150">添加时间</th>
+                                <th field="rl11112" width="150">添加人</th>*@
+                        </tr>
+                    </thead>
+                </table>
+                <div id="toolbar">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="changeMaterialDir()">修改目录</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="importMaterial_index_szrl111()">导入</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="search_szrl111()">查询</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newItem()">新增</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editItem()">编辑</a>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteItem()">删除</a>
+                    @*<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportItem_index_szrl111()">导出</a>*@
+                    <a href="javascript:void(0)" id="menu_export_szrl111" class="easyui-menubutton" plain="true"
+                       data-options="menu:'#menu_detail_export',iconCls:'icon-save'">导出</a>
+                    <div id="menu_detail_export" style="width:150px;">
+                        <div data-options="iconCls:'icon-undo'" onclick="exportItem_current_szrl111">导出本页</div>
+                        <div data-options="iconCls:'icon-redo'" onclick="exportItem_all_szrl111">导出全部</div>
+                    </div>
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editMaterialDir()">材料目录维护</a>
+                </div>
+
+                <div id="editContainer"></div>
+                <div id="importContainer"></div>
+                <div id="selectMaterialDirContainer"></div>
+                <script type="text/javascript">
+
+                    /// 搜索目录树
+                    //function searchMaterialDir_szrl111(value) {
+                    //    $('#materialDirTreeIframe')[0].contentWindow.reloadMaterialDir(value);
+                    //}
+
+                    // 刷新目录
+                    function reloadMaterialDir_index_szrl111() {
+                        $('#materialDirTreeIframe')[0].contentWindow.reloadMaterialDir_index_szrl111();
+                    }
+
+                    // 关闭编辑窗口
+                    function closeEditDialog() {
+                        $('#editContainer').dialog('close');
+                    }
+
+
+                    // 刷新表格
+                    function refreshDatagrid_index(dirId) {
+                        search_szrl111(dirId);
+                    }
+
+                    // 显示编辑窗口
+                    function showEditDialog(url) {
+                        var content = '<iframe src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+                        $('#editContainer').dialog({
+                            title: '材料库维护<编辑>',
+                            width: 900,
+                            height: 600,
+                            closed: false,
+                            cache: false,
+                            content: content,
+                            modal: true
+                        });
+                    }
+
+                    // 取已选目录ID
+                    function getSelectedDirId_szrl111() {
+                        var node = getSelectedDirNode_index_szrl111(), id = '';
+                        if (node) {
+                            id = node.id;
+                        }
+                        return id;
+                    }
+
+                    /// 取已选目录节点
+                    function getSelectedDirNode_index_szrl111() {
+                        var win = $('#materialDirTreeIframe')[0].contentWindow;
+                        var node = win.getSelectedNode();
+                        return node;
+                    }
+
+                    // 新增
+                    function newItem() {
+                        var did = getSelectedDirId_szrl111(), url = '/AreasCode030/szrl111/MaterialEdit';
+                        if (!rlform1101.isNullOrWhitespace(did)) {
+                            url += '?did=' + did;
+                        }
+                        showEditDialog(url);
+                    }
+
+                    // 编辑
+                    function editItem() {
+                        var row = $('#dg').datagrid('getSelected');
+                        if (row) {
+                            showEditDialog("/AreasCode030/szrl111/MaterialEdit?id=" + row.rl11101);
+                        }
+                    }
+
+                    // 删除
+                    function deleteItem() {
+                        $.messager.confirm('确认消息', '是否删除？', function (r) {
+                            if (r) {
+                                var row = $('#dg').datagrid('getSelected');
+                                if (row != null) {
+                                    rlform1101.post('/AreasCode030/szrl111/RemoveMaterial', { item: row }, function (result) {
+                                        $('#dg').datagrid('reload');
+                                    });
+                                }
+                            }
+                        });
+                    }
+
+                    // EXCEL导入
+                    function importMaterial_index_szrl111() {
+                        var content = '<iframe src="/AreasCode030/szrl111/MaterialImport" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+                        $('#importContainer').dialog({
+                            title: '导入向导',
+                            width: 900,
+                            height: 600,
+                            closed: false,
+                            cache: false,
+                            content: content,
+                            modal: true
+                        });
+                    }
+
+
+                    // 关闭材料导入窗口
+                    function closeMaterialImportDialog() {
+                        $('#importContainer').dialog('close');
+                    }
+
+                    // 查询
+                    function search_szrl111(dirId) {
+                        if (rlform1101.isNull(dirId)) {
+                            dirId = getSelectedDirId_szrl111();
+                        }
+                        var key = $('#input_condition_search').val();
+                        var url = '/AreasCode030/szrl111/GetMaterialList?key=' + key;
+                        if (!rlform1101.isNullOrWhitespace(dirId)) {
+                            url += '&dirId=' + dirId;
+                        }
+                        $('#dg').datagrid({ url: url });
+                    }
+
+                    // 表格响应双击事件
+                    $(function () {
+                        $('#dg').datagrid({
+                            onDblClickRow: function (index, row) {
+                                if (row) {
+                                    //rlform1101.openWindow("/AreasCode030/szrl100/Edit?id=" + row.rl10001);
+                                    editItem();
+                                }
+                            }
+                        });
+
+                        var jDdlMenu = $('#menu_export_szrl111').menubutton({ menu: '#menu_detail_export' }); 
+                        $(jDdlMenu.menubutton('options').menu).menu({
+                            onClick: function (item) {
+                                if (item.text == '导出本页') {
+                                    exportItem_current_szrl111();
+                                }
+                                else {
+                                    exportItem_all_szrl111();
+                                }
+                            }
+                        })
+                    });
+
+                    // 显示材料目录维护窗口
+                    function showMaterialDirEditDlg(url) {
+                        var content = '<iframe src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+                        $('#editContainer').dialog({
+                            title: '材料目录维护',
+                            width: 900,
+                            height: 600,
+                            closed: false,
+                            cache: false,
+                            //href: url,
+                            content: content,
+                            modal: true
+                        });
+                    }
+
+                    // 材料目录维护
+                    function editMaterialDir() {
+                        showMaterialDirEditDlg('/AreasCode030/szrl111/MaterialDirIndex');
+                    }
+
+                    // 修改材料目录
+                    function changeMaterialDir() {
+                        var row = $('#dg').datagrid('getSelected');
+                        if (row) {
+                            var url = '/AreasCode030/szrl111/MaterialDirTree?mid=' + row.rl11101 + '&cDirId=' + row.rl11102;
+                            showChangeMaterialDirTreeDlg(url);
+                        }
+                    }
+
+
+                    // 显示上级目录选择的树窗口
+                    function showChangeMaterialDirTreeDlg(url) {
+                        var toolbar = [{
+                            text: '确定选择',
+                            iconCls: 'icon-save',
+                            handler: handleChangeMaterialDir
+                        }];
+
+                        var content = '<iframe id="changeMaterialDirIframe" src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+                        $('#selectMaterialDirContainer').dialog({
+                            title: '选择目录',
+                            width: 600,
+                            height: 500,
+                            closed: false,
+                            cache: false,
+                            content: content,
+                            modal: true,
+                            toolbar: toolbar
+                        });
+                    }
+
+                    // 修改材料目录
+                    function handleChangeMaterialDir() {
+                        var win = $('#changeMaterialDirIframe')[0].contentWindow;
+                        if (win) {
+                            var node = win.getSelectedNode(),
+                                id = win.$.getUrlParam('mid');
+                            if (!rlform1101.isNull(node) && node.pid !== '') {
+                                rlform1101.post('/AreasCode030/szrl111/ChangeMaterialDir', { id: id, dirId: node.id }, function () {
+                                    refreshDatagrid_index();
+                                    $('#selectMaterialDirContainer').dialog('close');
+                                });
+                            }
+                        }
+                    }
+
+
+
+                    // 导出
+                    function exportItem_index_szrl111(num, size) {
+                        var dirId = getSelectedDirId_szrl111();
+                        var key = $('#input_condition_search').val();
+                        var url = '/AreasCode030/szrl111/ExportMaterialExcel_szrl111?key=' + key + '&pageNum=' + num + '&pageSize=' + size;
+                        if (!rlform1101.isNullOrWhitespace(dirId)) {
+                            url += '&dirId=' + dirId;
+                        }
+                        var jIframe = $('<iframe/>').hide().attr('src', url);
+                        jIframe.load(function () {
+                            jIframe.remove();
+                        })
+                        $(document.body).append(jIframe);
+                    }
+
+                    // 导出本页数据
+                    function exportItem_current_szrl111() {
+                        var pager = $('#dg').datagrid('getPager').data("pagination").options;
+                        var num = pager.pageNumber,
+                            size = pager.pageSize;
+                        exportItem_index_szrl111(num, size);
+                    }
+
+                    // 导出全部数据
+                    function exportItem_all_szrl111() {
+                        exportItem_index_szrl111(0, 0);
+                    }
+                </script>
+            </div>
+        </div>
+
+    </div>
+
+
+
+}

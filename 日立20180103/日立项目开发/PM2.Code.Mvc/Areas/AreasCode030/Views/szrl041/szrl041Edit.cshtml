@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "验收登记";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+
+}
+@section HeaderStyles{
+    <style type="text/css">
+        .form100-table-text {
+            text-align: right;
+        }
+    </style>
+}
+@section Body{
+    <div class="easyui-layout">
+        <div data-options="region:'center', collapsible: false">
+            <div id="tt" class="easyui-tabs">
+                <div id="tb1" title="批量验收登记">
+                    @Html.Partial("_szrl041Edit1", null, this.ViewData)
+                </div>
+                <div title="附件" id="attachFileContainer">
+                    @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+                </div>
+                <div title="协调办公">
+                </div>
+            </div>
+        </div>
+        <div style="display:none;">
+        </div>
+    </div>
+}
+@section FooterScript{
+    <script type="text/javascript">
+    </script>
+}

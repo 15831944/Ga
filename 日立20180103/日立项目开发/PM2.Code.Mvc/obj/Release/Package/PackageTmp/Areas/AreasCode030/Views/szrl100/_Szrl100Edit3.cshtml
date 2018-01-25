@@ -1,0 +1,35 @@
+﻿@model PM2.Models.Code030.szrl100Model.szrl100
+
+<table class="form100-table table-panel" style="margin-left: 100px;">
+    <thead>
+        <tr style="height: 10px;">
+            <th style="width: 150px;"></th>
+            <th style="width: 200px;"></th>
+            <th style="width: 150px;"></th>
+            <th style="width: 200px;"></th>
+            <th style="width: 220px;"></th>
+            <th style="width: 200px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="6">
+                @*<iframe id="iframe_edit3" frameborder="0" border="0" scrolling="no" style="width:950px;height:280px;" src=""></iframe>
+                <input type="hidden" id="input_hd_iframesrc3" value="/AreasCode030/szrl100/RemarkList?id=@ViewBag.SupplierId" />*@
+                @Html.Partial("_RemarkList")
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">
+                @Html.Partial("_Szrl100EditBottom", null, this.ViewData)
+            </td>
+        </tr>
+        
+    </tbody>
+</table>
+<div style="height: 30px;"></div>
+
+
+
+
+

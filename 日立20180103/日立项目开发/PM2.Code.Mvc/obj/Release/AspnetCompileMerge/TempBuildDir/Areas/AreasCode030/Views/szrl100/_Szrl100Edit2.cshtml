@@ -1,0 +1,74 @@
+﻿@model PM2.Models.Code030.szrl100Model.szrl100
+
+<table class="form100-table table-panel">
+    <thead>
+        <tr style="height: 10px;">
+            <th style="width: 150px;"></th>
+            <th style="width: 200px;"></th>
+            <th style="width: 150px;"></th>
+            <th style="width: 200px;"></th>
+            <th style="width: 220px;"></th>
+            <th style="width: 200px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="form100-table-tr">
+            <td class="form100-table-td1 form100-table-text"><label>成立日期：</label></td>
+            <td class="form100-table-td2">
+                <input type="datetime" id="rl10029" name="rl10029" class="easyui-datebox" required="true" editable="false" />
+            </td>
+            <td class="form100-table-td1 form100-table-text">注册资本（万元）：</td>
+            <td class="form100-table-td2">
+                @*@Html.EditorFor(x => x.rl10030, new { dataoptions = "required: true" })*@
+                <input class="easyui-numberbox" name="rl10030" required="true" precision="2" style="width:100%;">
+            </td>
+            <td class="form100-table-td1 form100-table-text"></td>
+            <td class="form100-table-td2">
+            </td>
+        </tr>
+        <tr class="form100-table-tr">
+            <td class="form100-table-td1 form100-table-text"><label>公司注册地址：</label></td>
+            <td class="form100-table-td2" colspan="5">
+                @Html.EditorFor(x => x.rl10031, new { dataoptions = "required: true", style="width: 950px;" })
+            </td>
+        </tr>
+        <tr class="form100-table-tr">
+            <td class="form100-table-td1 form100-table-text"><label>法人代表姓名：</label></td>
+            <td class="form100-table-td2">
+                @Html.EditorFor(x => x.rl10032, new { dataoptions = "required: true" })
+            </td>
+            <td class="form100-table-td1 form100-table-text">产品编号：</td>
+            <td class="form100-table-td2">
+                @Html.EditorFor(x => x.rl10033)
+            </td>
+            <td class="form100-table-td1 form100-table-text"></td>
+            <td class="form100-table-td2">
+            </td>
+        </tr>
+        <tr class="form100-table-tr">
+            <td class="form100-table-td1 form100-table-text"><label>开票信息维护：</label></td>
+            <td class="form100-table-td2" colspan="5">
+                @Html.EditorFor(x => x.rl10034, new { dataoptions = " multiline:true", style="height: 100px;width:950px;line-height: 24px;" })
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="5">
+                @*<iframe id="iframe_edit2" frameborder="0" border="0" scrolling="no" style="width:950px;height:280px;" src=""></iframe>
+                <input type="hidden" id="input_hd_iframesrc2" value="/AreasCode030/szrl100/SignedNameEdit?id=@ViewBag.SupplierId" />*@
+
+                @Html.Partial("_SignedNameEdit")
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="5">
+                @Html.Partial("_Szrl100EditBottom", null, this.ViewData)
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div style="height: 30px;"></div>
+
+
+

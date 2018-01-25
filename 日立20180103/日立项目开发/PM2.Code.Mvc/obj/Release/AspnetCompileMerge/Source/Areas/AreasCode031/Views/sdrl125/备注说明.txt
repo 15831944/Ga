@@ -1,0 +1,4 @@
+﻿1.Tabs_A/_Index:    支付处理
+  Tabs_A/_EditFrom: 支付处理-合同基本信息
+
+2.Tabs_B/_Index: 验收查看

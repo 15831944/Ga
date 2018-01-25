@@ -1,0 +1,109 @@
+﻿@using PM2.Models.Code030
+@model sdbo002
+@{
+    ViewBag.Title = "Index3";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section Body {
+    <form id="loginFrom" method="post" action="/AreasCode030/sdbo001/SetPeople">
+        <div>
+            <table style="border:1px solid black; " align="center" border="1">
+                <tr>
+                    <td colspan="4" style="text-align:center;">非作番部门审批者</td>
+                </tr>
+                <tr>
+                    <td colspan="4"></td>
+                </tr>
+                <tr>
+                    <td>采购部</td>
+                    <td>工程管理室</td>
+                    <td>财务部</td>
+                    <td>营业部</td>
+                </tr>
+                <tr>
+                    <td>本部长</td>
+                    <td></td>
+                    <td>本部长</td>
+                    <td>本部长</td>
+                </tr>
+                <tr>
+                    <td rowspan="1">@Html.EditorFor(x => x.bo00203)</td>
+                    <td></td>
+                    <td>@Html.EditorFor(x => x.bo00210, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00214, new { })</td>
+                </tr>
+                <tr>
+                    <td>部长</td>
+                    <td>部长</td>
+                    <td>部长</td>
+                    <td>部长</td>
+                </tr>
+                <tr>
+                    <td>@Html.EditorFor(x => x.bo00204, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00207, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00211, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00215, new { })</td>
+                </tr>
+                <tr>
+                    <td>科长</td>
+                    <td>科长</td>
+                    <td>科长</td>
+                    <td>科长</td>
+                </tr>
+                <tr>
+                    <td>@Html.EditorFor(x => x.bo00205, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00208, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00212, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00216, new { })</td>
+                </tr>
+                <tr>
+                    <td>担当</td>
+                    <td>担当</td>
+                    <td>担当</td>
+                    <td>担当</td>
+                </tr>
+                <tr>
+                    <td>@Html.EditorFor(x => x.bo00206, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00209, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00213, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00217, new { })</td>
+                </tr>
+                <tr style="display:none;">
+                    <td>@Html.EditorFor(x => x.bo00201, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00218, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00202, new { })</td>
+                    <td>@Html.EditorFor(x => x.bo00220, new { })</td>
+                </tr>
+            </table>
+        </div>
+        <a href="javascript:void(0)" id="loginButton" class="easyui-linkbutton" style="width:120px; height:38px;">保存</a>
+    </form>
+}
+<script>
+    $('#loginButton').linkbutton({
+        onClick: function () {
+            $('#loginFrom').form('submit', {
+                onSubmit: function (_param) {
+                    var isValid = $(this).form('validate');
+                    if (!isValid) {
+                        $.messager.alert('友情提示', '保存失败!', 'info');
+                    }
+                    return isValid;
+                },
+                success: function (data) {
+                    $.messager.progress('close');
+                    var obj = $.parseJSON(data);
+                    if (obj.success) {
+                        console.log(obj);
+                        $.messager.alert('友情提示', '保存成功!', 'info');
+                    } else {
+                        $.messager.alert('友情提示', obj.Message, 'error');
+                    }
+
+                }
+            });
+
+        }
+    });
+</script>

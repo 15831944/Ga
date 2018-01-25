@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<repositories>
+  <repository path="..\Microsoft.Framework\packages.config" />
+  <repository path="..\PM2.Code.Mvc\packages.config" />
+  <repository path="..\PM2.Code\packages.config" />
+  <repository path="..\PM2.Models\packages.config" />
+  <repository path="..\PM2.Repository\packages.config" />
+  <repository path="..\PM2.Service\packages.config" />
+</repositories>

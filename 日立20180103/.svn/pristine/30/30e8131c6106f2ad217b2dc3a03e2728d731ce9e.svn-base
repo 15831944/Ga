@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Models.Code031
+{
+    /// <summary>
+    /// 付款性质
+    /// </summary>
+    public enum szrl126_Rl12614
+    {
+        /// <summary>
+        /// 预付款
+        /// </summary>
+        ANature,
+
+        /// <summary>
+        /// 质保款
+        /// </summary>
+        BNature,
+
+        /// <summary>
+        /// 验收款
+        /// </summary>
+        CNature
+    }
+}

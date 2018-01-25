@@ -1,0 +1,327 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C5339697-E6F4-4F6A-A35E-E9AF401CE009}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PM2.Models</RootNamespace>
+    <AssemblyName>PM2.Models</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac.Extras.DynamicProxy, Version=4.2.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Extras.DynamicProxy.4.2.1\lib\net45\Autofac.Extras.DynamicProxy.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.7.3.3\lib\net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation.Mvc, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.Mvc5.7.2.1\lib\net45\FluentValidation.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Gmail.Framework, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Gmail.Framework.4.0.0\lib\Gmail.Framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LinqKit, Version=1.1.12.0, Culture=neutral, PublicKeyToken=bc217f8844052a91, processorArchitecture=MSIL">
+      <HintPath>..\packages\LinqKit.1.1.12\lib\net45\LinqKit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OOXML.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.3.0.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NPOI.2.3.0\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.6132.35681, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.7\lib\net40\System.Linq.Dynamic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="其他信息-Code100\ITreeFacade\Models\Auto_TreeType.cs" />
+    <Compile Include="北京开发-Code030\sdbo001.作番人员设置\Mapping\sdbo001Map.cs" />
+    <Compile Include="北京开发-Code030\sdbo001.作番人员设置\sdbo001.cs" />
+    <Compile Include="北京开发-Code030\sdbo002.设置非作番默认人员\Mapping\sdbo002Map.cs" />
+    <Compile Include="北京开发-Code030\sdbo002.设置非作番默认人员\sdbo002.cs" />
+    <Compile Include="北京开发-Code030\sdbo004.作番人员设置\Mapping\sdbo004Map.cs" />
+    <Compile Include="北京开发-Code030\sdbo004.作番人员设置\sdbo004.cs" />
+    <Compile Include="北京开发-Code030\sdbo005.作番人员设置详情\Mapping\sdbo005Map.cs" />
+    <Compile Include="北京开发-Code030\sdbo005.作番人员设置详情\sdbo005.cs" />
+    <Compile Include="北京开发-Code030\szrl001.区域\Mapping\szrl001Map.cs" />
+    <Compile Include="北京开发-Code030\szrl001.区域\szrl001.cs" />
+    <Compile Include="北京开发-Code030\szrl004.顾客信息登记\Mapping\szrl004Map.cs" />
+    <Compile Include="北京开发-Code030\szrl004.顾客信息登记\szrl004.cs" />
+    <Compile Include="北京开发-Code030\szrl005.采购申请\Mapping\szrl005Map.cs" />
+    <Compile Include="北京开发-Code030\szrl005.采购申请\szrl005.cs" />
+    <Compile Include="北京开发-Code030\szrl006.采购申请明细\Mapping\szrl006Map.cs" />
+    <Compile Include="北京开发-Code030\szrl006.采购申请明细\szrl006.cs" />
+    <Compile Include="北京开发-Code030\szrl018.发行作番\Mapping\szrl018Map.cs" />
+    <Compile Include="北京开发-Code030\szrl018.发行作番\szrl018.cs" />
+    <Compile Include="北京开发-Code030\szrl019.营业合同验收登记\Mapping\szrl019Map.cs" />
+    <Compile Include="北京开发-Code030\szrl019.营业合同验收登记\szrl019.cs" />
+    <Compile Include="北京开发-Code030\szrl025.发型受注传票\Mapping\szrl025Map.cs" />
+    <Compile Include="北京开发-Code030\szrl025.发型受注传票\szrl025.cs" />
+    <Compile Include="北京开发-Code030\szrl025.发型受注传票\szrl025_check.cs" />
+    <Compile Include="北京开发-Code030\szrl026.发型受注传票明细\Mapping\szrl026Map.cs" />
+    <Compile Include="北京开发-Code030\szrl026.发型受注传票明细\szrl026.cs" />
+    <Compile Include="北京开发-Code030\szrl026.发型受注传票明细\szrl026CBN.cs" />
+    <Compile Include="北京开发-Code030\szrl028.营业合同变更取消\Mapping\szrl028Map.cs" />
+    <Compile Include="北京开发-Code030\szrl028.营业合同变更取消\szrl028.cs" />
+    <Compile Include="北京开发-Code030\szrl030.验收收款计划更新\Mapping\szrl030Map.cs" />
+    <Compile Include="北京开发-Code030\szrl030.验收收款计划更新\szrl030.cs" />
+    <Compile Include="北京开发-Code030\szrl031.实行预算\szrl031.cs" />
+    <Compile Include="北京开发-Code030\szrl032.验收收款计划更新明细\Mapping\szrl032Map.cs" />
+    <Compile Include="北京开发-Code030\szrl032.验收收款计划更新明细\szrl032.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\AcceptanceExportObj.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\Mapping\rlvw_ConTreeMap.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\Mapping\szrl011Map.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\Mapping\szrl022Map.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\Mapping\szrl023Map.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\Mapping\szrl024Map.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\Mapping\szrl033Map.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\Mapping\szrl034Map.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\PagerInfo.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\PagerResult.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\rlvw_ConTree.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\szrl011.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\szrl022.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\szrl023.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\szrl024.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\szrl033.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\szrl034.cs" />
+    <Compile Include="北京开发-Code030\szrl033.营业合同验收登记\VAcceptancePlanObj.cs" />
+    <Compile Include="北京开发-Code030\szrl035.批量验收登记\Mapping\szrl035Map.cs" />
+    <Compile Include="北京开发-Code030\szrl035.批量验收登记\szrl035.cs" />
+    <Compile Include="北京开发-Code030\szrl036.批量验收明细\Mapping\szrl036Map.cs" />
+    <Compile Include="北京开发-Code030\szrl036.批量验收明细\szrl036.cs" />
+    <Compile Include="北京开发-Code030\szrl039.开票通知单\Mapping\szrl039Map.cs" />
+    <Compile Include="北京开发-Code030\szrl039.开票通知单\szrl039.cs" />
+    <Compile Include="北京开发-Code030\szrl040.开票通知明细\Mapping\szrl040Map.cs" />
+    <Compile Include="北京开发-Code030\szrl040.开票通知明细\szrl040.cs" />
+    <Compile Include="北京开发-Code030\szrl041.营业合同批量验收登记\szrl041.cs" />
+    <Compile Include="北京开发-Code030\szrl041.营业合同批量验收登记\szrl041Map.cs" />
+    <Compile Include="北京开发-Code030\szrl041.营业合同批量验收登记\szrl042.cs" />
+    <Compile Include="北京开发-Code030\szrl041.营业合同批量验收登记\szrl042Map.cs" />
+    <Compile Include="北京开发-Code030\szrl043.B类发包计划\Mapping\szrl043Map.cs" />
+    <Compile Include="北京开发-Code030\szrl043.B类发包计划\szrl043.cs" />
+    <Compile Include="北京开发-Code030\szrl043d.B类发包计划明细\Mapping\szrl043dMap.cs" />
+    <Compile Include="北京开发-Code030\szrl043d.B类发包计划明细\szrl043d.cs" />
+    <Compile Include="北京开发-Code030\szrl044.开票登记\Mapping\szrl044Map.cs" />
+    <Compile Include="北京开发-Code030\szrl044.开票登记\szrl044.cs" />
+    <Compile Include="北京开发-Code030\szrl045.开票登记明细\Mapping\szrl045Map.cs" />
+    <Compile Include="北京开发-Code030\szrl045.开票登记明细\szrl045.cs" />
+    <Compile Include="北京开发-Code030\szrl082.表纸\ImplementBudget.cs" />
+    <Compile Include="北京开发-Code030\szrl082.表纸\Mapping\szrl082Map.cs" />
+    <Compile Include="北京开发-Code030\szrl082.表纸\szrl082.cs" />
+    <Compile Include="北京开发-Code030\szrl083.KLBDE明细导入\KLBDE.cs" />
+    <Compile Include="北京开发-Code030\szrl083.KLBDE明细导入\Mapping\szrl083Map.cs" />
+    <Compile Include="北京开发-Code030\szrl083.KLBDE明细导入\szrl083.cs" />
+    <Compile Include="北京开发-Code030\szrl084.AJ明细导入\AJ.cs" />
+    <Compile Include="北京开发-Code030\szrl084.AJ明细导入\Mapping\szrl084Map.cs" />
+    <Compile Include="北京开发-Code030\szrl084.AJ明细导入\szrl084.cs" />
+    <Compile Include="北京开发-Code030\szrl085.计划进度编制\Mapping\szrl085Map.cs" />
+    <Compile Include="北京开发-Code030\szrl085.计划进度编制\szrl085.cs" />
+    <Compile Include="北京开发-Code030\szrl086.特记事项\Mapping\szrl086Map.cs" />
+    <Compile Include="北京开发-Code030\szrl086.特记事项\szrl086.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\BuildingIncCertObj.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\GGCodeType.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\HandleResult.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\Mapping\szrl100Map.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\Mapping\szrl101Map.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\Mapping\szrl102Map.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\Mapping\szrl103Map.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\Mapping\szrl104Map.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\MyLimit.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\SignedNameObj.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\SupplierExportObj.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\szrl100.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\szrl100_RemarkObj.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\szrl100_SupplierVersion.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\szrl101.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\szrl102.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\szrl103.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\szrl104.cs" />
+    <Compile Include="北京开发-Code030\szrl100.供应商信息管理\VSzrl100.cs" />
+    <Compile Include="北京开发-Code030\szrl105.采购合同登记\IDataConverter.cs" />
+    <Compile Include="北京开发-Code030\szrl105.采购合同登记\IDataMapper.cs" />
+    <Compile Include="北京开发-Code030\szrl105.采购合同登记\IDataMapperExtensions.cs" />
+    <Compile Include="北京开发-Code030\szrl105.采购合同登记\Mapping\Szrl105Map.cs" />
+    <Compile Include="北京开发-Code030\szrl105.采购合同登记\Szrl105.cs" />
+    <Compile Include="北京开发-Code030\szrl105.采购合同登记\szrl108.cs" />
+    <Compile Include="北京开发-Code030\szrl105.采购合同登记\szrl108Map.cs" />
+    <Compile Include="北京开发-Code030\szrl106.采购合同登记-合同材料明细\Mapping\szrl106Map.cs" />
+    <Compile Include="北京开发-Code030\szrl106.采购合同登记-合同材料明细\szrl106.cs" />
+    <Compile Include="北京开发-Code030\szrl107.采购合同登记-验收支付计划\Mapping\szrl107Map.cs" />
+    <Compile Include="北京开发-Code030\szrl107.采购合同登记-验收支付计划\szrl107.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\ExcelBaseObj.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\ImportExcelInfo.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\Mapping\sdpa013Map.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\Mapping\szrl111Map.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\Mapping\szrl112Map.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\MaterialExcel.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\MaterialExportObj.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\sdpa013.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\szrl111.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\szrl112.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\TreeNodeInfo.cs" />
+    <Compile Include="北京开发-Code030\szrl111.材料库\VMaterialObj.cs" />
+    <Compile Include="北京开发-Code030\szrl116.开票通知汇总表\Mapping\szrl116Map.cs" />
+    <Compile Include="北京开发-Code030\szrl116.开票通知汇总表\szrl116.cs" />
+    <Compile Include="北京开发-Code030\szrl116.开票通知汇总表\szrl116TableEntity.cs" />
+    <Compile Include="北京开发-Code030\szrl116.开票通知汇总表\szrl116WarmList.cs" />
+    <Compile Include="北京开发-Code030\szrl121.采购合同验收处理明细\Mapping\szrl121Map.cs" />
+    <Compile Include="北京开发-Code030\szrl121.采购合同验收处理明细\szrl121.cs" />
+    <Compile Include="北京开发-Code030\szrl124.采购合同验收处理变更明细\Mapping\szrl124Map.cs" />
+    <Compile Include="北京开发-Code030\szrl124.采购合同验收处理变更明细\szrl124.cs" />
+    <Compile Include="北京开发-Code030\szrl128.采购合同验收处理\Mapping\szrl128Map.cs" />
+    <Compile Include="北京开发-Code030\szrl128.采购合同验收处理\szrl128.cs" />
+    <Compile Include="北京开发-Code030\szrl129.采购合同验收处理变更\Mapping\szrl129Map.cs" />
+    <Compile Include="北京开发-Code030\szrl129.采购合同验收处理变更\szrl129.cs" />
+    <Compile Include="北京开发-Code030\szrl888.压力测试\GetModuleWeb.cs" />
+    <Compile Include="北京开发-Code030\szrl888.压力测试\GetModuleWeb_Model.cs" />
+    <Compile Include="北京开发-Code030\szrl888.压力测试\Mapping\szrl888Map.cs" />
+    <Compile Include="北京开发-Code030\szrl888.压力测试\szrl888.cs" />
+    <Compile Include="基础资料-Code001\sdey003.用户维护\Mapping\sdey003Map.cs" />
+    <Compile Include="基础资料-Code001\sdey003.用户维护\sdey003.cs" />
+    <Compile Include="基础资料-Code001\sdpj003.部门资料\Mapping\sdpj003Map.cs" />
+    <Compile Include="基础资料-Code001\sdpj003.部门资料\sdpj003.cs" />
+    <Compile Include="基础资料-Code001\sdpj004.员工资料\CurrentUserInfo.cs" />
+    <Compile Include="基础资料-Code001\sdpj004.员工资料\LoginModel.cs" />
+    <Compile Include="基础资料-Code001\sdpj004.员工资料\Mapping\sdpj004Map.cs" />
+    <Compile Include="基础资料-Code001\sdpj004.员工资料\sdpj004.cs" />
+    <Compile Include="基础资料-Code001\sdpj025.公司资料\Mapping\sdpj025Map.cs" />
+    <Compile Include="基础资料-Code001\sdpj025.公司资料\sdpj025.cs" />
+    <Compile Include="文档资料-Code019\sdpk007.资料附件\Mapping\sdpk007Map.cs" />
+    <Compile Include="文档资料-Code019\sdpk007.资料附件\sdpk007.cs" />
+    <Compile Include="文档资料-Code019\sdpk008.附件\FileType.cs" />
+    <Compile Include="文档资料-Code019\sdpk008.附件\Mapping\sdpk008Map.cs" />
+    <Compile Include="文档资料-Code019\sdpk008.附件\sdpk008.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PM2.Code\PM2.Code.csproj">
+      <Project>{1a44d5b3-afa0-4731-aa55-563ad9374815}</Project>
+      <Name>PM2.Code</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="北京开发-Code030\szrl031.实行预算\Mapping\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

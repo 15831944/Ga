@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "验收登记";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script type="text/javascript">
+        window.myFormatter = {
+            state: function (value) {
+                return value === '1' ? '已验收' : '未验收';
+            }
+        }
+
+        $(function () {
+            $('#btnSelect_edit_szrl041').bind('click', function () {
+
+            });
+        });
+    </script>
+}
+@section Body{
+    <div class="easyui-layout">
+        <div data-options="region:'north',height: 100, collapsible: false">
+            <div class="header">
+                <div class="right-layout" id="northContainer">
+                    <a href="javascript:void(0)" id="btnSelect_edit_szrl041" class="easyui-linkbutton">确认选择</a>
+                </div>
+            </div>
+        </div>
+        <div data-options="region:'center', collapsible: false">
+            <table id="dg_select_szrl041" class="easyui-datagrid" data-type="1"
+                   pagination="false" fit="true" style="width:1100px;"
+                   rownumbers="true" fitColumns="false" singleSelect="true" showFooter="true">
+                <thead>
+                    <tr>
+                        <th data-options="field: 'rl04214',align:'center', width: 100">合同名称</th>
+                        <th data-options="field: 'rl04215',align:'center', width: 100">合同序列号</th>
+                        <th data-options="field: 'rl04216',align:'center', width: 100">合同金额</th>
+                        <th data-options="field: 'rl04210',align:'center', width: 100">款项性质</th>
+                        <th data-options="field: 'rl04211',align:'center', width: 100">计划验收比例</th>
+                        <th data-options="field: 'rl04212',align:'center', width: 100">计划验收金额</th>
+                        <th data-options="field: 'rl04213',align:'center', width: 100">计划验收日期</th>
+                        <th data-options="field: 'rl04209',align:'center', width: 100, formatter:myFormatter.state">状态</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+}

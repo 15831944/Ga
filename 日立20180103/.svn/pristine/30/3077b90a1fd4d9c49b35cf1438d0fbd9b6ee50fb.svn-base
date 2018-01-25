@@ -1,0 +1,78 @@
+﻿using Gmail.DDD.Extensions;
+using PM2.Code;
+using PM2.Models.Code100;
+using PM2.Service.Code030;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PM2.Models.Code030;
+using Gmail.DDD.Service;
+using Gmail.DDD.Mvc;
+
+namespace PM2.WebApp.Areas.Code030.Controllers
+{
+    public class szrl124Controller : Controller
+    {
+        private Iszrl124Server _szrl124Server;
+
+        public szrl124Controller(Iszrl124Server szrl124Server)
+        {
+            this._szrl124Server = szrl124Server; 
+        }
+
+        // GET: AreasCode030/szrl124
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult QueryTopGridDataFor124(HttpCollection vParams)
+        {
+            return this._szrl124Server.QueryTopGridDataFor124(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult QueryGridDataFor124(HttpCollection vParams)
+        {
+            return this._szrl124Server.QueryGridDataFor124(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+
+        [HttpPost]
+        public ActionResult Insert124(HttpCollection vParams)
+        {
+            return this._szrl124Server.Insert124(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+
+        [HttpPost]
+        public ActionResult AdmitByYSCL(HttpCollection vParams)
+        {
+            return this._szrl124Server.AdmitByYSCL(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+
+        [HttpPost]
+        public ActionResult AdmitByPayPlan(HttpCollection vParams)
+        {
+            return this._szrl124Server.AdmitByPayPlan(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult DelBBH(HttpCollection vParams)
+        {
+            return this._szrl124Server.DelBBH(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult IsCanChanges(HttpCollection vParams)
+        {
+            return this._szrl124Server.IsCanChanges(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+    }
+}

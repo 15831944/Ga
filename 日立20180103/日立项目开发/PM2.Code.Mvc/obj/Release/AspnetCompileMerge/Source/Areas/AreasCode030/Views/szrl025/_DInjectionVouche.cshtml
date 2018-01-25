@@ -1,0 +1,33 @@
+﻿@using PM2.Models.Code030
+@model szrl025
+@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+    var a = this.ViewData;
+    var m_szrl019 = ViewBag.szrl019 as List<szrl019> ?? new List<szrl019>();
+    var m_szrl026 = ViewBag.szrl026 as List<szrl026> ?? new List<szrl026>();
+    //var a = m_szrl019.Count;
+}
+@section HeaderStyles {
+
+}
+@section Body {
+    <form id="szrl026From" method="post" action="/AreasCode030/szrl025/Add" style="height: 100%; width: 100%">
+        <div class="control-group">
+            <div class="control-group-content">
+                <div class="control-text"><label>发包公司名称：</label><p id="ct1" style="min-width:10em;"></p></div>
+                <div class="control-text"><label>作番编号：</label><p id="ct2" style="min-width:10em;"></p></div>
+                <div class="control-text"><label>精算日：</label><p id="ct3" style="min-width:10em;"></p></div>
+                <div class="control-text"><label>税率：</label><p id="ct4" style="min-width:5em;"></p></div>
+            </div>
+        </div>
+        <div style="margin:40px 23px 0 40px;">
+            <table id="szrl026_ux_Grid" class="easyui-datagrid"></table>
+        </div>
+        <div id="szrl026Win" title=" " class="easyui-window" closed="true" style="width:900px;height:600px"   
+        data-options="modal:true">
+            <table id="szrl019_ux_Grid" class="easyui-datagrid"  ></table>
+        </div>
+    </form>
+}
+@section FooterScript {
+}

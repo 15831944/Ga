@@ -1,0 +1,460 @@
+﻿
+@{
+    ViewBag.Title = "EditLst";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@using Gmail.DDD.Config;
+@section HeaderStyles{
+    <style type="text/css">
+        body {
+            overflow: hidden;
+        }
+    </style>
+}
+@section body{
+    <div data-options="region:'north',collapsible: false">
+        <div class="header">
+            <div class="left-layout">
+                <h1>批量验收登记</h1>
+            </div>
+            <div class="right-layout">
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="SCKPTZ_035" disabled="true">生成开票通知</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="AdmitYSJH_035" disabled="true">承认</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="ShowYSJH_035">新增</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="DelYSJH_035">删除</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="SaveYSJH_035">保存</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" id="PrintYSJH_035">打印</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center', collapsible: false">
+        <div class="easyui-layout">
+            <div class="easyui-layout">
+                <div data-options="region:'center'">
+                    <div id="tt" class="easyui-tabs">
+                        <div title="批量验收登记">
+                            <div class="nano">
+                                <div class="nano-content">
+                                    <div class="control-group" id="tt_0" style="margin:25px auto auto 25px">
+                                        <div class="control-group-content">
+                                            <div class="control-text">
+                                                <label>批次：</label>
+                                                <input id="pici" style="min-width:13em;" disabled="disabled" />
+                                            </div>
+                                            <div class="control-text">
+                                                <label>作番号：</label>
+                                                <input id="zuofanhao" style="min-width:20em;" disabled="disabled" />
+                                            </div>
+                                            <div class="control-text">
+                                                <label>客户名称：</label>
+                                                <input id="kehumingcheng" style="min-width:20em;" disabled="disabled" />
+                                            </div>
+                                            <div class="control-text">
+                                                <label>作番名称：</label>
+                                                <input id="zuofanmingcheng" style="min-width:20em;" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="margin:20px 0 0 0;width:100%;height:88%">
+                                        <table id="edit_035_grid">
+                                            <thead>
+                                                <tr>
+                                                    <th data-options="field: 'rl01903',align:'center',width:180">合同名称</th>
+                                                    <th data-options="field: 'rl01904',align:'center',width:100">合同序列号</th>
+                                                    <th data-options="field: 'rl01909',align:'center',width:100">合同金额</th>
+                                                    <th data-options="field: 'rl02403',align:'center',width:100">款项性质</th>
+                                                    <th data-options="field: 'rl02404',align:'center',width:80">比例</th>
+                                                    <th data-options="field: 'rl02405',align:'center',width:100">计划验收金额</th>
+                                                    <th data-options="field: 'rl02406',align:'center',width:100">计划验收日期</th>
+                                                    <th data-options="field: 'ysrq',align:'center',width:100,editor: { type: 'datebox' }">验收日期</th>
+                                                    <th data-options="field: 'rl02405',align:'center',width:100">验收金额</th>
+                                                    <th data-options="field: 'yszmqdr',align:'center',width:100,editor: { type: 'datebox' }">验收证明取得日</th>
+
+                                                    <th width="110px" halign="center" field="rl03606Name" data-options="
+                                                        align:'center',
+                                                        formatter:function(value,row){
+                                                        if(value == '0'){return '内部'}
+                                                        if(value == '1'){return '外部'}
+                                                        },
+                                                        editor:{
+                                                        type:'combobox',
+                                                        options:{
+                                                        valueField: 'rl03606',
+                                                        textField: 'rl03606Name',
+                                                        data:[
+                                                        {rl03606: '0', rl03606Name: '内部'},
+                                                        {rl03606: '1', rl03606Name: '外部'}
+                                                        ],onSelect: on035Select }}">外部/内部验收</th>
+                                                    <th data-options="field: 'wgzm',align:'center',width:70,
+                                                        formatter:function(value,row){
+                                                            if(value == '1'){ return '√'; }
+                                                            if(value == '0'){ return ''; }
+                                                        },
+                                                        editor: {
+                                                            type: 'checkbox',
+                                                            options:{on:'1',off:'0'}
+                                                        }">完工证明</th>
+                                                    <th data-options="field: 'rl02408',align:'center',width:90,
+                                                        formatter: function (value, row, index) {
+                                                        if(value == '0'){ return '未验收' }
+                                                        if(value == '1'){ return '已验收' }
+                                                        }">状态</th>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div title="附件">
+                            等桑大侠的附件模块 
+                        </div>
+                        <div title="协同办公">
+                            等桑大侠的协同办公模块
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ysjh_035" class="easyui-window" title="合同验收计划" data-options="modal:true" closed="true" collapsible="false" style="width:47%;height:45%;">
+        <table id="ysjh_035_grid" class="easyui-datagrid"
+               data-options=" pagination:true,
+                              fit:true,
+                              rownumbers: true,
+                              fitColumns: false,
+                              idField: 'rl02401',
+                              toolbar: [{
+                                  id: 'ysjh_icon_add',
+                                  text: '添加',
+                                  iconCls: 'icon-add',
+                                  handler: function () {
+                                  AddTo_edit_035_grid();
+                                }
+                            }]">
+            <thead>
+                <tr>
+                    <th data-options="field: 'rl01903',align:'center',width:180">合同名称</th>
+                    <th data-options="field: 'rl02403',align:'center',width:100">款项性质</th>
+                    <th data-options="field: 'rl02404',align:'center',width:100">比例</th>
+                    <th data-options="field: 'rl02405',align:'center',width:100">金额</th>
+                    <th data-options="field: 'rl02406',align:'center',width:100">计划验收日期</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+}
+
+@section FooterScript{
+    <script>
+        (function () {
+            $(function () {
+                //页面grid
+                var PLYSDJ_Grid_data;
+                //作番id
+                var zuofanid = undefined;
+                //批量验收id
+                var plysid = undefined;
+                //合同验收计划grid
+                var HTYSJH_Grid_data;
+                //当前编辑行索引
+                var editIndex = undefined;
+                var chuantouIP = '@PM2Config.Instance.GetSetting("ChuanTouIP_116")'
+
+
+                function endEditing() {
+                    if (editIndex == undefined) { return true }
+                    if ($('#edit_035_grid').datagrid('validateRow', editIndex)) {
+                        $('#edit_035_grid').datagrid('endEdit', editIndex);
+                        editIndex = undefined;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                //页面选择行
+                onClick035Row = function (index) {
+                    if ('@ViewData["rl03508"]' != 1) {       //到时候要判断是查看还是什么
+                        if (endEditing()) {
+                            $('#edit_035_grid').datagrid('selectRow', index)
+                                .datagrid('beginEdit', index);
+                            editIndex = index;
+                        } else {
+                            $('#edit_035_grid').datagrid('selectRow', editIndex);
+                        }
+                    }
+                }
+                //内部外部选择后(选择后的数据会自动保存到PLYSDJ_Grid_data中，)
+                on035Select = function (record) {
+                    var selected = $('#edit_035_grid').datagrid('getSelected');
+                    if (selected) {
+                        selected['rl03606Name'] = record['rl03606Name'];
+                    }
+                }
+
+                //页面新增按钮
+                $("#ShowYSJH_035").click(function () {
+                    Saveloaddata();
+                    debugger;
+                    $("#ysjh_035").window("open");
+                    $.ajax({
+                        url: "/AreasCode030/szrl035/QueryYSJHGridData",
+                        data: {
+                            "zuofanid": zuofanid  //作番ID
+                        },
+                        type: "post",
+                        async: false,
+                        success: function (data) {
+                            debugger;
+                            var obj = $.parseJSON(data);
+                            HTYSJH_Grid_data = obj;
+                        },
+                        error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                    if (HTYSJH_Grid_data != undefined) {
+                        $('#ysjh_035_grid').datagrid('loadData', HTYSJH_Grid_data);
+                    }
+                });
+                //页面删除按钮
+                $("#DelYSJH_035").click(function () {
+                    if (editIndex == undefined) { return }
+                    $('#edit_035_grid').datagrid('cancelEdit', editIndex)
+                        .datagrid('deleteRow', editIndex);
+                    if (PLYSDJ_Grid_data["rows"].length > 0) {
+                        PLYSDJ_Grid_data["rows"].splice(editIndex, 0);
+                    }
+                    $('#edit_035_grid').datagrid('loadData', PLYSDJ_Grid_data);
+                    editIndex = undefined;
+                });
+                //页面保存按钮
+                $("#SaveYSJH_035").click(function () {
+                    if (PLYSDJ_Grid_data != undefined) {
+                        if (PLYSDJ_Grid_data["rows"].length != 0) {
+                            Saveloaddata();
+                            //保存之前判断所有的值是否都填写了
+                            var rows = $('#edit_035_grid').datagrid('getRows');
+                            debugger;
+                            var Str = "";
+                            for (var i = 0; i < rows.length; i++) {
+                                if (rows[i]['ysrq'] == "") {
+                                    Str = "第" + (i + 1) + "行,请选择验收日期";
+                                    alert(Str);
+                                    return false;
+                                }
+                                if (rows[i]['yszmqdr'] == "") {
+                                    Str = "第" + (i + 1) + "行,请选择验收证明取得日";
+                                    alert(Str);
+                                    return false;
+                                }
+                                if (rows[i]['rl03606Name'] == "") {
+                                    Str = "第" + (i + 1) + "行,请选择外部/内部验收";
+                                    alert(Str);
+                                    return false;
+                                }
+                                if (rows[i]['wgzm'] == "0") {
+                                    Str = "第" + (i + 1) + "行,请选择完工证明";
+                                    alert(Str);
+                                    return false;
+                                }
+                            }
+                            $.ajax({
+                                url: "/AreasCode030/szrl035/Insert3536",
+                                data: {
+                                    PLYSDJ_Grid_data: JSON.stringify(PLYSDJ_Grid_data['rows']),
+                                    zuofanid: zuofanid,
+                                    plysid: plysid
+                                },
+                                type: "post",
+                                success: function (data) {
+                                    var obj = $.parseJSON(data);
+                                    if (obj.success) {
+                                        alert("保存成功！");
+                                        $("#AdmitYSJH_035").linkbutton("enable");
+                                        //window.location.href = "/AreasCode030/szrl035/Index";
+                                    }
+                                    else { alert("系统出错，请联系管理员！"); }
+                                },
+                                error: function (obj) { alert("系统出错，请联系管理员！"); }
+                            });
+                        }
+                        else { alert("请添加数据后再保存！"); }
+                    }
+                    else { alert("请添加数据后再保存！"); }
+                });
+                //页面打印按钮
+                $("#PrintYSJH_035").click(function () {
+                    window.print();
+                });
+                //页面承认按钮
+                $("#AdmitYSJH_035").click(function () {
+                    var r = confirm("确定承认吗？");
+                    if (r) {
+                        $.ajax({
+                            url: "/AreasCode030/szrl035/AdmitPLYSDJData",
+                            data: {
+                                plysid: plysid
+                            },
+                            type: "post",
+                            async: false,
+                            success: function (data) {
+                                var obj = $.parseJSON(data);
+                                if (obj.success)
+                                { alert("承认成功！");}
+                            },
+                            error: function (obj) { alert("系统出错，请联系管理员！"); }
+                        });
+                    }
+                    else {
+                        return false;
+                    }
+                });
+                //页面生成开票通知按钮
+                $("#SCKPTZ_035").click(function () {
+                    $.ajax({
+                        url: "/AreasCode030/szrl035/SCKPTZ_035",
+                        data: {
+                            zuofanid: zuofanid,
+                            plysid: plysid
+                        },
+                        type: "post",
+                        async: false,
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.success)
+                            {
+                                 //【obj.Message主表39ID】
+                                var str_ip = chuantouIP + '/CustomForm/RLProject/szrl039/szrl039Edit.aspx?sd_billId=' + obj.Message;
+                                alert(str_ip);
+                                window.open(str_ip);
+                            }
+                        },
+                         error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                });
+                //保存本地data数据方法
+                Saveloaddata = function () {
+                    //取消选中当前的行
+                    if (editIndex != undefined) {
+                        $("#edit_035_grid").datagrid("unselectRow", editIndex);
+                    }
+                    //edit_035_grid退出编辑，保存好数据
+                    if (PLYSDJ_Grid_data != undefined) {
+                        for (var i = 0; i < $('#edit_035_grid').datagrid('getChanges').length + PLYSDJ_Grid_data["total"]; i++) {
+                            $('#edit_035_grid').datagrid('endEdit', i);   //【这句话会把修改过的值自动保存到YJH_Grid_data里面】
+                        }
+                    }
+                };
+                //验收计划添加的时候方法
+                AddTo_edit_035_grid = function () {
+                    var rows = $('#ysjh_035_grid').datagrid('getSelections');
+                    debugger;
+                    if (rows != null && rows.length != 0) {
+                        if (PLYSDJ_Grid_data != undefined) {
+                            //判断对象里面有没有这条记录，如果已经有了则不添加
+                            for (var i = 0; i < PLYSDJ_Grid_data["total"]; i++) {
+                                for (var x = 0; x < rows.length; x++) {
+                                    if (PLYSDJ_Grid_data["rows"][i].rl02401 == rows[x].rl02401) {
+                                        rows.splice(x, 1);
+                                    }
+                                }
+                            }
+                        }
+                        if (rows.length != 0) {
+                            $.ajax({
+                                url: "/AreasCode030/szrl035/QueryPLYSDJGridData",
+                                data: {
+                                    "zuofanid": zuofanid,  //作番ID
+                                    "ysjharry": JSON.stringify(rows)         //验收计划数组
+                                },
+                                type: "post",
+                                async: false,
+                                success: function (data) {
+                                    debugger;
+                                    var obj = $.parseJSON(data);
+                                    if (PLYSDJ_Grid_data != undefined) {
+                                        for (var i = 0; i < obj["total"]; i++) {
+                                            PLYSDJ_Grid_data["rows"].push(obj["rows"][i]);
+                                        }
+                                        PLYSDJ_Grid_data["total"] += obj["total"];
+                                    }
+                                    else {
+                                        PLYSDJ_Grid_data = obj;
+                                    }
+                                },
+                                error: function (obj) { alert("系统出错，请联系管理员！"); }
+                            });
+                        }
+                    }
+                    else {
+                        alert("请选择记录！");
+                    }
+
+                    $('#edit_035_grid').datagrid('loadData', PLYSDJ_Grid_data);
+                    $("#ysjh_035").window("close");
+                }
+
+                window.onload = function () {
+                    BindData();
+                    zuofanid = '@ViewData["zuofanid"]';
+                    plysid = '@ViewData["plysid"]';
+                    $('#edit_035_grid').datagrid({
+                        pagination: true,
+                        fit: true,
+                        rownumbers: true,
+                        fitColumns: false,
+                        singleSelect: true,
+                        onClickRow: onClick035Row
+                    });
+                    Bind035_gridData();
+                    QueryPower();
+                }
+                BindData = function () {
+                    $("#pici").val('@ViewData["rl03503"]');
+                    $("#zuofanhao").val('@ViewData["rl01806"]');
+                    $("#kehumingcheng").val('@ViewData["rl01802"]');
+                    $("#zuofanmingcheng").val('@ViewData["rl01807"]');
+                };
+                Bind035_gridData = function () {
+                      $.ajax({
+                          url: "/AreasCode030/szrl035/Query036GridData",
+                          data: {
+                              plysid: plysid,
+                              zuofanid: zuofanid
+                          },
+                          type: "post",
+                          async:false,
+                          success: function (data) {
+                              debugger;
+                              var obj = $.parseJSON(data);
+                              if (obj.total != 0)
+                              {
+                                  PLYSDJ_Grid_data = obj;
+                                  $('#edit_035_grid').datagrid('loadData', PLYSDJ_Grid_data);
+                              }
+                          },
+                          error: function (obj) { alert("系统出错，请联系管理员！"); }
+                      });
+
+                }
+                QueryPower = function () {
+                    var Status = '@ViewData["rl03508"]';
+                    if (Status == 1) {
+                        $("#AdmitYSJH_035").linkbutton("disable");
+                        $("#ShowYSJH_035").linkbutton("disable");
+                        $("#DelYSJH_035").linkbutton("disable");
+                        $("#SaveYSJH_035").linkbutton("disable");
+                        $("#SCKPTZ_035").linkbutton("enable");
+                    }
+                    else
+                    {
+                        debugger;
+                        if (plysid != undefined && PLYSDJ_Grid_data != undefined) {
+                            $("#AdmitYSJH_035").linkbutton("enable");
+                        }
+                    }
+                }
+
+            });
+        }());
+    </script>
+}

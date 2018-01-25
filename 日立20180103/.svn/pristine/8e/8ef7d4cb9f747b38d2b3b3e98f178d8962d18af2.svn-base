@@ -1,0 +1,150 @@
+﻿using Gmail.DDD.Extensions;
+using PM2.Code;
+using PM2.Models.Code100;
+using PM2.Service.Code030;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PM2.Models.Code030;
+using Gmail.DDD.Service;
+using Gmail.DDD.Mvc;
+
+namespace PM2.WebApp.Areas.Code030.Controllers
+{
+    public class szrl121Controller : Controller
+    {
+        private Iszrl121Server _szrl121Server;
+        private IEasyTree _serverTree;
+        public szrl121Controller(Iszrl121Server szrl121Server, Autofac.Features.Indexed.IIndex<Auto_TreeType, IEasyTree> serverTrees)
+        {
+            this._szrl121Server = szrl121Server;
+            this._serverTree = serverTrees[Auto_TreeType.szrl105Tree];
+        }
+
+        // GET: AreasCode030/szrl121
+        public ActionResult Index(HttpCollection vParams)
+        {
+            ViewData["type"] = vParams.GetValue<string>("type"); 
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult QueryGridDataFor121(HttpCollection vParams)
+        {
+            return this._szrl121Server.QueryGridDataFor121(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+
+        [HttpPost]
+        public ActionResult Insert121(HttpCollection vParams)
+        {
+            return this._szrl121Server.Insert121(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult Contro121Btn(HttpCollection vParams)
+        {
+            return this._szrl121Server.Contro121Btn(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        //[HttpPost]
+        //public ActionResult Hande121Btn(HttpCollection vParams)
+        //{
+        //    return this._szrl121Server.Hande121Btn(vParams)
+        //         .ToActionResult(this.ControllerContext);
+        //}
+        [HttpPost]
+        public ActionResult QueryTopGridDataFor121(HttpCollection vParams)
+        {
+            return this._szrl121Server.QueryTopGridDataFor121(vParams)
+                .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult AdmitByPayPlan(HttpCollection vParams)
+        {
+            return this._szrl121Server.AdmitByPayPlan(vParams)
+              .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult AdmitByYSCL(HttpCollection vParams)
+        {
+            return this._szrl121Server.AdmitByYSCL(vParams)
+             .ToActionResult(this.ControllerContext);
+        }
+
+        [HttpPost]
+        public ActionResult BindBasicData(HttpCollection vParams)
+        {
+            szrl121BasicData query = this._szrl121Server.BindBasicData(vParams).ToList().FirstOrDefault();
+            if (query != null)
+            {
+                var data = new
+                {
+                    success = true,
+                    rl10502 = query.rl10502, //作番号
+                    rl10505 = query.rl10505, //采购合同号
+                    rl10522 = query.rl10522.ToString("f2"), //采购合同金额 含税
+                    rl10510 = query.rl10510, //供应商
+                    rl10605 = query.rl10605 //合同内容
+                };
+                return Json(data);
+            }
+            else
+            {
+                var data = new { success = false };
+                return Json(data);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult QueryOverTimeData(HttpCollection vParams)
+        {
+            return this._szrl121Server.QueryOverTimeData(vParams)
+            .ToActionResult(this.ControllerContext);
+        }
+
+        //[HttpPost]
+        //public ActionResult Update121(HttpCollection vParams)
+        //{
+        //    return this._szrl121Server.Update121(vParams)
+        //    .ToActionResult(this.ControllerContext);
+        //}
+
+        [HttpPost]
+        public ActionResult XQ_121(HttpCollection vParams)
+        {
+            return this._szrl121Server.XQ_121(vParams)
+            .ToActionResult(this.ControllerContext);
+        } 
+        [HttpPost]
+        public ActionResult DelBBH(HttpCollection vParams)
+        {
+            return this._szrl121Server.DelBBH(vParams)
+            .ToActionResult(this.ControllerContext);
+        }
+         
+        /// <summary>
+        /// 生成合同树
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult TreeLoad(HttpCollection vParams)
+        {
+            return this._serverTree.TreeLoad(vParams).ToActionResult(this.ControllerContext);
+        }
+
+        //public ActionResult VersioNnumber(HttpCollection vParams)
+        //{
+        //    IEnumerable<szrl128> list = this._szrl121Server.VersioNnumber(vParams);
+        //    return Json(list); 
+        //}
+        [HttpPost]
+        public ActionResult SearchTree(HttpCollection vParams)
+        {
+            return this._szrl121Server.SearchTree(vParams)
+            .ToActionResult(this.ControllerContext);
+        }
+    }
+}

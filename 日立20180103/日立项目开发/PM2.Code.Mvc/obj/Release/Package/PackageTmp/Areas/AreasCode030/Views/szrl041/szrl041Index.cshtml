@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "批量验收登记";
+    Layout = "_EasyuiLayout2.cshtml";
+}
+
+@section Body{
+    
+}
+
+@section FooterScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script type="text/javascript">
+        function refreshDataGrid() {
+            window.jDatagrid.rlDataGrid('refresh', { key: '' });
+        }
+
+        var editUrl = '/AreasCode030/szrl041/szrl041Edit';
+        // 承认
+        function admit_szrl041() {
+            
+        }
+
+        // 新增
+        function newItem_szrl041() {
+            var node = navTreeObj.getSelectedNode();
+            if (node && node.IsLeaf) {
+                var url = editUrl + '?zid=' + node.id;
+                showEditDialog({ url: editUrl, title: '新增批量验收登记' });
+            }
+        }
+
+        // 修改
+        function editItem_szrl041() {
+            alert('edit');
+        }
+
+        // 删除
+        function deleteItem_szrl041() {
+            alert('delete');
+        }
+
+        $(function () {
+            myWin.init({
+                btns: [
+                    { text: '承认', action: admit_szrl041 },
+                    { text: '新增', action: newItem_szrl041 },
+                    { text: '修改', action: editItem_szrl041 },
+                    { text: '删除', action: deleteItem_szrl041 },
+                ],
+                datagrid: {
+                    myTitle: '批量验收登记',
+                    columns: [
+                        //{ field: 'rl04101', title: 'ID', width: 100 },
+                        { field: 'rl04102', title: '批次', width: 100 },
+                        { field: 'rl04103', title: '作番号', width: 100 },
+                        { field: 'rl04106', title: '客户名称', width: 300 },
+                        { field: 'rl04104', title: '作番名称', width: 300 }
+                    ],
+                    url: '/AreasCode030/szrl041/Get_szrl042'
+                },
+                navTree: {
+                    dataUrl: '/AreasCode030/szrl033/GetContractDirs?multi=1',
+                    handleSelectAction: refreshDataGrid,
+                    myTitle: '作番',
+                    width: 300
+                }
+            });
+
+
+        });
+    </script>
+
+}
+

@@ -1,0 +1,154 @@
+﻿
+(function () {
+
+    //#region Tabs_A_EditFrom: 合同基本信息窗体
+    var Tabs_A_EditFrom = (function () {
+
+        var _editFrom;
+        var me = {
+        };
+
+        var Initialize = function (parameters) {
+            if (parameters)
+                $.extend(me, parameters);
+
+            _editFrom = $('#Tabs_A_EditFrom');
+        }
+
+        var SetDisabled = function(_isTrue){
+
+            var childs = _editFrom.find("p[x-isReadOnly]");
+            $.each(childs, function (key, val) {
+               
+            });  
+        }
+
+        return {
+            Initialize: Initialize,
+            SetDisabled: SetDisabled
+        };
+
+    }());
+    //#endregion
+    //#region Index_Link_Buttons: 主页面按钮组
+    var Index_Link_Buttons = (function () {
+
+        var _index_link_ABt, //发票维护
+            _index_link_BBt, //预付款
+            _index_link_CBt, //验收款
+            _index_link_DBt, //支付计划调整
+            _index_link_EBt, //带入验收计划
+            _index_link_FBt, //恢复原支付计划
+            _index_link_JBt, //变更
+            _index_link_HBt, //修改
+            _index_link_IBt, //保存
+            _index_link_JBt, //删除
+            _index_link_KBt; //输出AP
+        var me = {
+        };
+
+        var Initialize = function (parameters) {
+            if (parameters)
+                $.extend(me, parameters);
+            _index_link_ABt = $('#index_link_ABt'),
+            _index_link_BBt = $('#index_link_BBt'),
+            _index_link_CBt = $('#index_link_CBt'),
+            _index_link_DBt = $('#index_link_DBt'),
+            _index_link_EBt = $('#index_link_EBt'),
+            _index_link_FBt = $('#index_link_FBt'),
+            _index_link_JBt = $('#index_link_JBt'),
+            _index_link_HBt = $('#index_link_HBt'),
+            _index_link_IBt = $('#index_link_IBt'),
+            _index_link_JBt = $('#index_link_JBt'),
+            _index_link_KBt = $('#index_link_KBt');
+
+        }
+
+        return {
+            Initialize: Initialize
+        };
+
+    }());
+    //#endregion
+    //#region Tabs_A_Index_center_Grid: 支付信息
+    var Tabs_A_Index_center_Grid = (function () {
+
+        var _easy_Grid;
+        var me = {
+        };
+
+        var Initialize = function (parameters) {
+            if (parameters)
+                $.extend(me, parameters);
+
+            _easy_Grid = new Easy_GridPanel({
+                id: "Tabs_A_Index_center_Grid",
+                url: "xxxx.aspx",
+                isPagination: false,
+                columns: [[
+                    { field: 'xxxx', title: '支払済', width: 120 },
+                    { field: 'xxxx', title: '支払日期', width: 120 },
+                    { field: 'xxxx', title: '%', width: 120 },
+                    { field: 'xxxx', title: '金額', width: 120 },
+                    { field: 'xxxx', title: '処理日期', width: 120 },
+                    { field: 'xxxx', title: '支払日期', width: 120 },
+                    { field: 'xxxx', title: '金額', width: 120 },
+                    { field: 'xxxx', title: '附件', width: 120 },
+                    { field: 'xxxx', title: '付款性质', width: 120 },
+                    { field: 'xxxx', title: '预付款扣款金额', width: 120 },
+                    { field: 'xxxx', title: '预付款扣款<br/>占合同%', width: 120 },
+                    { field: 'xxxx', title: '本次实际支<br/>付金额(含税)', width: 120 },
+                    { field: 'xxxx', title: '本次实际支<br/>付金额(不含税)', width: 120 },
+                    { field: 'xxxx', title: '备注', width: 120 },
+                    { field: 'xxxx', title: '状态', width: 120 },
+                    { field: 'xxxx', title: 'AP编号', width: 120 },
+                    { field: 'xxxx', title: '担当者', width: 120 }
+                ]]
+            });
+        }
+
+        //#region 数据加载
+        var Load = function (_params) {
+            _easy_Grid.Load(_params);
+        };
+        //#endregion
+
+        return {
+            Initialize: Initialize,
+            Load: Load
+        };
+
+    }());
+    //#endregion
+    //#region 中介者
+    var Mediator = (function () {
+
+        var _Tabs_A_EditFrom = Tabs_A_EditFrom;                   //合同基本信息窗体
+        var _Index_Link_Buttons = Index_Link_Buttons;             //主页面按钮组
+        var _Tabs_A_Index_center_Grid = Tabs_A_Index_center_Grid; //支付信息
+        var Notify = function (component, parameters) {
+           
+        }
+        
+        return {
+            Notify: Notify
+        };
+
+    }());
+    //#endregion
+
+
+    var Initialize = function (parameters) {
+       
+    }
+    $(function () {
+        Tabs_A_EditFrom.Initialize();
+        Index_Link_Buttons.Initialize();
+        Tabs_A_Index_center_Grid.Initialize();
+
+        Initialize();
+    });
+
+
+}());
+

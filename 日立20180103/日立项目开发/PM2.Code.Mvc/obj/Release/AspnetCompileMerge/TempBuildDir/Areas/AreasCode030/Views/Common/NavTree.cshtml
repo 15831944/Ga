@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewBag.Title = "目录树";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+}
+@section Body{
+    <div data-options="region:'center'">
+        <div id="navTreeContainer" style="display:none;">
+            <div id="container_searchbox" data-options="region:'north',collapsible: false">
+                <div class="tree-search">
+                    <div class="search-layout"><input id="input_searchbox_nav_common1117" class="easyui-searchbox" style="width:100%" data-options="searcher: navTreeObj.searchNavDirTree" /></div>
+                </div>
+            </div>
+            <div data-options="region:'center'">
+                <div class="nano">
+                    <div class="nano-content">
+                        <ul id="dirTree_nav_common1117"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section FooterScript{
+    <script type="text/javascript">
+        window.navTreeObj = {
+            jDirTreeNavCommon: $('#dirTree_nav_common1117'),
+            // 是否处理第一次选择事件
+            isHandleFirstSelect: true,
+            _firstSelectFlag: true,
+            // 只处理叶子节点
+            onlyLeaf: true,
+            // 选择事件行为
+            handleSelectAction: null,
+            // 使用搜索框
+            hasSearchBox: false,
+            // 目录数据URL
+            dataUrl: '',
+            // 处理选择事件
+            handleOnSelected: function () {
+                var me = navTreeObj;
+                if (!me._firstSelectFlag) {
+                    var node = me.getSelectedNode();
+                    if (node) {
+                        if (me.onlyLeaf) {
+                            if (node.IsLeaf) {
+                                me.handleSelectAction(node.id);
+                            }
+                        }
+                        else {
+                            me.handleSelectAction(node.id);
+                        }
+                    }
+                }
+                me._firstSelectFlag = false;
+            },
+            // 重新加载目录树
+            reloadNavDirTree: function () {
+                var key = $('#input_searchbox_nav_common1117').val();
+                $.post(this.dataUrl, { key: key }, function (result) {
+                    data = result;
+                    navTreeObj.jDirTreeNavCommon.tree({ data: data });
+
+                    var id = window.parent.$.getUrlParam('id');
+                    if (!rlform1101.isNullOrWhitespace(id)) {
+                        var node = navTreeObj.jDirTreeNavCommon.tree('find', id);
+                        navTreeObj.jDirTreeNavCommon.tree('expandTo', node.target).tree('select', node.target);
+
+                    }
+                });
+            },
+            // 获取已选择节点
+            getSelectedNode: function () {
+                var me = this;
+                var selectedNode = me.jDirTreeNavCommon.tree('getSelected');
+                return selectedNode;
+            },
+            // 处理目录搜索
+            searchNavDirTree: function () {
+
+            },
+            // 初始化
+            initNavDirTree: function (config) {
+                var defaultConfig = {
+                    onlyLeaf: true,
+                    isHandleFirstSelect: true,
+                    handleSelectAction: null,
+                    hasSearchBox: false,
+                    dataUrl: '',
+                };
+                var defaultConfig = $.extend(defaultConfig, config);
+                this.onlyLeaf = defaultConfig.onlyLeaf;
+                this.isHandleFirstSelect = defaultConfig.isHandleFirstSelect;
+                this.handleSelectAction = defaultConfig.handleSelectAction;
+                this.hasSearchBox = defaultConfig.hasSearchBox;
+                this.dataUrl = defaultConfig.dataUrl;
+
+                if (this.isHandleFirstSelect) {
+                    this._firstSelectFlag = false;
+                }
+
+                // 不使用搜索框
+                if (!this.hasSearchBox) {
+                    $('#container_searchbox').hide();
+                }
+
+                $('#navTreeContainer').show().layout();
+
+                // 主页树，响应选择事件
+                this.jDirTreeNavCommon.tree({
+                    onSelect: this.handleOnSelected
+                });
+                navTreeObj.reloadNavDirTree();
+            }
+        };
+
+        /// 取树
+        function getTreeObj() {
+            return window.navTreeObj;
+        }
+
+        //$(function () {
+        //    navTreeObj.initNavDirTree();
+        //});
+    </script>
+
+}

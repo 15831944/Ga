@@ -1,0 +1,450 @@
+﻿
+var zuofanid = null;
+
+var comdata = null;
+
+var zip_1 = new Array;
+var zip_2 = new Array;
+
+
+$(function () {
+    load();
+    setTimeout(function () {
+        disLoad();
+    }, 800);
+    GetForSome();
+    //var $ipt = $("#sdbo001_input input").not("#bo00102").not("#bo00103");
+    //$ipt.each(function (i) {
+    //    var ipt_id = $(this).attr("id");
+    //    try {
+    //        if (ipt_id.length == 7) {
+    //            $("#" + ipt_id + "").combogrid({
+    //                panelWidth: 350,
+    //                value: '',
+    //                idField: 'pj00402',
+    //                textField: 'pj00402',
+    //                url: '/AreasCode030/sdbo001/List_sdpj004',
+    //                remoteSort: false,
+    //                rownumbers: true,
+    //                pagination: true,
+    //                scrollbarSize: 0,
+    //                fit: true,
+    //                //pageSize: 10,
+    //                //pageList: [10, 20, 30],//可以设置每页记录条数的列表  
+    //                //pagePosition: 'bottom',
+    //                columns: [[
+    //                    { field: 'pj00421', title: '编码'},
+    //                    { field: 'pj00402', title: '名称'},
+    //                    { field: 'pj00403', title: '性别' },
+    //                    { field: 'pj00420', title: '电话'},
+    //                    { field: 'pj00415', title: '联系方式'}
+    //                ]]
+    //            });
+    //        }
+    //    } catch (e) {
+
+    //    }
+    //});
+
+
+
+
+    var upGrid = function (target) {
+        var grid = $(target).combogrid('grid');
+        var index = grid.datagrid('getRowIndex', grid.datagrid('getSelected'));
+        var upindex = Number(index) - 1;
+        if (upindex < 0) {
+            upindex = 0;
+        }
+        grid.datagrid('selectRow', upindex);
+    }
+    var downGrid = function (target) {
+        var grid = $(target).combogrid('grid'),
+            rows = grid.datagrid('getData').rows;
+        var index = grid.datagrid('getRowIndex', grid.datagrid('getSelected'));
+        var nextindex = Number(index) + 1;
+        if (nextindex > rows.length) {
+            nextindex = rows.length;
+        }
+        grid.datagrid('selectRow', nextindex);
+    }
+
+
+
+
+    var clearGrid = function (target) {
+        var grid = $(target).combogrid('grid'),
+            rows = grid.datagrid('getData').rows;
+        try {
+            $.each(rows, function (index, value) {
+                grid.datagrid('deleteRow', grid.datagrid('getRowIndex', value));
+            });
+        } catch (e) {
+            console.log(e);
+        }
+
+    };
+
+
+
+    $.ajax({
+        type: "POST",
+        url: "/AreasCode030/sdbo001/List_sdpj004_2",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            comdata = data;
+
+            var newdata = [];
+
+            var $ipt = $("#sdbo001_input input").not("#bo00102").not("#bo00103");
+            $ipt.each(function (i) {
+
+                var ipt_id = $(this).attr("id");
+                try {
+                    if (ipt_id.length == 7) {
+                        $(this).combogrid({
+                            panelWidth: 450,
+                            // value: '',
+                            idField: 'pj00402',
+                            textField: 'pj00402',
+                            //url: '/AreasCode030/sdbo001/List_sdpj004',
+                            //url: null,
+                            //data: comdata.slice(0, 10),
+                            remoteSort: false,
+                            rownumbers: true,
+                            pagination: true,
+                            scrollbarSize: 0,
+                            fitColumns: true,
+                            fit: true,
+                            mode: 'local',
+                            //pageSize: 10,
+                            //pageList: [10, 20, 30],//可以设置每页记录条数的列表  
+                            //pagePosition: 'bottom',
+                            columns: [[
+                                { field: 'pj00421', title: '编码' },
+                                { field: 'pj00402', title: '名称' },
+                                {
+                                    field: 'pj00403', title: '性别',
+                                    formatter: function (value, row, index) {
+                                        return value == "1" ? "女" : "男";
+                                    }
+                                },
+                                { field: 'pj00420', title: '电话' },
+                                { field: 'pj00415', title: '联系方式' }
+                            ]],
+                            keyHandler: {
+                                    enter: function () {
+                                        var keyword = $(this).combogrid("getText");
+                                        //$("#" + ipt_id + "").combogrid("setText","111");
+                                        newdata = [];
+                                        var wherename = $(this).combogrid("getText");
+                                        for (var i = 0; i < comdata.length; i++) {
+                                            var _index = comdata[i].pj00402.indexOf(wherename);
+                                            if (_index >= 0) {
+                                                newdata.push(comdata[i]);
+                                            }
+                                        }
+                                        $(this).combogrid('grid').datagrid('loadData', newdata.slice(0, 3));
+                                        $(this).combogrid('grid').datagrid('getPager').pagination('refresh', {
+                                            total: newdata.length,
+                                            pageNumber: 1
+                                        });
+                                        $(this).combogrid("setText", "");
+                                        $(this).combogrid("setText", keyword);
+                                    },
+                                //query: function (q) {
+                                //    var _this = this,
+                                //        text = $(_this).combogrid('getText'),
+                                //        grid = $(_this).combogrid('grid');
+                                //    if (text == '' || text == ' ') return;
+                                //    var _data = $.grep(comdata, function (value) {
+                                //        return value.pj00402.indexOf(text) >= 0;
+                                //    });
+                                //    clearGrid(this);  //清空表格内数据
+                                //    $.each(_data.slice(0,3), function (index, value) {
+                                //        grid.datagrid('appendRow', value);
+                                //    });
+                                //    $(this).combogrid('grid').datagrid('getPager').pagination('refresh', {
+                                //        total: _data.length,
+                                //        pageNumber: 1
+                                //    });
+                                //},
+                                up: function () {
+                                    upGrid(this);
+                                },
+                                down: function () {
+                                    downGrid(this);
+                                }
+                            },
+                            onShowPanel: function () {
+                                newdata = [];
+                                var wherename = $(this).combogrid("getText");
+                                for (var i = 0; i < comdata.length; i++) {
+                                    var _index = comdata[i].pj00402.indexOf(wherename);;
+                                    if (_index >= 0) {
+                                        newdata.push(comdata[i]);
+                                    }
+                                }
+                                $(this).combogrid('grid').datagrid('loadData', newdata.slice(0, 3));
+                                $(this).combogrid('grid').datagrid('getPager').pagination('refresh', {
+                                    total: newdata.length,
+                                    pageNumber: 1
+                                });
+                            },
+                            onBeforeLoad: function () {
+
+                            }
+                        });
+
+                        var pager = $("#" + ipt_id + "").combogrid('grid').datagrid('getPager');
+                        if (pager) {
+                            $(pager).pagination({
+                                pageSize: 3,               //每页显示的记录条数，默认为10
+                                pageList: [3, 20, 30, 40, 50],       //可以设置每页记录条数的列表
+                                beforePageText: '第',       //页数文本框前显示的汉字
+                                afterPageText: '页    共 {pages} 页',
+                                displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录',
+                                onSelectPage: function (pageNo, pageSize) { //按分页的设置取数据
+                                    var start = (pageNo - 1) * pageSize;
+                                    var end = start + pageSize;
+                                    $("#" + ipt_id + "").combogrid('grid').datagrid('loadData', newdata.slice(start, end));
+                                    pager.pagination('refresh', {
+                                        total: newdata.length,
+                                        pageNumber: pageNo
+                                    });
+
+                                }
+                            });
+                        }
+
+
+
+
+
+                        //模糊查询用indexOf
+
+
+                        //$("#" + ipt_id + "").combogrid('grid').datagrid('getPager').pagination('select');  // refresh the current page  
+                        //$(pager).pagination('refresh'); // 刷新页面右栏的信息  
+
+                        //var getData = function (page, rows) {
+                        //    $.ajax({
+                        //        type: "POST",
+                        //        url: "ashx/ComboGridHandler.ashx?action=search",
+                        //        data: "page=" + page + "&rows=" + rows + "&keyword=" + $('#hdKeyword').val(),
+                        //        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        //            alert(textStatus);
+                        //            $.messager.progress('close');
+                        //        },
+                        //        success: function (data) {
+                        //            $('#cg').combogrid('grid').datagrid('loadData', data);
+                        //        }
+                        //    });
+                        //};  
+
+
+
+
+
+                        ////var pager = $("#" + ipt_id + "").datagrid("getPager");
+                        //pager.pagination({
+                        //    total: comdata.length,
+                        //    onSelectPage: function (pageNo, pageSize) {
+                        //        var start = (pageNo - 1) * pageSize;
+                        //        var end = start + pageSize;
+                        //        $("#" + ipt_id + "").datagrid("loadData", comdata.slice(start, end));
+                        //        pager.pagination('refresh', {
+                        //            total: comdata.length,
+                        //            pageNumber: pageNo
+                        //        });
+                        //    }
+                        //});  
+
+
+                    }
+                } catch (e) {
+
+                }
+                ////$(this).click(function () {
+                //$ipt.eq(i).combobox({
+                //    valueField: 'pj00402',
+                //    textField: 'pj00402',
+                //    data: comdata
+                //});
+                //// })
+            });
+        }
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function combo_readonly(a) {
+    var $ipt = $("#sdbo001_input input").not("#bo00102").not("#bo00103");
+    $ipt.each(function (i) {
+        var ipt_id = $(this).attr("id");
+        try {
+            if (ipt_id.length == 7) {
+                $("#" + ipt_id + "").combo('readonly', a);
+            }
+        } catch (e) {
+        }
+    });
+    $("#bo00102").combo('readonly', true);
+    $("#bo00102").combo('readonly', true);
+}
+
+
+
+
+
+$("input[name='forsome']").click(function () {
+    GetForSome();
+});
+
+//#region 1111
+function GetForSome() {
+
+    var forsome = $('input[name="forsome"]:checked ').val()
+    $('#szrl001Tree').tree({
+        url: '/AreasCode030/szrl001/TreeLoad',
+        animate: true,
+        onBeforeLoad: function (node, param) {
+            $("#btn_save").linkbutton('disable');
+            if (node == null)
+                param.forsome = forsome;
+        },
+        onClick: function (node) {
+            $(this).tree('expand', node.target);
+            if (node.attributes) {
+                var nodemessage = node.attributes.nodeType;//获取作番号
+                if (nodemessage != "szrl001" && nodemessage != "szrl004") {
+                    nodemessageid = nodemessage;
+                    zuofanid = nodemessageid;
+                    SetInfo();
+                    //$("#sdbo001_input input").attr("disabled", true);//enable
+                    combo_readonly(true);
+                    $("#btn_edit").linkbutton('enable');
+                    $("#btn_save").linkbutton('disable');
+                }
+            }
+        },
+        onCollapse: function (node) {
+            $(this).tree('collapseAll', node.target);
+        }
+    });
+}
+//#endregion
+
+
+
+function SetInfo() {
+    if (zuofanid) {
+        $("#sdbo004From").form({
+            onLoadSuccess: function (_record) {//_record获取的数据
+                GetInfoData(_record);
+            },
+            onLoadError: function () {
+
+            }
+        });
+        var _url = "/AreasCode030/sdbo001/GetIndexInfo?zuofanid=" + zuofanid;
+        $('#sdbo001From').form('load', _url);
+    }
+}
+function GetInfoData(_record) {
+}
+
+
+
+
+$('#btn_save').linkbutton({
+    onClick: function () {
+        $('#sdbo001From').form('submit', {
+            url: "/AreasCode030/sdbo001/Add",
+            onSubmit: function (_param) {
+                $(".zip_1").each(function () {
+                    zip_1.push(this.value)
+                });
+                $(".zip_2").each(function () {
+                    zip_2.push(this.value)
+                });
+                console.log(zip_1, zip_2);
+                _param.bo00150 = zuofanid;
+                _param.p1 = JSON.stringify(zip_1);
+                _param.p2 = JSON.stringify(zip_2);
+                var isValid = $(this).form('validate');
+                if (!isValid) {
+                    $.messager.alert('友情提示', '请填写必填选项!', 'info');
+                }
+                return isValid;
+            },
+            success: function (data) {
+                $.messager.progress('close');
+                var obj = $.parseJSON(data);
+                if (obj.success) {
+                    $("#btn_save").linkbutton('disable');
+                    $("#btn_edit").linkbutton('enable');
+                    combo_readonly(true);
+                    //$("#sdbo001_input input").attr("disabled", true);
+                    combo_readonly(true);
+                    $.messager.alert('友情提示', '保存成功!', 'info');
+                } else {
+                    $.messager.alert('友情提示', obj.Message, 'error');
+                }
+                zip_1 = new Array();
+                zip_2 = new Array();
+            }
+        });
+    }
+});
+
+$('#btn_edit').linkbutton({
+    onClick: function () {
+        console.log("111");
+        combo_readonly(false);
+        //$("#sdbo001_input input").attr("disabled", false);
+        combo_readonly(false);
+        $("#btn_edit").linkbutton('disable');
+        $("#btn_save").linkbutton('enable');
+    }
+});
+
+
+
+
+
+
+
+//弹出加载层
+function load() {
+    $("<div class=\"datagrid-mask\"></div>").css({ display: "block", width: "100%", height: $(window).height() }).appendTo("body");
+    $("<div class=\"datagrid-mask-msg\"></div>").html("正在加载，请稍候。。。").appendTo("body").css({ display: "block", left: ($(document.body).outerWidth(true) - 190) / 2, top: ($(window).height() - 45) / 2 });
+}
+//取消加载层  
+function disLoad() {
+    $(".datagrid-mask").remove();
+    $(".datagrid-mask-msg").remove();
+}

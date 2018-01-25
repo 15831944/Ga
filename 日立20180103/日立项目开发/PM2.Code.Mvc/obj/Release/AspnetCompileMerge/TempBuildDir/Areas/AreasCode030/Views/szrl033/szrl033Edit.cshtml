@@ -1,0 +1,355 @@
+﻿@{
+    ViewBag.Title = "验收登记";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl033/javascript/datagrid-groupview.js"></script>
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script src="~/Content/Areas/AreasCode030/szrl033/javascript/szrl033.js"></script>
+    <script type="text/javascript">
+
+    </script>
+}
+@section HeaderStyles{
+    <style type="text/css">
+        .form-table-label-033 {
+            border-bottom: solid 1px black;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        .form100-table-text {
+        }
+
+        table.form100-table tbody tr {
+            height: 35px;
+        }
+    </style>
+}
+
+@section Body{
+    <div data-options="region:'center'">
+        <div class="easyui-layout">
+            <div data-options="region:'center'">
+                @Html.Partial("_szrl033Edit1", null, this.ViewData)
+
+                @*<div id="tt" class="easyui-tabs">
+                    <div id="tb1" title="验收登记">
+                        @Html.Partial("_szrl033Edit1", null, this.ViewData)
+                    </div>
+                    <div title="附件" id="attachFileContainer">
+                        @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+                    </div>
+                    <div title="协调办公">
+                    </div>
+                </div>*@
+            </div>
+        </div>
+    </div>
+}
+@section FooterScript{
+    <script type="text/javascript">
+        function onClickCell(index, field) {
+            if (editIndex != index) {
+                if (endEditing()) {
+                    $('#dg_edit_szrl033').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                    var ed = $('#dg_edit_szrl033').datagrid('getEditor', { index: index, field: field });
+                    if (ed) {
+                        ($(ed.target).data('textbox') ? $(ed.target).textbox('textbox') : $(ed.target)).focus();
+                    }
+                    editIndex = index;
+                } else {
+                    setTimeout(function () {
+                        $('#dg_edit_szrl033').datagrid('selectRow', editIndex);
+                    }, 0);
+                }
+            }
+        }
+
+        function closeEditDialog() {
+            $('#editContainer').dialog('close');
+        }
+
+        // 刷新页面
+        function refreshForm_edit_szrl033(id) {
+            location.href = '/AreasCode030/szrl033/szrl033Edit?id=' + id;
+        }
+
+        function refreshDatagrid_edit_szrl033(dirId) {
+            search_edit_szrl033(dirId);
+        }
+
+        function showAttachFilesDialog_szrl033(url) {
+            var content = '<iframe id="iframe_attachfiles_edit_szrl033" src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+
+            $('#editContainer').dialog({
+                title: '附件',
+                width: 900,
+                height: 600,
+                closed: false,
+                cache: false,
+                //href: url,
+                content: content,
+                modal: true
+            });
+        }
+
+        // 搜索
+        function search_edit_szrl033(id) {
+            var url = '/AreasCode030/szrl033/GetAcceptancePlanDetails';
+            if (!rlform1101.isNullOrWhitespace(id)) {
+                url += '?id=' + id;
+            }
+
+            //$('#dg_edit_szrl033').datagrid({ url: url });
+            $.post(url, null, function (data) {
+                handleAdmitedState_edit_szrl033(data.AcceptFlag);
+                $('#dg_edit_szrl033').datagrid('loadData', data.Rows);
+            });
+        }
+
+
+        // 取营业合同ID
+        function getContractId_edit_szrl033() {
+            var value = $('#input_hd_contractid_edit_szrl033').val();
+            return value;
+        }
+
+        // 开始编辑
+        function startEdit(index, obj) {
+            if (editRow != undefined) {
+                rlform1101.messenger.showMessage('请先编辑完成一行，再编辑下一行！');
+                return;
+                //jDgEditszrl033.datagrid("endEdit", editRow);
+            }
+            if (editRow == undefined) {
+                jDgEditszrl033.datagrid("beginEdit", index);
+                editRow = index;
+            }
+
+            showEditState(obj, true);
+            var row = jDgEditszrl033.datagrid('getRows')[index];
+            if (row.rl03412 === 1) {
+                var ed1 = jDgEditszrl033.datagrid('getEditor', { index: index, field: 'rl03408' }),
+                    ed3 = jDgEditszrl033.datagrid('getEditor', { index: index, field: 'rl03410' });
+                $(ed1.target).datebox('disable');
+                $(ed3.target).datebox('disable');
+                if (row.rl03411 === 1) {
+                    var jRadios = $(obj).parent().parent().parent().find('.container-innerouter').children('input[type=radio]');
+                    jRadios.attr('disabled', 'disabled');
+                }
+            }
+        }
+
+        window.editRow = undefined;
+        window.jDgEditszrl033 = $('#dg_edit_szrl033');
+        // 内部/外部验收
+        //window._datagrid_rl03411 = [];
+        function endEdit(index, obj) {
+            var jRadios = $(obj).parent().parent().parent().find('.container-innerouter').children('input[type=radio]'),
+                row = jDgEditszrl033.datagrid('getRows')[index];
+            for (var i = 0; i < jRadios.length; i++) {
+                var jItem = $(jRadios[i]);
+                if (jItem.prop('checked') == true) {
+                    jItem.data('checked', '1');
+                    jItem[0].data_checked = 1;
+                    row.rl03411 = jItem.val();
+                }
+                else {
+                    jItem.data('checked', '0');
+                }
+            }
+
+            var ed1 = jDgEditszrl033.datagrid('getEditor', { index: index, field: 'rl03408' }),
+                ed3 = jDgEditszrl033.datagrid('getEditor', { index: index, field: 'rl03410' });
+            var value1 = $(ed1.target).datebox('getValue'),
+                value3 = $(ed3.target).datebox('getValue');
+            if (rlform1101.isNullOrWhitespace(value1) || rlform1101.isNullOrWhitespace(value3)) {
+                rlform1101.messenger.showMessage('“验收日期”和“验收证明取得日”不能为空！');
+                return;
+            }
+
+            jDgEditszrl033.datagrid('acceptChanges');
+            showEditState(obj, false);
+            row.IsChanged = true;
+
+            var jOperateViewBtns = $(obj).parent().parent().parent().find('.btn-attach-state1');
+        }
+
+
+        // 附件操作
+        function doAttachFiles(id, obj) {
+            var mm = this;
+            var url = '/AreasCode030/szrl033/AttachFiles?id=' + id;
+            showAttachFilesDialog_szrl033(url);
+        }
+
+        // 查看附件
+        function viewAttachFiles(id) {
+            var url = '/AreasCode030/szrl033/AttachFiles?v=1&id=' + id;
+            showAttachFilesDialog_szrl033(url);
+        }
+
+        // 取消编辑
+        function cancelEdit(index, obj) {
+            jDgEditszrl033.datagrid("rejectChanges");
+            jDgEditszrl033.datagrid("unselectAll");
+            showEditState(obj, false);
+        }
+
+        // 编辑状态的操作
+        function showEditState(obj, flag) {
+            var jRadios = $(obj).parent().parent().parent().find('.container-innerouter').children('input[type=radio]'),
+                jOperateAttachBtns = $(obj).parent().parent().parent().find('.btn-attach-state2'),
+                jOperateViewBtns = $(obj).parent().parent().parent().find('.btn-attach-state1');
+            if (flag) {
+                $(obj).hide().parent().children('.btn-state2').show();
+                jRadios.removeAttr('disabled');
+                jOperateViewBtns.hide();
+                jOperateAttachBtns.show();
+            }
+            else {
+                $(obj).show().parent().children('.btn-state2').hide();
+                jRadios.attr('disabled', 'disabled');
+                jOperateAttachBtns.hide();
+                jOperateViewBtns.show();
+            }
+
+            if (flag === false) {
+                editRow = undefined;
+            }
+        }
+
+        // 加载合同信息
+        function loadContract_edit_szrl033() {
+            var infoContent = $('#input_hd_contractInfo_edit_szrl033').val();
+            if (!rlform1101.isNullOrWhitespace(infoContent)) {
+                var info = $.parseJSON(infoContent);
+
+                if (!rlform1101.isNull(info.rl01904)) {
+                    $('#labelContractSerialNo_edit_szrl033').text(info.rl01904);
+                    $('#labelContractName_edit_szrl033').text(info.rl01903);
+                    $('#labelContractMoney_edit_szrl033').text(info.rl01951);
+                    $('#labelContractPayCondition_edit_szrl033').text(info.rl01919);
+                }
+                else {
+                    $('#labelContractSerialNo_edit_szrl033').text(info.rl03316);
+                    $('#labelContractName_edit_szrl033').text(info.rl03303);
+                    $('#labelContractMoney_edit_szrl033').text(info.rl03304);
+                    $('#labelContractPayCondition_edit_szrl033').text(info.rl03305);
+                    if (info.rl03306 === 1) {
+                        $('#checkbox_finished_edit_szrl033').attr('checked', 'checked');
+                    }
+                    $('#datebox_finished_edit_szrl033').datebox('setValue', info.rl03307);
+                    $('#datebox_realityfinished_edit_szrl033').datebox('setValue', info.rl03308);
+                    $('#input_hd_rl03301_edit_szrl033').val(info.rl03301);
+                }
+            }
+        }
+
+        /// 初始化页面操作信息
+        function initOperate_edit_szrl033() {
+            // 承认
+            rlform1101.bindClick('btnAdmit_edit_szrl033', function () {
+                rlform1101.messenger.confirm('是否承认验收登记信息？', function () {
+                    var url = '/AreasCode030/szrl033/Admit_szrl034',
+                        dgRows = jDgEditszrl033.datagrid('getRows');
+                    rlform1101.post(url, { items: dgRows }, function () {
+                        location.reload();
+                    });
+                });
+            });
+            // 保存
+            rlform1101.bindClick('btnSave_edit_szrl033', function () {
+                var rl03307 = $('#datebox_finished_edit_szrl033').datebox('getValue');
+                var rl03308 = $('#datebox_realityfinished_edit_szrl033').datebox('getValue');
+                //if (rlform1101.isNullOrWhitespace(rl03307) || rlform1101.isNullOrWhitespace(rl03308)) {
+                //    rlform1101.messenger.showMessage('“工程完工证明取得日”和“实际完工日期”不能为空！');
+                //    return;
+                //}
+
+                var url = '/AreasCode030/szrl033/Save_szrl033',
+                    dgRows = jDgEditszrl033.datagrid('getRows'),
+                    rows = [];
+                for (var i = 0; i < dgRows.length; i++) {
+                    var row = dgRows[i];
+                    if (row.IsChanged === true) {
+                        rows.push(row);
+                    }
+                }
+                var rl03316 = $('#labelContractSerialNo_edit_szrl033').text();
+                var rl03303 = $('#labelContractName_edit_szrl033').text();
+                var rl03304 = $('#labelContractMoney_edit_szrl033').text();
+                var rl03305 = $('#labelContractPayCondition_edit_szrl033').text();
+                var rl03306 = $('#checkbox_finished_edit_szrl033:checked').length === 1 ? "1" : "0";
+                var rl03302 = $('#input_hd_contractid_edit_szrl033').val();
+                var rl03301 = $('#input_hd_rl03301_edit_szrl033').val();
+
+                var szrl033Item = {
+                    rl03301: rl03301,
+                    rl03302: rl03302,
+                    rl03303: rl03303,
+                    rl03304: rl03304,
+                    rl03305: rl03305,
+                    rl03306: rl03306,
+                    rl03307: rl03307,
+                    rl03308: rl03308,
+                    rl03316: rl03316
+                };
+
+                rlform1101.post(url, { items: rows, szrl033Item: szrl033Item }, function () {
+                    location.reload();
+                });
+            });
+        }
+
+        // 处理审核完成
+        function handleAdmitedState_edit_szrl033(flag) {
+            // 已审核状态
+            //var flag = $('#input_hd_acceptflag_edit_szrl033').val() === '1';
+            if (flag === '1') {
+                $('#input_hd_acceptflag_edit_szrl033').val('1');
+                $('#checkbox_finished_edit_szrl033').attr('disabled', 'disabled');
+                $('#datebox_finished_edit_szrl033').datebox('disable');
+                $('#datebox_realityfinished_edit_szrl033').datebox('disable');
+                $('#btnAdmit_edit_szrl033').linkbutton('disable');
+                $('#btnSave_edit_szrl033').linkbutton('disable');
+            }
+        }
+
+        function handleNavDg_edit_szrl033() {
+            var row = $('#dg_nav_edit_szrl033').datagrid('getSelected');
+            location.href = '/AreasCode030/szrl033/szrl033Edit?id=' + row.rl01902;
+        }
+
+        // 导航表格初始化，不使用了
+        function initDatagrid_edit_szrl033(key) {
+            var url = '/AreasCode030/szrl033/GetContractType_szrl033';
+            if (!rlform1101.isNullOrWhitespace(key)) {
+                url += '?key=' + key;
+            }
+            $('#dg_nav_edit_szrl033').datagrid({
+                url: url,
+                onDblClickRow: handleNavDg_edit_szrl033
+            });
+        }
+
+        $(function () {
+            var id = getContractId_edit_szrl033();
+            jDgEditszrl033.datagrid({
+                onAfterEdit: function (rowIndex, rowData, changes) {
+                    editRow = undefined;
+                }
+            });
+
+            search_edit_szrl033(id);
+
+            initOperate_edit_szrl033();
+            //initDatagrid_edit_szrl033();
+            loadContract_edit_szrl033();
+        });
+    </script>
+
+}

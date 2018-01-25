@@ -1,0 +1,97 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PM2.Models.Code030;
+using PM2.Service.Code030;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using PM2.Service.Code001;
+using Gmail.DDD.Mvc;
+using System.Threading.Tasks;
+using PM2.Service.Code031;
+using PM2.Models.Code031;
+
+namespace PM2.WebApp.Areas.Code031.Controllers
+{
+    public class sdrl125Controller : Controller
+    {
+        private Iszrl105ServerAsync _szrl105ServerAsync;
+        private Iszrl125ServerAsync _szrl125ServerAsync;
+        public sdrl125Controller(Iszrl105ServerAsync szrl105ServerAsync,
+            Iszrl125ServerAsync szrl125ServerAsync
+            )
+        {
+            this._szrl105ServerAsync = szrl105ServerAsync;
+            this._szrl125ServerAsync = szrl125ServerAsync;
+        }
+        
+        public ActionResult Index()
+        {
+            return this.View();
+        }
+        #region 预付款|验收款
+        public async Task<ActionResult> AdvancePaymentAsync([JsonModelBinder]szrl125 szrl125)
+        {
+            IOperateResult Result = await this._szrl125ServerAsync.AdvancePaymentAsync(szrl125);
+            return Result.ToActionResult(this.ControllerContext);
+        }
+        #endregion
+        #region 支付计划调整
+        public async Task<ActionResult> AdjustPaymentAsync([JsonModelBinder]szrl125 szrl125)
+        {
+            IOperateResult Result = await this._szrl125ServerAsync.AdjustPaymentAsync(szrl125);
+            return Result.ToActionResult(this.ControllerContext);
+        }
+        #endregion
+        #region 带入验收计划
+        public async Task<ActionResult> IntoPaymentAsync([JsonModelBinder]szrl125 szrl125)
+        {
+            IOperateResult Result = await this._szrl125ServerAsync.IntoPaymentAsync(szrl125);
+            return Result.ToActionResult(this.ControllerContext);
+        }
+        #endregion
+        #region 恢复原支付计划
+        public async Task<ActionResult> RestorePaymentAsync([JsonModelBinder]szrl125 szrl125)
+        {
+            IOperateResult Result = await this._szrl125ServerAsync.RestorePaymentAsync(szrl125);
+            return Result.ToActionResult(this.ControllerContext);
+        }
+        #endregion
+
+        #region 数据保存
+        public async Task<ActionResult> SaveAsync([JsonModelBinder]szrl125 szrl125)
+        {
+            IOperateResult Result = await this._szrl125ServerAsync.SaveAsync(szrl125);
+            return Result.ToActionResult(this.ControllerContext);
+        }
+        #endregion
+        #region 加载合同信息
+        /// <summary>
+        /// 加载合同信息
+        /// </summary>
+        /// <param name="rl10503">合同ID</param>
+        /// <returns></returns>
+        public async Task<ActionResult> LoadFromAsync(string id)
+        {
+            IOperateResult Result = await this._szrl105ServerAsync.LoadFromAsync(id);
+            return Result.ToActionResult(this.ControllerContext);
+        }
+        #endregion
+        #region 加载合同支付情况
+        /// <summary>
+        /// 加载合同支付情况
+        /// </summary>
+        /// <param name="rl12502">合同ID</param>
+        /// <param name="rl12507">状态: -1 初始化</param>
+        /// <returns></returns>
+        public async Task<ActionResult> LoadAsync(string rl12502, int rl12507)
+        {
+            IOperateResult Result = await this._szrl125ServerAsync.LoadAsync(rl12502, rl12507);
+            return Result.ToActionResult(this.ControllerContext);
+        }
+        #endregion
+
+    }
+}

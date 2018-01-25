@@ -1,0 +1,90 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Repositorys;
+using Gmail.DDD.JsonConvert;
+using PM2.Models.Code030.szrl100Model;
+using PM2.Models.Code030;
+using System.Linq.Expressions;
+using System.Data.Entity.SqlServer;
+using System.Data.Common;
+using System.Data.Entity.Infrastructure;
+using System.Web;
+using PM2.Models.Code030.Szrl105Model;
+using PM2.Service.Code030.CM;
+
+namespace PM2.Service.Code030.Szrl105Service
+{
+    /// <summary>
+    /// 供应商信息管理
+    /// </summary>
+    public class Szrl105Server : CmDataService<Szrl105>, ISzrl105Server
+    {
+        #region ================= 属性等 ==================
+        private IDbContextScopeFactory _scopeFactory;
+        private IEFRepository<Szrl105> _szrl105Repository;
+        private IEFRepository<szrl005> _szrl005Repository;
+
+        public Szrl105Server(
+             IDbContextScopeFactory scopeFactory,
+             IEFRepository<Szrl105> szrl105Repository,
+             IEFRepository<szrl005> szrl005Repository
+        ) : base(scopeFactory, szrl105Repository)
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl105Repository = szrl105Repository;
+            this._szrl005Repository = szrl005Repository;
+
+        }
+
+        #endregion
+
+
+
+
+        #region ========================= 采购申请 ========================= 
+
+        
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
+        /// <summary>
+        /// 取新的GUID
+        /// </summary>
+        /// <returns></returns>
+        private string NewGuid()
+        {
+            return Guid.NewGuid().ToString("N");
+        }
+
+
+        /// <summary>
+        /// 取当前登录用户
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLoginUserId()
+        {
+            string name = "当前用户1";
+            if (HttpContext.Current != null && HttpContext.Current.User != null)
+            {
+                name = HttpContext.Current.User.Identity.Name;
+            }
+
+            return name;
+        }
+    }
+}

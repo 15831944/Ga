@@ -1,0 +1,146 @@
+﻿ body {
+    font-size: 12px !important;
+}
+
+.panel-body {
+    font-size: 12px !important;
+}
+
+.tree-title {
+    font-size: 12px !important;
+}
+/*public -- start */
+.tdcolor {
+    background: #538DD5;
+}
+
+.tdcolor2 {
+    background: #FFFF00;
+}
+
+.tdcolor3 {
+    background: #FFCC99;
+}
+
+.textleft {
+    text-align: left !important;
+}
+
+.textright {
+    text-align: right !important;
+}
+
+.textbox .textbox-text {
+    font-size: 12px;
+    font-family: 'Microsoft YaHei',sans-serif;
+}
+.textunline {
+    border-color: #878787;
+    border-style: solid;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 1px;
+    border-left-width: 0px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+/*public --  end*/
+.tb1 {
+    border-collapse: collapse;
+}
+
+    .tb1 tr td {
+        border: 1px solid black;
+        width: 65px;
+        text-align: center;
+    }
+
+.tb2 {
+    border: 1px solid black;
+}
+
+    .tb2 tr td {
+        border: 1px solid black;
+    }
+
+.tbtd2 td {
+    height: 30px;
+}
+
+.td40 {
+    width: 40px;
+}
+
+.td45 {
+    width: 45px;
+}
+
+.td85 {
+    width: 85px;
+}
+
+.td100 {
+    width: 100px;
+}
+
+.td120 {
+    width: 120px;
+}
+
+.td150 {
+    width: 150px;
+}
+
+.td175 {
+    width: 175px;
+}
+
+.td240 {
+    width: 240px;
+}
+
+.td280 {
+    width: 280px;
+}
+
+.td330 {
+    width: 330px;
+}
+
+.td360 {
+    width: 360px;
+}
+
+.td400 {
+    width: 400px;
+}
+
+.td420 {
+    width: 420px;
+}
+
+.td450 {
+    width: 450px;
+}
+
+.td480 {
+    width: 480px;
+}
+
+.easyui-progressbar {
+    width: 400px;
+    position: absolute;
+    top: 50%;
+    right: 35%;
+    z-index: 99999999 !important;
+    display:none;
+}
+
+
+/*.tabs li.tabs-selected a.tabs-inner {
+    color: #987765 !important;
+}*/
+ 

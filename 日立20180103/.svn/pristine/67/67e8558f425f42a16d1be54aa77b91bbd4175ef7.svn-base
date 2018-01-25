@@ -1,0 +1,652 @@
+﻿
+(function () {
+
+    //#region Index_Tree: 合同Tree
+    var Index_Tree = (function () {
+
+        var _tree;
+        var me = {
+        };
+
+        var Initialize = function (parameters) {
+            if (parameters)
+                $.extend(me, parameters);
+
+            _tree = $('#index_Tree');
+            _tree.tree({
+                url: '/AreasCode031/szrl105Tree/TreeLoad',
+                animate: true,
+                onBeforeLoad: function (node, param) {
+                    if (node == null)
+                        param.id = '-1';
+                },
+                onClick: function (node) {
+                    $(this).tree('expand', node.target);
+                    if(node.attributes.nodeType == 'szrl105')
+                    {
+                        Mediator.Notify('Index_Tree',{
+                            perform: 'onClick',
+                            node: node
+                        });
+                    } else
+                      $.messager.alert('警告', '请选择合同信息!!', 'warning');
+
+                },
+                onCollapse: function (node) {
+                    $(this).tree('collapseAll', node.target);
+                }
+            });
+        }
+
+        return {
+            Initialize: Initialize
+        };
+
+    }());
+    //#endregion
+    //#region Tabs_A_EditFrom: 合同基本信息窗体
+    var Tabs_A_EditFrom = (function () {
+
+        var _editFrom;
+        var me = {
+        };
+
+        var Initialize = function (parameters) {
+            if (parameters)
+                $.extend(me, parameters);
+
+            _editFrom = $('#Tabs_A_EditFrom');
+        }
+
+        //#region 加载合同信息
+        var LoadFrom = function(rl10503){
+            _editFrom.form({
+                onLoadSuccess: function (_record) {
+                    SetValues(_record);
+                },
+                onLoadError: function () {
+            
+                }
+            });
+            var _url = "/AreasCode031/sdrl125/LoadFromAsync/" + rl10503;
+            _editFrom.form('load', _url);
+
+        }
+        //#endregion
+        //#region 控件赋值
+        var SetValues = function(_record){
+            if(_record) {
+                for (key in _record) {
+                    var content = _record[key];
+                    var selector = _editFrom.find("p[id='Tabs_A_"+ key +"']").eq(0);
+                    if(selector)
+                    {
+                        selector.text(content);
+                    }
+                }
+            }
+        }
+        //#endregion
+        //#region 控制控件状态
+        var SetDisabled = function(_isTrue){
+
+            var childs = _editFrom.find("p[x-isReadOnly]");
+            $.each(childs, function (key, val) {
+               
+            });  
+        }
+        //#endregion
+
+        return {
+            Initialize: Initialize,
+            LoadFrom: LoadFrom,      //加载合同信息
+            SetDisabled: SetDisabled //控制控件状态
+        };
+
+    }());
+    //#endregion
+    //#region Index_Link_Buttons: 主页面按钮组
+    var Index_Link_Buttons = (function () {
+
+        var _index_link_ABt, //发票维护
+            _index_link_BBt, //预付款
+            _index_link_CBt, //验收款
+            _index_link_DBt, //支付计划调整
+            _index_link_EBt, //带入验收计划
+            _index_link_FBt, //恢复原支付计划
+            _index_link_JBt, //变更
+            _index_link_IBt, //保存
+            _index_link_JBt, //删除
+            _index_link_KBt; //输出AP
+        var me = {
+        };
+
+        var Initialize = function (parameters) {
+            if (parameters)
+                $.extend(me, parameters);
+            _index_link_ABt = $('#index_link_ABt'),
+            _index_link_BBt = $('#index_link_BBt'),
+            _index_link_CBt = $('#index_link_CBt'),
+            _index_link_DBt = $('#index_link_DBt'),
+            _index_link_EBt = $('#index_link_EBt'),
+            _index_link_FBt = $('#index_link_FBt'),
+            _index_link_JBt = $('#index_link_JBt'),
+            _index_link_HBt = $('#index_link_HBt'),
+            _index_link_IBt = $('#index_link_IBt'),
+            _index_link_JBt = $('#index_link_JBt'),
+            _index_link_KBt = $('#index_link_KBt');
+
+        }
+
+        //#region 按钮状态控制
+        var ButtonControl = function(state)
+        {
+            _index_link_ABt.linkbutton('enable');
+            _index_link_BBt.linkbutton('disable');
+            _index_link_CBt.linkbutton('disable');
+            _index_link_DBt.linkbutton('disable');
+            _index_link_EBt.linkbutton('disable');
+            _index_link_FBt.linkbutton('disable');
+            _index_link_JBt.linkbutton('disable');
+            _index_link_HBt.linkbutton('disable');
+            _index_link_IBt.linkbutton('disable');
+            _index_link_JBt.linkbutton('disable');
+            _index_link_KBt.linkbutton('disable');
+
+            switch(state)
+            {
+                case -1: //初始化
+                case 7:  //[已审核]支付结束-等待下次支付
+                    _index_link_BBt.linkbutton('enable'); //预付款
+                    _index_link_CBt.linkbutton('enable'); //验收款
+
+                    if(state == 7)
+                    {
+                        _index_link_ABt.linkbutton('disable'); //发票维护
+                        _index_link_KBt.linkbutton('enable');  //输出AP
+                    }
+
+                break;     
+                case 0: //预付款
+                case 1: //验收款
+                    _btControl();
+
+                break;  
+                case 2: //[调整支付计划]预付款
+                case 3: //[调整支付计划]验收款
+                    _btControl();
+                    _index_link_DBt.linkbutton('disable');
+                break;   
+                case 4: //[带入验收计划]预付款
+                case 5: //[带入验收计划]验收款
+                    _btControl();
+                    _index_link_EBt.linkbutton('disable');
+                    _index_link_FBt.linkbutton('enable');
+                break;   
+                
+            }
+
+            var _btControl = function(){
+                _index_link_DBt.linkbutton('enable'); //支付计划调整
+                _index_link_EBt.linkbutton('enable'); //带入验收计划
+                _index_link_IBt.linkbutton('enable'); //保存
+                _index_link_JBt.linkbutton('enable'); //删除
+            }
+
+        }
+        //#endregion
+
+        return {
+            Initialize: Initialize
+        };
+
+    }());
+    //#endregion
+    //#region Tabs_A_Index_center_Grid: 支付信息
+    var Tabs_A_Index_center_Grid = (function () {
+
+        var _easy_Grid;
+        var IsEdit = true; //是否启用编辑
+
+        var me = {
+        };
+
+        var Initialize = function (parameters) {
+            if (parameters)
+                $.extend(me, parameters);
+
+            _easy_Grid = new Easy_GridPanel({
+                id: "Tabs_A_Index_center_Grid",
+                isPagination: false,
+
+                configuration:{
+                    idField: 'rl12601',
+                    url: '/AreasCode031/sdrl125/LoadAsync',
+                    columns: [[
+                        { 
+                            field: 'rl12605', title: '支払済', width: 100, 
+                            halign: 'center', align: 'center',
+                            formatter: function(value, record, rowIndex){
+                                switch(value)
+                                {
+                                    case -1: 
+                                        return "支付济"; 
+                                    break;  
+                                    case -2: 
+                                        return "累計検収済"; 
+                                    break;   
+                                    case -3: 
+                                        return "合计"; 
+                                    break;  
+                                    case -4: 
+                                        return "元支払予定"; 
+                                    break;  
+                                    case 0: 
+                                        return "今回支払"; 
+                                    break; 
+                                    case 1: 
+                                    case 2: 
+                                        return "今後支払予定"; 
+                                    break;   
+                                    default:
+                                        return value;
+                                    break;                               
+                                }
+                            }
+                        },
+                        { 
+                            field: 'rl12606', title: '支払日期', width: 120 ,
+                            halign: 'center', align: 'center'
+                        },
+                        { 
+                            field: 'rl12607', title: '%', width: 120,
+                            halign: 'center', align: 'right',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == 0 && record.rl12604 == '-1')
+                                    return '';
+                                return value + '%';
+                            } 
+                        },
+                        { 
+                            field: 'rl12608', title: '金額', width: 120,
+                            halign: 'center', align: 'right',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == 0 && record.rl12604 == '-1')
+                                    return '';
+                                return value;
+                            }  
+                        },
+
+                        { 
+                            field: 'rl12609', title: '処理日期', width: 120,
+                            halign: 'center', align: 'center',
+                            formatter: function(value, record, rowIndex){
+                                switch(record.rl12605)
+                                {
+                                    case -4: 
+                                        return "今回支払実績/今後支払予定修正"; 
+                                    break;     
+                                    default:
+                                        if(record.rl12605 == -1 || record.rl12605 == 0)
+                                            return value;
+                                    break;                           
+                                }
+                            } 
+                        },
+                        { 
+                            field: 'rl12610', title: '支払日期', width: 120,
+                            halign: 'center', align: 'center',
+                            editor: {
+                                type: 'datebox',
+                                options: {
+                                    value: 'new data()'
+                                }
+                            }
+                        },
+                        { 
+                            field: 'rl12611', title: '%', width: 120,
+                            halign: 'center', align: 'right',
+                            formatter: function(value, record, rowIndex){
+                                return value + '%';
+                            },
+                            editor:{
+                                type:'numberbox',
+                                options: { 
+                                    min: 0,
+                                    max: 100,
+                                    precision: 2
+                                }
+                            }  
+                        },
+                        { 
+                            field: 'rl12612', title: '金額', width: 120,
+                            halign: 'center', align: 'right',
+                            editor:{
+                                type:'numberbox',
+                                options: { groupSeparator: ',', decimalSeparator:'.', precision: 2 }
+                            } 
+                        },
+                        { 
+                            field: 'xxxx', title: '附件', width: 120,
+                            halign: 'center', align: 'center',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == 0 && record.rl12604 != '-1')
+                                   return "上传附件";
+                                if(record.rl12605 == -1)
+                                   return "下载附件";
+                            } 
+                        },
+                        { 
+                            field: 'rl12614', title: '付款性质', width: 120,
+                            halign: 'center', align: 'center',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                {
+                                    switch(value)
+                                    {
+                                        case 0:
+                                            return '预付款';
+                                        break;
+                                        case 1:
+                                            return '质保款';
+                                        break;
+                                        case 2:
+                                            return '验收款';
+                                        break;
+                                    }
+                                }
+                            }  
+                        },
+                        { 
+                            field: 'rl12615', title: '预付款扣款金额', width: 120,
+                            halign: 'center', align: 'right',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                    return value;
+                            },
+                            editor:{
+                                type:'numberbox',
+                                options: { groupSeparator: ',', decimalSeparator:'.', precision: 2 }
+                            }    
+                        },
+                        { 
+                            field: 'rl12616', title: '预付款扣款<br/>占合同%', width: 120,
+                            halign: 'center', align: 'right',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                    return value + '%';
+                            },
+                            editor:{
+                                type:'numberbox',
+                                options: { 
+                                    min: 0,
+                                    max: 100,
+                                    precision: 2
+                                }
+                            }    
+                        },
+                        { 
+                            field: 'rl12617', title: '本次实际支<br/>付金额(含税)', width: 120,
+                            halign: 'center', align: 'right',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                    return value;
+                            },
+                            editor:{
+                                type:'numberbox',
+                                options: { groupSeparator: ',', decimalSeparator:'.', precision: 2 }
+                            }    
+                        },
+                        { 
+                            field: 'rl12618', title: '本次实际支<br/>付金额(不含税)', width: 120,
+                            halign: 'center', align: 'right',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                    return value;
+                            },
+                            editor:{
+                                type:'numberbox',
+                                options: { groupSeparator: ',', decimalSeparator:'.', precision: 2 }
+                            }      
+                        },
+
+                        { 
+                            field: 'rl12619', title: '备注', width: 120,
+                            halign: 'center',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                    return value;
+                            },
+                            editor:{
+                                type:'textbox'
+                            }  
+                        },
+                        { 
+                            field: 'rl12719', title: '状态', width: 120,
+                            halign: 'center', align: 'center',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                {
+                                    switch(value)
+                                    {
+                                        case 0:
+                                            return '承认济';
+                                        break;
+                                        case 1:
+                                            return 'AP已发行';
+                                        break;
+                                    }
+                                    if(record.rl12605 == 0 && record.rl12604 != '-1')
+                                        return '未提出';
+                                }
+                            }   
+                        },
+                        { 
+                            field: 'rl12720', title: 'AP编号', width: 120,
+                            halign: 'center' 
+                        },
+                        { 
+                            field: 'rl12620', title: '担当者', width: 120,
+                            halign: 'center',
+                            formatter: function(value, record, rowIndex){
+                                if(record.rl12605 == -1 || (record.rl12605 == 0 && record.rl12604 != '-1'))
+                                    return value;
+                            }   
+                        }
+                    ]],
+                    rownumbers: false,
+                    showFooter: true,
+                    onLoadSuccess: function(jsonData) {
+                        MergeCells($(this));
+                    },
+                    onClickCell: onClickCell
+                }
+                
+            });
+        }
+        
+        //#region 编辑控制
+        var onBeforeEdit = function(index, field){
+            if(IsEdit)
+            {
+                                
+            }
+            return false;
+		}
+        //#endregion
+        //#region 单元格编辑
+        var editIndex = undefined;
+        var endEditing = function(){
+			if (editIndex == undefined){
+                return true;
+            }
+			if (_easy_Grid.GridPanel.datagrid('validateRow', editIndex)){
+				_easy_Grid.GridPanel.datagrid('endEdit', editIndex);
+                editIndex = undefined;
+                MergeCells(_easy_Grid.GridPanel);
+				return true;
+			} else {
+				return false;
+			}
+		}
+		function onClickCell(index, field){
+			if (endEditing() && onBeforeEdit(index, field)){
+				_easy_Grid.GridPanel.datagrid('selectRow', index)
+						  .datagrid('editCell', {index:index, field:field});
+				editIndex = index;
+			}
+		}
+        //#endregion
+        //#region 数据加载
+        var Load = function (_params) {
+            _easy_Grid.Load(_params);
+        };
+        //#endregion
+        //#region 合并单元格
+        var MergeCells = function(_this){
+
+            var merges = [];
+            var rows = _this.datagrid('getRows');
+            var rowIndex = -1;
+            var record = undefined;
+            
+            //#region 元支払予定-合并
+            rowIndex = _this.datagrid('getRowIndex', '-4');
+            merges.push({
+				index: rowIndex,
+				field: 'rl12605',
+				rowspan: 0,
+				colspan: 4
+            });
+            merges.push({
+				index: rowIndex,
+				field: 'rl12609',
+				rowspan: 0,
+				colspan: 14
+			});
+            //#endregion
+            //#region 支払済-今回支払合并
+            rowIndex = -1;
+            var count = 0;
+            $.each(rows, function (index, value) {
+                if(value.rl12605 == 0){
+                    if(rowIndex == -1)
+                        rowIndex = index;
+                    count = count+1;
+                }
+
+            });
+            if(rowIndex!=-1)
+            {
+                merges.push({
+                    index: rowIndex,
+                    field: 'rl12605',
+                    rowspan: count,
+                    colspan: 0
+                });
+                merges.push({
+                    index: rowIndex,
+                    field: 'rl12609',
+                    rowspan: count,
+                    colspan: 0
+                });
+            }
+            //#endregion
+            //#region 支払済-今後支払予定合并
+            rowIndex = -1;
+            count = 0;
+            $.each(rows, function (index, value) {
+                if(value.rl12605 == 1 || value.rl12605 == 2){
+                    if(rowIndex == -1)
+                       rowIndex = index;
+                    count = count+1;
+                }
+            });
+            if(rowIndex!=-1)
+            {
+                merges.push({
+                    index: rowIndex,
+                    field: 'rl12605',
+                    rowspan: count,
+                    colspan: 0
+                });
+            }
+            //#endregion
+			for (var i = 0; i < merges.length; i++) {
+				_this.datagrid('mergeCells', {
+					index: merges[i].index,     //从N 行开始
+					field: merges[i].field,     //合并字段
+					rowspan: merges[i].rowspan, //共合并多少列
+					colspan: merges[i].colspan  //共合并多少行
+				});
+            }
+            
+        }
+        //#endregion
+        
+        return {
+            Initialize: Initialize,
+            IsEdit: IsEdit,
+            Load: Load
+        };
+
+    }());
+    //#endregion
+    
+    //#region 中介者
+    var Mediator = (function () {
+
+        var _Index_Tree = Index_Tree;                             //合同树
+        var _Tabs_A_EditFrom = Tabs_A_EditFrom;                   //合同基本信息窗体
+        var _Index_Link_Buttons = Index_Link_Buttons;             //主页面按钮组
+        var _Tabs_A_Index_center_Grid = Tabs_A_Index_center_Grid; //支付信息
+        var Notify = function (component, parameters) {
+            //#region Index_Tree: 合同Tree
+            if(component == 'Index_Tree')
+            {
+                //树点击
+                if(parameters.perform == 'onClick') {
+                    TreeClick(parameters.node)
+                }            
+            }
+            //#endregion
+
+        }
+
+        //#region Index_Tree: 合同Tree
+        //树点击
+        var TreeClick = function(node) {
+            //加载合同信息
+            _Tabs_A_EditFrom.LoadFrom(node.id);
+            //加载合同支付信息
+            _Tabs_A_Index_center_Grid.Load({
+                rl12502: node.id,
+                rl12507: -1
+
+            });
+        }
+        //#endregion
+
+        return {
+            Notify: Notify
+        };
+
+    }());
+    //#endregion
+
+
+    var Initialize = function (parameters) {
+       
+    }
+    $(function () {
+        Index_Tree.Initialize();
+        Tabs_A_EditFrom.Initialize();
+        Index_Link_Buttons.Initialize();
+        Tabs_A_Index_center_Grid.Initialize();
+
+        Initialize();
+    });
+
+
+}());
+

@@ -1,0 +1,258 @@
+﻿@{
+    ViewBag.Title = "材料目录";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+}
+@section HeaderStyles{
+    <link href="~/Content/Areas/AreasCode030/szrl100/css/szrl100.css" rel="stylesheet" />
+}
+
+@section Body{
+    <div data-options="region:'north'">
+        <div class="tree-search">
+            <div id="toolbar">
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newItem()">新增</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editItem()">编辑</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteItem()">删除</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center'">
+        <div id="materialDirTreeContainer" style="width:100%; height:100%;">
+            <iframe id="materialDirTreeIframe" frameborder="0" src="/AreasCode030/szrl111/MaterialDirTree?all=1" style="width:100%;height:90%;"></iframe>
+        </div>
+    </div>
+    <div id="selectMaterialDirContainer" style="display:none"></div>
+    <div id="dlgMaterialDir" style="display:none;">
+        <form id="formMaterialDir" method="post">
+            <div style="height: 20px;"></div>
+            <table class="form100-table table-panel" style="margin: 0 auto;">
+                <thead>
+                    <tr style="height: 10px;">
+                        <th style="width: 100px;"></th>
+                        <th style="width: 300px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="form100-table-tr">
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>上级分类名称</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11201" type="hidden" name="rl11201" />
+                            @*<input id="rl11202" type="hidden" name="rl11202" />*@
+                            <input id="rl11207" type="hidden" name="rl11207" />
+                            <input id="rl11208" type="hidden" name="rl11208" />
+                            <input id="rl11209" type="hidden" name="rl11209" />
+                            <input id="rl11213" type="hidden" name="rl11213" />
+                            <input id="rl11214" type="hidden" name="rl11214" />
+                            <input id="rl11215" type="hidden" name="rl11215" />
+                            <input id="rl11211" type="hidden" name="rl11211" />
+                            <input id="rl11202" name="rl11202" class="easyui-textbox" editable="false" data-options="required: true,buttonText:'选择',prompt:'请点击按钮选择...',buttonIcon:'icon-search'" style="width:100%;height:32px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>本级目录编码</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11203" type="text" name="rl11203" data-options="required: true" class="easyui-textbox" />
+                        </td>
+                    </tr>
+                    <tr class="form100-table-tr">
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>本级分类名称</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11204" type="text" name="rl11204" data-options="required: true" class="easyui-textbox" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>目录属性</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            @*<input id="rl11205" type="text" name="rl11205" data-options="required: true" class="easyui-textbox" />*@
+                            <select id="rl11205" class="easyui-combobox" name="rl11205" data-options="required: true,editable: false" style="width:250px;">
+                                <option value="K1">K1</option>
+                                <option value="L1">L1</option>
+                                <option value="B1">B1</option>
+                                <option value="D1">D1</option>
+                                <option value="E1">E1</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>排序码</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11206" type="text" name="rl11206" data-options="required: true" class="easyui-numberbox" precision="2" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript">
+        // 关闭编辑窗口
+        function closeEditDialog() {
+            $('#dlgMaterialDir').dialog('close');
+        }
+
+        // 保存目录
+        function handleSaveMaterialDir() {
+            rlform1101.submitForm('formMaterialDir', '/AreasCode030/szrl111/SaveMaterialDir', null, handleSaveMaterialDirSuccess);
+        }
+
+        // 处理保存目录成功后的事件
+        function handleSaveMaterialDirSuccess(data) {
+            closeEditDialog();
+            var win = $('#materialDirTreeIframe')[0].contentWindow;
+            if (data.success) {
+                var nodeId = data.Pamrms;
+                win.setNewestMaterialDir(nodeId);
+            }
+            win.refreshMaterialDirs();
+            window.parent.reloadMaterialDir_index_szrl111();
+        }
+
+        // 显示编辑窗口
+        function showEditDialog(nodeId) {
+            $('#formMaterialDir').form('clear');
+            if (!rlform1101.isNullOrWhitespace(nodeId)) {
+                $.post('/AreasCode030/szrl111/GetMaterialDirs', { id: nodeId }, function (data) {
+                    data = $.parseJSON(data);
+                    $('#formMaterialDir').form('load', data);
+                    openEditDialog();
+                });
+            }
+            else {
+                var win = $('#materialDirTreeIframe')[0].contentWindow;
+                fillParentDirInfo(win);
+                openEditDialog();
+            }
+        }
+
+        // 打开编辑窗口
+        function openEditDialog() {
+            var toolbar = [{
+                text: '保存',
+                iconCls: 'icon-save',
+                handler: handleSaveMaterialDir
+            }];
+            $('#dlgMaterialDir').dialog({
+                title: '材料目录维护<编辑>',
+                width: 600,
+                height: 400,
+                closed: false,
+                cache: false,
+                modal: true,
+                toolbar: toolbar
+            });
+        }
+
+        // 新建目录
+        function newItem() {
+            showEditDialog();
+        }
+
+        // 编辑目录
+        function editItem() {
+            var win = $('#materialDirTreeIframe')[0].contentWindow;
+            var node = win.getSelectedNode(win);
+            if (node) {
+                showEditDialog(node.id);
+            }
+        }
+
+        // 删除
+        function deleteItem() {
+            $.messager.confirm('确认消息', '是否删除选中项及其子项？', function (r) {
+                if (r) {
+                    var win = $('#materialDirTreeIframe')[0].contentWindow;
+                    var node = win.getSelectedNode(win);
+                    if (node != null) {
+                        rlform1101.post('/AreasCode030/szrl111/RemoveMaterialDir', { id: node.id }, function (result) {
+                            win.refreshMaterialDirs();
+                            window.parent.reloadMaterialDir_index_szrl111();
+                        });
+                    }
+                }
+            });
+        }
+
+        // 搜索
+        //function searchSuppliers() {
+        //    var key = $('#input_condition_search').val(),
+        //        black = $('input:radio[name=input_condition_black]:checked').val();
+        //    var url = '/AreasCode030/szrl100/GetGysList?key=' + key + '&black=' + black;
+        //    $('#dg').datagrid({ url: url });
+        //}
+
+        // 显示上级目录选择的树窗口
+        function showMaterialDirTreeDlg(url) {
+            var toolbar = [{
+                text: '确定选择',
+                iconCls: 'icon-save',
+                handler: handleSelectParentMaterialDir
+            }];
+
+            var content = '<iframe id="changeMaterialDirIframe" src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+            $('#selectMaterialDirContainer').dialog({
+                title: '选择目录',
+                width: 600,
+                height: 500,
+                closed: false,
+                cache: false,
+                content: content,
+                modal: true,
+                toolbar: toolbar
+            });
+        }
+
+        // 填充上级目录信息
+        function fillParentDirInfo(win) {
+            var node = win.getSelectedNode();
+            if (!rlform1101.isNull(node)) {
+                var oldId = $('#rl11201').val();
+                if (node.id === oldId) {
+                    rlform1101.messenger.showMessage('上级目录不能选择自身！');
+                    return;
+                }
+                $('#rl11202').textbox('setValue', node.text);
+                $('#rl11209').val(node.code);
+                $('#rl11214').val(node.id);
+            }
+        }
+
+        // 处理上级目录确认选择按钮事件
+        function handleSelectParentMaterialDir() {
+            var win = $('#changeMaterialDirIframe')[0].contentWindow;
+            fillParentDirInfo(win);
+            $('#selectMaterialDirContainer').dialog('close');
+        }
+
+        $(function () {
+            //$('#dg').datagrid({
+            //    onDblClickRow: function (index, row) {
+            //        if (row) {
+            //            rlform1101.openWindow("/AreasCode030/szrl100/Edit?id=" + row.rl10001);
+            //        }
+            //    }
+            //});
+
+            // 选择上级目录事件
+            $('a', $('#rl11202').next('span')).click(function () {
+                var cDirId = $('#rl11214').val();
+                showMaterialDirTreeDlg('/AreasCode030/szrl111/MaterialDirTree?all=1&cDirId=' + cDirId);
+            });
+        });
+    </script>
+
+
+
+}

@@ -1,0 +1,57 @@
+﻿using Gmail.DDD.Repositorys;
+using Gmail.DDD.Utility;
+using PM2.Models.Code001;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.Entity;
+using PM2.Models.Code030;
+
+namespace PM2.Repository.Code030
+{
+    public class szrl128Repository : Iszrl128Repository
+    {
+        private IUnitOfWork _unitOfWork;
+        public szrl128Repository(IUnitOfWork unitOfWork)
+        {
+            this._unitOfWork = unitOfWork;
+        }
+
+        #region 获取-合同验收计划
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pk">合同ID</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<szrl128Model>> LoadAsync(string pk)
+        {
+            string sql = "select " +
+                "rl12802, " + //--合同ID
+                "rl12102, " + //--状态 1: 今回检收,2: 今月再度检收预定
+
+                "rl12101, " + //--计划ID
+                    //--验收计划
+                "rl12103, " + //--验收日期
+                "rl12104, " + //--验收比率
+                "rl12105, " + //--验收金额
+                    //--实际验收
+                "rl12106, " + //--验收日期
+                "rl12107, " + //--验收比率
+                "rl12108, " + //--验收金额
+
+                "rl12110  " + //--备注
+
+            "from szrl128 inner join szrl121 " +
+            "on rl12124 = rl12801 " +
+            "where rl12802 = @rl12802 and rl12804 = 1 and rl12809 = 1 " +
+            "and rl12102 in(1, 2)";
+
+            return
+                await this._unitOfWork.ExecuteSqlQueryAsync<szrl128Model>(sql, new System.Data.SqlClient.SqlParameter("@rl12802", pk));
+        }
+        #endregion
+
+    }
+}

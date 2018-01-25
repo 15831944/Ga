@@ -1,0 +1,49 @@
+﻿using Gmail.DDD.Repositorys;
+using Gmail.DDD.Utility;
+using PM2.Models.Code001;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.Entity;
+using PM2.Models.Code030;
+
+namespace PM2.Repository.Code030
+{
+    public class szrl105Repository : Iszrl105Repository
+    {
+        private IUnitOfWork _unitOfWork;
+        public szrl105Repository(IUnitOfWork unitOfWork)
+        {
+            this._unitOfWork = unitOfWork;
+        }
+
+        #region 获取-合同支付计划
+        /// <summary>
+        /// 获取-合同支付计划
+        /// </summary>
+        /// <param name="pk">合同ID</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<szrl105Model>> LoadAsync(string pk)
+        {
+            string sql = "select "+
+                "rl10503, "+ //合同ID
+	
+                "rl10701, "+ //支付计划ID
+                "rl10707, "+ //计划支付日期
+                "rl10708, "+ //计划支付%
+                "rl10709  "+ //计划支付金额
+	
+            "from szrl105 inner join szrl107 "+
+            "on rl10702 = rl10503 "+
+            "where rl10572 = 1 and isnull(rl10709, 0) > 0  and rl10503 = @rl10503 "+
+            "order by rl10503,rl10707";
+
+            return
+                await this._unitOfWork.ExecuteSqlQueryAsync<szrl105Model>(sql, new System.Data.SqlClient.SqlParameter("@rl10503", pk));
+        }
+        #endregion
+        
+    }
+}

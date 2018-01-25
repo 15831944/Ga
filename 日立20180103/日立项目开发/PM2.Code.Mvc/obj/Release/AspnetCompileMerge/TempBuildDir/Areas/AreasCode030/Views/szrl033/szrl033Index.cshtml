@@ -1,0 +1,236 @@
+﻿@{
+    ViewBag.Title = "验收登记";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl033/javascript/datagrid-groupview.js"></script>
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script src="~/Content/Areas/AreasCode030/szrl033/javascript/szrl033.js"></script>
+    <script type="text/javascript">
+    </script>
+}
+
+@section Body{
+    <div data-options="region:'west',split:true,width:250, title: '分类列表',collapsible: false">
+        <div class="easyui-layout">
+            <div data-options="region:'north',collapsible: false">
+                <div class="tree-search">
+                    <div class="search-layout"><input id="input_searchbox_index_szrl033" class="easyui-searchbox" style="width:100%" data-options="searcher: search_index_szrl033" /></div>
+                </div>
+            </div>
+            <div data-options="region:'center'">
+                <div class="nano">
+                    <div class="nano-content">
+                        <iframe id="iframe_dirtree_index_szrl033" frameborder="0" src="/AreasCode030/szrl033/szrl033DirTree?f=1" style="width:100%;height:90%;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'north',collapsible: false">
+        <div class="header">
+            <div class="center-layout"></div>
+            <div class="right-layout">
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="">营业合同验收/收款计划</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="" id="btn_multiaccept_index_szrl033">批量验收</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="">生成请款申请</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="">生成开票通知</a>
+
+                @*<a href="javascript:void(0)" class="easyui-linkbutton" onclick="search_index_szrl033()">查询</a>*@
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="editItem_index_szrl033()" id="btn_accept_index_szrl033">验收登记</a>
+                @*<a href="javascript:void(0)" class="easyui-linkbutton" onclick="deleteItem_index_szrl033()">删除</a>*@
+                <a href="javascript:void(0)" id="menu_export_szrl033" class="easyui-menubutton"
+                   data-options="menu:'#menu_detail_export',plain:false">导出</a>
+                <div id="menu_detail_export" style="width:150px;">
+                    <div data-options="iconCls:'icon-undo'" onclick="exportItem_current_szrl033">导出本页</div>
+                    <div data-options="iconCls:'icon-redo'" onclick="exportItem_all_szrl033">导出全部</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center', collapsible: false,title: '验收登记'">
+        <div class="easyui-layout">
+            <div data-options="region:'center', collapsible: false">
+                <table id="dg_index_szrl033" class="easyui-datagrid" data-type="1"  showFooter="true"
+                       data-options="pagination:true, fit:true, rownumbers: true, fitColumns: false, singleSelect: true, onLoadSuccess: onLoadSuccess_index_szrl033"
+                       toolbar="#toolbar">
+                    <thead>
+                        <tr>
+                            @*<th colspan="3" data-options="align:'center'">合同分类</th>*@
+                            <th colspan="4" data-options="align:'center'">验收计划</th>
+                            <th colspan="4" data-options="align:'center'">验收登记</th>
+                            <th rowspan="2" data-options="field: 'rl03412',align:'center', width: 80, formatter:formatter_szrl033.status_edit">状态</th>
+                        </tr>
+                        <tr>
+                            @*<th data-options="field: 'rl00403',align:'center', width: 160">顾客</th>
+                                <th data-options="field: 'rl01807',align:'center', width: 120">作番</th>
+                                <th data-options="field: 'rl01903',align:'center', width: 160">合同</th>*@
+                            <th data-options="field: 'rl02403',align:'center', width: 80">款项性质</th>
+                            <th data-options="field: 'rl02404',align:'center', width: 60">比例</th>
+                            <th data-options="field: 'rl02405',align:'center', width: 100">金额</th>
+                            <th data-options="field: 'rl02406',align:'center', width: 100">计划验收日期</th>
+                            <th data-options="field: 'rl03408',align:'center',width: 100">验收日期</th>
+                            <th data-options="field: 'rl03409',align:'center', width: 100">验收金额</th>
+                            <th data-options="field: 'rl03410',align:'center', width: 100">验收证明取得日</th>
+                            <th data-options="field: 'rl03411',align:'center',width: 120, formatter:formatter_szrl033.radio_index">外部/内部验收</th>
+                        </tr>
+                    </thead>
+                </table>
+                @*<div id="toolbar">
+                    
+                </div>*@
+
+                <div id="editContainer"></div>
+            </div>
+        </div>
+    </div>
+}
+@section FooterScript{
+    <script type="text/javascript">
+
+        function closeEditDialog_index_szrl033() {
+            $('#editContainer').dialog('close');
+        }
+
+        function showEditDialog_index_szrl033(url) {
+            var content = '<iframe src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+            $('#editContainer').dialog({
+                title: '验收登记<编辑>',
+                width: 1200,
+                height: 700,
+                closed: false,
+                cache: false,
+                //href: url,
+                content: content,
+                modal: true,
+                onClose: handleEditDialogClose_szrl033
+            });
+        }
+
+        function handleEditDialogClose_szrl033() {
+
+        }
+
+
+        // 验收登记
+        function editItem_index_szrl033() {
+            //var row = $('#dg_index_szrl033').datagrid('getSelected');
+            var win = $('#iframe_dirtree_index_szrl033')[0].contentWindow;
+            var node = win.getSelectedNode();
+            if (node && node.IsLeaf) {
+                //showEditDialog_index_szrl033("/AreasCode030/szrl033/szrl033Edit?id=" + row.rl01902);
+                showEditDialog_index_szrl033("/AreasCode030/szrl033/szrl033Edit?id=" + node.id);
+            }
+        }
+
+        function deleteItem_index_szrl033() {
+            $.messager.confirm('确认消息', '是否删除？', function (r) {
+                if (r) {
+                    var row = $('#dg_index_szrl033').datagrid('getSelected');
+                    if (row != null) {
+                        rlform1101.post('/AreasCode030/szrl111/', { item: row }, function (result) {
+                            $('#dg_index_szrl033').datagrid('reload');
+                        });
+                    }
+                }
+            });
+        }
+
+
+        function search_index_szrl033(key) {
+            //var key = $('#input_searchbox_index_szrl033').val();
+            //refreshDatagrid_index_szrl033(key, id);
+
+            var win = $('#iframe_dirtree_index_szrl033')[0].contentWindow;
+            win.reloadDir_edit_szrl033('', key);
+        }
+
+        // 刷新表格
+        function refreshDatagrid_index_szrl033(id, level) {
+            //id = rlform1101.isNullOrWhitespace(id) ? '' : id;
+            var url = '/AreasCode030/szrl033/GetIndexAcceptancePlanDetails';
+            if (!rlform1101.isNullOrWhitespace(id)) {
+                url += '?id=' + id;
+            }
+            $('#dg_index_szrl033').datagrid({ url: url });
+            //$('#dg_index_szrl033').datagrid('getPanel').removeClass('lines-both lines-no lines-right lines-bottom')
+
+            disableButtons_index_szrl033(level);
+        }
+
+        $(function () {
+            refreshDatagrid_index_szrl033();
+
+            var jDdlMenu = $('#menu_export_szrl033').menubutton({ menu: '#menu_detail_export' });
+            $(jDdlMenu.menubutton('options').menu).menu({
+                onClick: function (item) {
+                    if (item.text == '导出本页') {
+                        exportItem_current_szrl033();
+                    }
+                    else {
+                        exportItem_all_szrl033();
+                    }
+                }
+            });
+
+            disableButtons_index_szrl033();
+        });
+
+        function disableButtons_index_szrl033(level) {
+            var jMultiBtn = $('#btn_multiaccept_index_szrl033'),
+                jBtn = $('#btn_accept_index_szrl033');
+
+            if (level === 3) {
+                jMultiBtn.linkbutton('enable');
+                jBtn.linkbutton('disable');
+            }
+            else if (level === 4) {
+                jMultiBtn.linkbutton('disable');
+                jBtn.linkbutton('enable');
+            }
+            else {
+                jMultiBtn.linkbutton('disable');
+                jBtn.linkbutton('disable');
+            }
+        }
+
+
+        // 导出
+        function exportItem_index_szrl033(num, size) {
+            var win = $('#iframe_dirtree_index_szrl033')[0].contentWindow;
+            var node = win.getSelectedNode(),
+                id = '';
+            if (node) {
+                id = node.id;
+            }
+            var url = '/AreasCode030/szrl033/ExportExcel_szrl033?pageNum=' + num + '&pageSize=' + size;
+            if (!rlform1101.isNullOrWhitespace(id)) {
+                url += '&id=' + id;
+            }
+
+            var jIframe = $('<iframe/>').hide().attr('src', url);
+            jIframe.load(function () {
+                jIframe.remove();
+            })
+            $(document.body).append(jIframe);
+        }
+
+        // 导出本页数据
+        function exportItem_current_szrl033() {
+            var pager = $('#dg_index_szrl033').datagrid('getPager').data("pagination").options;
+            var num = pager.pageNumber,
+                size = pager.pageSize;
+            exportItem_index_szrl033(num, size);
+        }
+
+        // 导出全部数据
+        function exportItem_all_szrl033() {
+            exportItem_index_szrl033(0, 0);
+        }
+
+
+        
+    </script>
+
+}

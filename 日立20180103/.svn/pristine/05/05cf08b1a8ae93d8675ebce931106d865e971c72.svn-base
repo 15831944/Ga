@@ -1,0 +1,57 @@
+﻿using Gmail.DDD.Extensions;
+using PM2.Code;
+using PM2.Models.Code100;
+using PM2.Service.Code030;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PM2.Models.Code030;
+using Gmail.DDD.Service;
+using Gmail.DDD.Mvc;
+
+namespace PM2.WebApp.Areas.Code030.Controllers
+{
+    public class szrl121Controller : Controller
+    {
+        private Iszrl121Server _szrl121Server;
+        public szrl121Controller(Iszrl121Server szrl121Server)
+        {
+            this._szrl121Server = szrl121Server;
+        }
+
+        // GET: AreasCode030/szrl121
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult QueryGridDataFor121(HttpCollection vParams)
+        {
+           return this._szrl121Server.QueryGridDataFor121(vParams)
+                .ToActionResult(this.ControllerContext);
+        }
+
+        [HttpPost]
+        public ActionResult Insert121(HttpCollection vParams)
+        {
+            return this._szrl121Server.Insert121(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult Contro121Btn(HttpCollection vParams)
+        {
+            return this._szrl121Server.Contro121Btn(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        [HttpPost]
+        public ActionResult Hande121Btn(HttpCollection vParams)
+        {
+            return this._szrl121Server.Hande121Btn(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+    }
+}

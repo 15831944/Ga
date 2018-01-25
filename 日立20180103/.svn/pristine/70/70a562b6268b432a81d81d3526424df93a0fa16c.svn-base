@@ -1,0 +1,48 @@
+﻿
+@{
+    ViewBag.Title = "采购合同支付处理";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderStyles {
+  
+}
+@section Body {
+    <div data-options="region:'west', split:true,width: 350, hideCollapsedContent: false">
+        <ul id="index_Tree"></ul>
+    </div>
+    <div data-options="region:'north',border: true,height:'auto'">
+        <a id="index_link_ABt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:80px; height:30px;">发票维护</a>
+        <a id="index_link_BBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:80px; height:30px;">预付款</a>
+        <a id="index_link_CBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:80px; height:30px;">验收款</a>
+        <a id="index_link_DBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:120px; height:30px;">支付计划调整</a>
+        <a id="index_link_EBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:120px; height:30px;">带入验收计划</a>
+        <a id="index_link_FBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:120px; height:30px;">恢复原支付计划</a>
+        <a id="index_link_JBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:80px; height:30px;">变更</a>
+        <a id="index_link_IBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:80px; height:30px;">保存</a>
+        <a id="index_link_JBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:80px; height:30px;">删除</a>
+        <a id="index_link_KBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="disabled: true" style="width:80px; height:30px;">输出AP</a>
+    </div>  
+    <div data-options="region:'center', hideCollapsedContent: false" >
+        <div id="index_Tabs" class="easyui-tabs" data-options="tabPosition: 'bottom', fit: true, tabWidth: 120">
+            <div title="支付处理">
+                @Html.Partial("Tabs_A/_Index")
+            </div>
+            <div title="验收查看">
+                @Html.Partial("Tabs_B/_Index")
+            </div>
+            <div title="附件">
+                @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+            </div>
+            <div title="协同办公">
+                
+            </div>
+        </div>  
+    </div>   
+}
+@section FooterScript {
+    <script src="~/Content/TComponent/datagrid.defaults.editors.js"></script>
+    <script src="~/Content/TComponent/datagrid.methods.editCell.js"></script>
+    <script type="text/javascript" src="~/Content/TComponent/Easy_GridPanel.js"></script>
+    <script type="text/javascript" src="~/Content/Areas/AreasCode031/sdrl125/javaScript/Init.js"></script>
+}

@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using PM2.Models.Code030;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Repositorys;
+using PM2.Models.Code001;
+using Gmail.DDD.JsonConvert;
+using PM2.Service.Code001;
+using Gmail.DDD.PagedList;
+using Gmail.DDD.Mvc;
+using PM2.Repository.Code030;
+using System.Data.Entity;
+using Gmail.DDD.Config;
+using PM2.Models.Code030.Szrl105Model;
+using PM2.Models.Code030.szrl100Model;
+
+namespace PM2.Service.Code030
+{
+    public class szrl124Server : Iszrl124Server
+    { 
+        private IDbContextScopeFactory _scopeFactory;
+        private Iszrl121Repository_Facade _szrl121Repository;//szrl121.采购合同验收处理
+        private IEFRepository<szrl107> _szrl107Repository;//szrl107.采购合同登记-验收支付计划
+        private IEFRepository<szrl004> _szrl004Repository;
+        private IEFRepository<Szrl105> _szrl105Repository;//szrl105.采购合同登记
+        private IEFRepository<szrl106> _szrl106Repository;//szrl106.采购合同登记-合同材料明细
+        private IEFRepository<szrl018> _szrl018Repository;//作番表
+        private IEFRepository<szrl100> _szrl100Repository;//供应商表
+        public szrl124Server(
+             IDbContextScopeFactory scopeFactory,
+             Iszrl121Repository_Facade szrl121Repository,
+             IEFRepository<szrl107> szrl107Repository,
+             IEFRepository<szrl004> szrl004Repository,
+             IEFRepository<Szrl105> szrl105Repository,
+             IEFRepository<szrl106> szrl106Repository,
+             IEFRepository<szrl018> szrl018Repository,
+             IEFRepository<szrl100> szrl100Repository
+       )
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl121Repository = szrl121Repository;
+            this._szrl107Repository = szrl107Repository;
+            this._szrl004Repository = szrl004Repository;
+            this._szrl105Repository = szrl105Repository;
+            this._szrl106Repository = szrl106Repository;
+            this._szrl018Repository = szrl018Repository;
+            this._szrl100Repository = szrl100Repository;
+        }
+
+
+
+    }
+}

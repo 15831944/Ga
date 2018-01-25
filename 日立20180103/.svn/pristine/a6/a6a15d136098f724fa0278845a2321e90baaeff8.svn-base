@@ -1,0 +1,24 @@
+﻿using Gmail.DDD.Extensions;
+using PM2.Code;
+using PM2.Models.Code100;
+using PM2.Service.Code030;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PM2.Models.Code030;
+using Gmail.DDD.Service;
+using Gmail.DDD.Mvc;
+
+namespace PM2.WebApp.Areas.Code030.Controllers
+{
+    public class szrlxxxController : Controller
+    {
+        // GET: AreasCode030/szrlxxx
+        public ActionResult Index()
+        {
+            return View();
+        }
+    }
+}

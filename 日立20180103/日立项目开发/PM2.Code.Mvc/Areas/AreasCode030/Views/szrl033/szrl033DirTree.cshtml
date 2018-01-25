@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "营业合同目录树";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+}
+@section Body{
+    <div id="dirTree_index_szrl033Container">
+        <ul id="dirTree_index_szrl033"></ul>
+    </div>
+    <div style="display:none">
+        <input type="hidden" id="input_hd_newestid" />
+        <input type="hidden" id="input_hd_treedata" />
+    </div>
+
+}
+@section FooterScript{
+    <script type="text/javascript">
+        // 初始化
+        function initDir_edit_szrl033() {
+            var from = $.getUrlParam('f');
+            var contractId = '';
+            if (from === '1') {
+                reloadDir_edit_szrl033();
+                $('#dirTree_index_szrl033').tree({
+                    onSelect: handleOnSelected_index_szrl033
+                });
+            }
+            else {
+                $('#dirTree_index_szrl033').tree({
+                    onSelect: handleOnSelected_edit_szrl033,
+                });
+                //contractId = window.parent.getContractId_edit_szrl033();
+            }
+            reloadDir_edit_szrl033(contractId);
+        }
+
+        function handleOnSelected_index_szrl033() {
+            var node = getSelectedNode();
+            window.parent.refreshDatagrid_index_szrl033(node.id, node.level);
+        }
+
+        window.first_select = true;
+        function handleOnSelected_edit_szrl033() {
+            if (!first_select) {
+                var node = getSelectedNode();
+                if (node && node.IsLeaf) {
+                    window.parent.refreshForm_edit_szrl033(node.id);
+                }
+            }
+            first_select = false;
+        }
+
+        function reloadDir_edit_szrl033(id, key) {
+            var m = $.getUrlParam('m');
+            key = rlform1101.isNullOrWhitespace(key) ? '' : key;
+            $.post('/AreasCode030/szrl033/GetContractDirs', { id: id, key: key, multi: m }, function (result) {
+                data = result;
+                $('#dirTree_index_szrl033').tree({ data: data });
+
+                var id = window.parent.$.getUrlParam('id');
+                if (!rlform1101.isNullOrWhitespace(id)) {
+                    var node = $('#dirTree_index_szrl033').tree('find', id);
+                    $('#dirTree_index_szrl033').tree('expandTo', node.target).tree('select', node.target);
+                    
+                }
+            });
+        }
+
+
+        // 获取已选择节点
+        function getSelectedNode() {
+            var selectedNode = $('#dirTree_index_szrl033').tree('getSelected');
+            return selectedNode;
+        }
+
+        function refreshDirs_edit_szrl033() {
+            reloadDir_edit_szrl033();
+        }
+
+        $(function () {
+            initDir_edit_szrl033();
+        });
+    </script>
+
+}

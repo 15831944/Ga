@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+    
+}
+@section Header {
+}
+@section HeaderStyles {
+}
+
+@section Body {
+    <body>
+        @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+    </body>
+}
+
+@section FooterScript {
+    <script type="text/javascript">
+        $(function () {
+            window.sdpk007_ux_WinClass.Init('F1E993F8-7137-4177-ACA7-9F1A584BD148', true);
+            window.sdpk007_ux_WinClass.Load();
+
+        });
+    </script>
+}
+
+
+
+

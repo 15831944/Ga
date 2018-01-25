@@ -1,0 +1,92 @@
+﻿#region using
+using Gmail.DDD.Repositorys;
+using Gmail.DDD.Utility;
+using PM2.Models.Code001;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.Entity;
+using PM2.Models.Code030;
+using PM2.Models.Code031;
+#endregion
+namespace PM2.Repository.Code031
+{
+    public class szrl125Repository_Facade : EFRepository<szrl125>, Iszrl125Repository_Facade
+    {
+        private IEFRepository<szrl126> _szrl126Repository;
+        public szrl125Repository_Facade(IDbContextFactory dbFactory, 
+            IUnitOfWork unitOfWork,
+            IEFRepository<szrl126> szrl126Repository)
+            : base(dbFactory, unitOfWork)
+        {
+            this._szrl126Repository = szrl126Repository;
+        }
+
+        #region 检测合同是否为初始化状态
+        /// <summary>
+        /// 检测合同是否为[初始化状态]
+        /// </summary>
+        /// <param name="pd00401">合同ID</param>
+        /// <returns></returns>
+        public bool IsInitialize(string pd00401)
+        {
+            int count = (from x in this.GetModels(x=> x.rl12502.Equals(pd00401))
+                        let count1 = x.szrl126s.Where(y=> y.rl12602 == x.rl12501 && y.rl12621 == 1).Count()
+                        let count2 = x.szrl127s.Where(y=> y.rl12702 == x.rl12501).Count()
+                        select count1 + count2).Sum();
+            return count == 0;
+        }
+        #endregion
+        #region 获取-[待支付确认]合同支付情况
+        /// <summary>
+        /// 获取-[待支付确认]合同支付情况
+        /// </summary>
+        /// <param name="rl12502">合同ID</param>
+        /// <returns></returns>
+        public async Task<szrl125> GetSzrl126s(string rl12502)
+        {
+            return await this.GetModels(x => x.rl12502.Equals(rl12502))
+                             .Include(x => x.szrl126s)
+                             .SingleOrDefaultAsync();
+        }
+        #endregion
+        #region 获取-[已支付确认]合同支付情况
+        /// <summary>
+        /// 获取-[已支付确认]合同支付情况
+        /// </summary>
+        /// <param name="rl12502"></param>
+        /// <returns></returns>
+        public async Task<szrl125> GetSzrl127s(string rl12502)
+        {
+            try
+            {
+                IQueryable<szrl125> szrl125s = this.GetModels(x => x.rl12502.Equals(rl12502))
+                                               .Include(x => x.szrl127s);
+                return await szrl125s.SingleOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        #endregion
+
+        #region 删除合同验收计划
+        /// <summary>
+        /// 删除合同验收计划
+        /// </summary>
+        /// <param name="rl12502"></param>
+        /// <returns></returns>
+        public async Task RemoveIntoPayment(string rl12502)
+        {
+            szrl125 szrl125 = await this.GetSzrl126s(rl12502);
+            IEnumerable<szrl126> szrl126s = szrl125.szrl126s.Where(x => x.rl12603 == 1 && x.rl12621 == 1);
+            this._szrl126Repository.RemoveRange(szrl126s);
+
+        }
+        #endregion
+        
+    }
+}

@@ -1,0 +1,156 @@
+﻿@{
+    ViewBag.Title = "供应商列表";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script type="text/javascript">
+    </script>
+}
+
+@section Body{
+    <div data-options="region:'north', title: '供应商信息', collapsible: false" style="height: 65px;">
+        <table>
+            <tr>
+                <td>查询条件</td>
+                <td style="height: 30px;">
+                    <input type="text" id="input_condition_search" class="easyui-textbox" />
+                </td>
+                <td>
+                    <input type="radio" name="input_condition_black" value="2" checked="checked" />全部
+                    <input type="radio" name="input_condition_black" value="1" />黑名单
+                    <input type="radio" name="input_condition_black" value="0" />非黑名单
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div data-options="region:'center'">
+        <table id="dg" class="easyui-datagrid" data-type="1"
+               url="/AreasCode030/szrl100/GetGysList"
+               toolbar="#toolbar" pagination="true" fit="true"
+               rownumbers="true" fitColumns="false" singleSelect="true">
+            <thead>
+                <tr>
+                    <th field="rl10002" width="80">企业编码</th>
+                    <th field="rl10041" width="100">G&G代码</th>
+                    <th field="rl10003" width="100">企业名</th>
+                    <th field="rl10005" width="100">曾用名</th>
+                    <th field="rl10006" width="100" formatter="rlFormatter1101_ent">企业类型</th>
+                    <th field="rl10007" width="100" formatter="rlFormatter1101_ent">种别分类</th>
+                    <th field="rl10008" width="100">产品类型</th>
+                    <th field="rl10009" width="100">联系地址</th>
+                    <th field="ContactPerson1" width="100">联系人</th>
+                    <th field="ContactPhone1" width="100">联系电话</th>
+                    <th field="Email1" width="150">电子邮箱</th>
+                    <th field="rl10015" width="100" formatter="rlFormatter1101_have">建筑业企业资质</th>
+                    <th field="rl10016" width="100" formatter="rlFormatter1101_have">安全生产许可证</th>
+                    <th field="rl10017" width="150" formatter="rlFormatter1101_date">安全生产许可证有效期</th>
+                    <th field="rl10018" width="80" formatter="rlFormatter1101_have">特别资质</th>
+                    <th field="rl10019" width="80" formatter="rlFormatter1101_have">质量认证</th>
+                    <th field="rl10020" width="100" formatter="rlFormatter1101_date">质量认证有效期</th>
+                    <th field="rl10026" width="80" formatter="rlFormatter1101_able">可否采用</th>
+                    <th field="rl10027" width="80" formatter="rlFormatter1101_yes">黑名单</th>
+                </tr>
+            </thead>
+        </table>
+        <div id="toolbar">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="searchSuppliers()">查询</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newItem()">新增</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editItem()">编辑</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteItem()">删除</a>
+            <a href="javascript:void(0)" id="menu_export_szrl100" class="easyui-menubutton"
+               data-options="menu:'#menu_index_export_szrl100',iconCls:'icon-save'">导出</a>
+            <div id="menu_index_export_szrl100" style="width:150px;">
+                <div data-options="iconCls:'icon-undo'" onclick="exportItem_current_szrl100">导出本页</div>
+                <div data-options="iconCls:'icon-redo'" onclick="exportItem_all_szrl100">导出全部</div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            // 新增按钮事件
+            function newItem() {
+                rlform1101.openWindow("/AreasCode030/szrl100/Edit");
+            }
+
+            // 编辑按钮事件
+            function editItem() {
+                var row = $('#dg').datagrid('getSelected');
+                if (row) {
+                    rlform1101.openWindow("/AreasCode030/szrl100/Edit?id=" + row.rl10001);
+                }
+            }
+
+            // 删除按钮事件
+            function deleteItem() {
+                $.messager.confirm('确认消息', '是否删除？', function (r) {
+                    if (r) {
+                        var row = $('#dg').datagrid('getSelected');
+                        rlform1101.post('/AreasCode030/szrl100/RemoveSupplier', { code: row.rl10002 }, function (result) {
+                            $('#dg').datagrid('reload');    // reload the user data
+                        });
+                    }
+                });
+            }
+
+            // 查询
+            function searchSuppliers() {
+                var key = $('#input_condition_search').val(),
+                    black = $('input:radio[name=input_condition_black]:checked').val();
+                var url = '/AreasCode030/szrl100/GetGysList?key=' + key + '&black=' + black;
+                $('#dg').datagrid({ url: url });
+            }
+
+            // 初始化
+            $(function () {
+                $('#dg').datagrid({
+                    onDblClickRow: function (index, row) {
+                        if (row) {
+                            rlform1101.openWindow("/AreasCode030/szrl100/Edit?id=" + row.rl10001);
+                        }
+                    }
+                });
+
+                var jDdlMenu = $('#menu_export_szrl100').menubutton({ menu: '#menu_index_export_szrl100' });
+                $(jDdlMenu.menubutton('options').menu).menu({
+                    onClick: function (item) {
+                        if (item.text == '导出本页') {
+                            exportItem_current_szrl100();
+                        }
+                        else {
+                            exportItem_all_szrl100();
+                        }
+                    }
+                })
+            });
+
+
+            // 导出
+            function exportItem_index_szrl100(num, size) {
+                var key = $('#input_condition_search').val(),
+                    black = $('input:radio[name=input_condition_black]:checked').val();
+                var url = '/AreasCode030/szrl100/Export_szrl100?key=' + key + '&black=' + black + "&page=" + num + "&rows=" + size;
+                var jIframe = $('<iframe/>').hide().attr('src', url);
+                jIframe.load(function () {
+                    jIframe.remove();
+                })
+                $(document.body).append(jIframe);
+            }
+
+            // 导出当前页
+            function exportItem_current_szrl100() {
+                var pager = $('#dg').datagrid('getPager').data("pagination").options;
+                var num = pager.pageNumber,
+                    size = pager.pageSize;
+                exportItem_index_szrl100(num, size);
+            }
+
+            // 导出全部
+            function exportItem_all_szrl100() {
+                exportItem_index_szrl100(0, 0);
+            }
+        </script>
+
+    </div>
+
+}

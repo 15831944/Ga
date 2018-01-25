@@ -1,0 +1,1728 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Mvc;
+using Gmail.DDD.Service;
+using Gmail.DDD.DBContextScope;
+using PM2.Models.Code030;
+using Gmail.DDD.Repositorys;
+using PM2.Models.Code001;
+using PM2.Models.Code030.szrl111Model;
+using Gmail.DDD.PagedList;
+using PM2.Repository.Code030;
+using Gmail.DDD.Utility;
+using Gmail.DDD.Extensions;
+using System.Data;
+using PM2.Service.Code030.szrl111Service;
+using PM2.Service.Code030.Szrl105Service;
+using PM2.Service.Code001;
+
+namespace PM2.Service.Code030
+{
+    public class sdbo003Server : Isdbo003Server
+    {
+        #region ===============注入======================
+        private IDbContextScopeFactory _scopeFactory;
+        private IEFRepository<szrl004> _szrl004Repository;
+        private IEFRepository<sdpj004> _sdpj004Repository;
+        private IEFRepository<szrl025> _szrl025Repository;
+        private IEFRepository<szrl018> _szrl018Repository;
+        private Iszrl111Repository_Facade _szrl111Repository;
+        private IEFRepository<szrl112> _szrl112Repository;
+        private IEFRepository<szrl082> _szrl082Repository;
+        private IEFRepository<szrl083> _szrl083Repository;
+        private IEFRepository<szrl084> _szrl084Repository;
+        private IEFRepository<szrl085> _szrl085Repository;
+        private IEFRepository<szrl086> _szrl086Repository;
+        IExcelService _excelService;
+        public sdbo003Server(
+            IDbContextScopeFactory scopeFactory,
+            IEFRepository<szrl004> szrl004Repository,
+            IEFRepository<sdpj004> sdpj004Repository,
+            IEFRepository<szrl025> szrl025Repository,
+            IEFRepository<szrl018> szrl018Repository,
+            IEFRepository<szrl112> szrl112Repository,
+            IEFRepository<szrl082> szrl082Repository,
+            IEFRepository<szrl083> szrl083Repository,
+            IEFRepository<szrl084> szrl084Repository,
+            IEFRepository<szrl085> szrl085Repository,
+            IEFRepository<szrl086> szrl086Repository,
+            Iszrl111Repository_Facade szrl111Repository,
+            IExcelService excelService
+        )
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl004Repository = szrl004Repository;
+            this._sdpj004Repository = sdpj004Repository;
+            this._szrl025Repository = szrl025Repository;
+            this._szrl018Repository = szrl018Repository;
+            this._szrl112Repository = szrl112Repository;
+            this._szrl082Repository = szrl082Repository;
+            this._szrl083Repository = szrl083Repository;
+            this._szrl084Repository = szrl084Repository;
+            this._szrl085Repository = szrl085Repository;
+            this._szrl086Repository = szrl086Repository;
+            this._szrl111Repository = szrl111Repository;
+            this._excelService = excelService;
+        }
+        #endregion
+        #region =================================表纸=================================
+        /// <summary>
+        /// 查询实行预算信息
+        /// </summary>
+        /// <param name="vParams"></param>
+        /// <returns></returns>
+        public IOperateResult GetImplementBudgetInfo(IRequestGetter vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    /*
+                     * ------此处需要修改------
+                     1.从作番导航中点击时查询最新版本的实行预算所关联的受注传票
+                     2.选择版本查询时,根据所有版本查询相对应的受注传票
+                     */
+                    string zuofanid = vParams.GetValue<string>("zuofanid");
+                    string rl02503 = vParams.GetValue<string>("rl02503");
+                    // var rl02503 = vParams.GetValue<List<111>>("rl02503",GetterType.JToken);//接收json
+                    szrl082 query_szrl082 = this._szrl082Repository.GetModels(x => x.rl08204.Equals(zuofanid)).OrderByDescending(x => x.rl08203).FirstOrDefault();
+                    szrl025 query_szrl025 = null;
+                    IEnumerable<szrl083> query_szrl083s = null;
+                    IEnumerable<szrl084> query_szrl084s = null;
+                    szrl018 query_szrl018 = this._szrl018Repository.GetModels(x => x.rl01801.Equals(zuofanid)).FirstOrDefault();
+                    query_szrl018.rl01802 = this._szrl004Repository.GetModels(x => x.rl00401.Equals(query_szrl018.rl01802)).Select(x => x.rl00403).FirstOrDefault();
+                    query_szrl018.rl01811 = this._sdpj004Repository.GetModels(x => x.pj00401.Equals(query_szrl018.rl01811)).Select(x => x.pj00402).FirstOrDefault() ?? string.Empty;
+                    decimal _rl01835 = query_szrl018.rl01835;
+                    szrl085 query_szrl085 = new szrl085();
+                    #region 赋值
+                    if (query_szrl082 == null)
+                    {
+                        query_szrl025 = this._szrl025Repository.GetModels(x => x.rl02501.Equals(zuofanid) && x.rl02532.Equals(1)).OrderByDescending(x => x.rl02503).FirstOrDefault();
+                        query_szrl082 = new szrl082();
+                        query_szrl082.rl08203 = "000000";
+                        query_szrl082.rl08204 = zuofanid;
+                        query_szrl082.rl08209 = query_szrl018.rl01812;
+                        query_szrl082.rl08210 = query_szrl025.rl02508;
+                        query_szrl082.rl08211 = query_szrl018.rl01812;
+                        query_szrl082.rl08217 = query_szrl025.rl02520;
+                        query_szrl082.rl08218 = query_szrl025.rl02520 * ((_rl01835 / 100) / (1 + _rl01835 / 100));
+                        query_szrl082.rl08219 = query_szrl025.rl02520 - (query_szrl025.rl02520 * ((_rl01835 / 100) / (1 + _rl01835 / 100)));
+                        query_szrl082.rl08227 = 0.18m;
+                        query_szrl082.rl08244 = 12m;
+                        query_szrl082.rl08245 = 0.20m;
+
+                    }
+                    else
+                    {
+                        query_szrl025 = this._szrl025Repository.GetModels(x => x.rl02535.Equals(query_szrl082.rl08225)).FirstOrDefault();
+                        query_szrl085 = this._szrl085Repository.GetModels(x => x.rl08506.Equals(query_szrl082.rl08204) && x.rl08507
+                                 .Equals(query_szrl082.rl08203)).FirstOrDefault();
+                        query_szrl083s = this._szrl083Repository.GetModels(x => x.rl08316.Equals(query_szrl082.rl08204) && x.rl08317
+                                 .Equals(query_szrl082.rl08203)).ToArray();
+                        query_szrl084s = this._szrl084Repository.GetModels(x => x.rl08415.Equals(query_szrl082.rl08204) && x.rl08416
+                                 .Equals(query_szrl082.rl08203)).ToArray();
+                    }
+                    ImplementBudget ib = CombinatorialEntity(query_szrl018, query_szrl025, query_szrl082, query_szrl085, query_szrl083s, query_szrl084s);
+                    #endregion
+                    return OperateResultFactory.FromLoadOperateResult(ib);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        /// <summary>
+        /// 组合model
+        /// </summary>
+        /// <param name="_a"></param>
+        /// <param name="_b"></param>
+        /// <param name="_c"></param>
+        /// <param name="_d"></param>
+        /// <returns></returns>
+        public ImplementBudget CombinatorialEntity(szrl018 _a, szrl025 _b, szrl082 _c, szrl085 _d, IEnumerable<szrl083> _e, IEnumerable<szrl084> _f)
+        {
+            string _k1 = "K1";
+            string _l1 = "L1";
+            string _b1 = "B1";
+            string __A = "A";
+            string __M = "M";
+            string __E = "E";
+            string __P = "P";
+            ImplementBudget ib = new ImplementBudget()
+            {
+                #region szrl018
+                rl01801 = _a.rl01801,
+                rl01802 = _a.rl01802,
+                rl01803 = _a.rl01803,
+                rl01804 = _a.rl01804,
+                rl01805 = _a.rl01805,
+                rl01806 = _a.rl01806,
+                rl01807 = _a.rl01807,
+                rl01808 = _a.rl01808,
+                rl01809 = _a.rl01809,
+                rl01810 = _a.rl01810,
+                rl01811 = _a.rl01811,
+                rl01812 = _a.rl01812,
+                rl01813 = _a.rl01813,
+                rl01814 = _a.rl01814,
+                rl01815 = _a.rl01815,
+                rl01816 = _a.rl01816,
+                rl01817 = _a.rl01817,
+                rl01818 = _a.rl01818,
+                rl01819 = _a.rl01819,
+                rl01820 = _a.rl01820,
+                rl01821 = _a.rl01821,
+                rl01822 = _a.rl01822,
+                rl01823 = _a.rl01823,
+                rl01824 = _a.rl01824,
+                rl01825 = _a.rl01825,
+                rl01826 = _a.rl01826,
+                rl01827 = _a.rl01827,
+                rl01828 = _a.rl01828,
+                rl01829 = _a.rl01829,
+                rl01830 = _a.rl01830,
+                rl01831 = _a.rl01831,
+                rl01832 = _a.rl01832,
+                rl01833 = _a.rl01833,
+                rl01834 = _a.rl01834,
+                rl01835 = _a.rl01835,
+                #endregion
+                #region szrl025
+                rl02501 = _b.rl02501,
+                rl02502 = _b.rl02502,
+                rl02503 = _b.rl02503,
+                rl02504 = _b.rl02504,
+                rl02505 = _b.rl02505,
+                rl02506 = _b.rl02506,
+                rl02507 = _b.rl02507,
+                rl02508 = _b.rl02508,
+                rl02509 = _b.rl02509,
+                rl02510 = _b.rl02510,
+                rl02511 = _b.rl02511,
+                rl02512 = _b.rl02512,
+                rl02513 = _b.rl02513,
+                rl02514 = _b.rl02514,
+                rl02515 = _b.rl02515,
+                rl02516 = _b.rl02516,
+                rl02517 = _b.rl02517,
+                rl02518 = _b.rl02518,
+                rl02519 = _b.rl02519,
+                rl02520 = _b.rl02520,
+                rl02521 = _b.rl02521,
+                rl02522 = _b.rl02522,
+                rl02523 = _b.rl02523,
+                rl02524 = _b.rl02524,
+                rl02525 = _b.rl02525,
+                rl02526 = _b.rl02526,
+                rl02527 = _b.rl02527,
+                rl02528 = _b.rl02528,
+                rl02529 = _b.rl02529,
+                rl02530 = _b.rl02530,
+                rl02531 = _b.rl02531,
+                rl02532 = _b.rl02532,
+                rl02533 = _b.rl02533,
+                rl02534 = _b.rl02534,
+                rl02535 = _b.rl02535,
+                #endregion
+                #region szrl082
+                rl08201 = _c.rl08201,
+                rl08202 = _c.rl08202,
+                rl08203 = _c.rl08203,
+                rl08204 = _c.rl08204,
+                rl08205 = _c.rl08205,
+                rl08206 = _c.rl08206,
+                rl08207 = _c.rl08207,
+                rl08208 = _c.rl08208,
+                rl08209 = _c.rl08209,
+                rl08210 = _c.rl08210,
+                rl08211 = _c.rl08211,
+                rl08212 = _c.rl08212,
+                rl08213 = _c.rl08213,
+                rl08214 = _c.rl08214,
+                rl08215 = _c.rl08215,
+                rl08216 = _c.rl08216,
+                rl08217 = _c.rl08217,
+                rl08218 = _c.rl08218,
+                rl08219 = _c.rl08219,
+                rl08220 = _c.rl08220,
+                rl08221 = _c.rl08221,
+                rl08222 = _c.rl08222,
+                rl08223 = _c.rl08223,
+                rl08224 = _c.rl08224,
+                rl08225 = _c.rl08225,
+                rl08226 = _c.rl08226,
+                rl08227 = _c.rl08227,
+                rl08228 = _c.rl08228,
+                rl08229 = _c.rl08229,
+                rl08230 = _c.rl08230,
+                rl08231 = _c.rl08231,
+                rl08232 = _c.rl08232,
+                rl08233 = _c.rl08233,
+                rl08234 = _c.rl08234,
+                rl08235 = _c.rl08235,
+                rl08236 = _c.rl08236,
+                rl08237 = _c.rl08237,
+                rl08238 = _c.rl08238,
+                rl08239 = _c.rl08239,
+                rl08240 = _c.rl08240,
+                rl08241 = _c.rl08241,
+                rl08242 = _c.rl08242,
+                rl08243 = _c.rl08243,
+                rl08244 = _c.rl08244,
+                rl08245 = _c.rl08245,
+                rl08246 = _c.rl08246,
+                #endregion
+                #region szrl085
+                rl08501 = _d.rl08501,
+                rl08502 = _d.rl08502,
+                rl08503 = _d.rl08503,
+                rl08504 = _d.rl08504,
+                rl08505 = _d.rl08505,
+                rl08506 = _d.rl08506,
+                rl08507 = _d.rl08507,
+                rl08508 = _d.rl08508,
+                #endregion
+            };
+            if (_e != null)
+            {
+
+                ib._extend_1 = extend("K1", true, _e);
+                ib._extend_2 = extend("K1", false, _e);
+                ib._extend_3 = extend("L1", true, _e);
+                ib._extend_4 = extend("L1", false, _e);
+                ib._extend_5 = extend("B1", true, _e);
+                ib._extend_6 = extend("B1", false, _e);
+                ib._extend_7 = extend("D1", true, _e);
+                ib._extend_8 = extend("D1", false, _e);
+                ib._extend_9 = extend("E1", true, _e);
+                ib._extend_10 = extend("E1", false, _e);
+            }
+            if (_f != null)
+            {
+                ib._extend_11 = _f.Where(x => x.rl08402.Equals("A")).Sum(s => s.rl08410).ToString();
+                ib._extend_12 = _f.Where(x => x.rl08402.Equals("A")).Sum(s => s.rl08414).ToString();
+                ib._extend_13 = _f.Where(x => x.rl08402.Equals("C")).Sum(s => s.rl08410).ToString();
+                ib._extend_14 = _f.Where(x => x.rl08402.Equals("C")).Sum(s => s.rl08414).ToString();
+                ib._extend_15 = _f.Where(x => x.rl08402.Equals("D2")).Sum(s => s.rl08410).ToString();
+                ib._extend_16 = _f.Where(x => x.rl08402.Equals("D2")).Sum(s => s.rl08414).ToString();
+                ib._extend_17 = _f.Where(x => x.rl08402.Equals("F")).Sum(s => s.rl08410).ToString();
+                ib._extend_18 = _f.Where(x => x.rl08402.Equals("F")).Sum(s => s.rl08414).ToString();
+                ib._extend_19 = _f.Where(x => x.rl08402.Equals("G")).Sum(s => s.rl08410).ToString();
+                ib._extend_20 = _f.Where(x => x.rl08402.Equals("G")).Sum(s => s.rl08414).ToString();
+                ib._extend_21 = _f.Where(x => x.rl08402.Equals("H")).Sum(s => s.rl08410).ToString();
+                ib._extend_22 = _f.Where(x => x.rl08402.Equals("H")).Sum(s => s.rl08414).ToString();
+                ib._extend_23 = _f.Where(x => x.rl08402.Equals("J1")).Sum(s => s.rl08410).ToString();
+                ib._extend_24 = _f.Where(x => x.rl08402.Equals("J1")).Sum(s => s.rl08414).ToString();
+                ib._extend_25 = _f.Where(x => x.rl08402.Equals("J2")).Sum(s => s.rl08410).ToString();
+                ib._extend_26 = _f.Where(x => x.rl08402.Equals("J2")).Sum(s => s.rl08414).ToString();
+                ib._extend_27 = _f.Where(x => x.rl08402.Equals("J3")).Sum(s => s.rl08410).ToString();
+                ib._extend_28 = _f.Where(x => x.rl08402.Equals("J3")).Sum(s => s.rl08414).ToString();
+                ib._extend_29 = _f.Where(x => x.rl08402.Equals("J4")).Sum(s => s.rl08410).ToString();
+                ib._extend_30 = _f.Where(x => x.rl08402.Equals("J4")).Sum(s => s.rl08414).ToString();
+                ib._extend_31 = _f.Where(x => x.rl08402.Equals("J5")).Sum(s => s.rl08410).ToString();
+                ib._extend_32 = _f.Where(x => x.rl08402.Equals("J5")).Sum(s => s.rl08414).ToString();
+                ib._extend_33 = _f.Where(x => x.rl08402.Equals("J6")).Sum(s => s.rl08410).ToString();
+                ib._extend_34 = _f.Where(x => x.rl08402.Equals("J6")).Sum(s => s.rl08414).ToString();
+                ib._extend_35 = _f.Where(x => x.rl08402.Equals("J8")).Sum(s => s.rl08410).ToString();
+                ib._extend_36 = _f.Where(x => x.rl08402.Equals("J8")).Sum(s => s.rl08414).ToString();
+                ib._extend_37 = _f.Where(x => x.rl08402.Equals("M")).Sum(s => s.rl08414).ToString();
+                ib._extend_38 = _f.Where(x => x.rl08402.Equals("M")).Sum(s => s.rl08410).ToString();
+                ib._extend_39 = _f.Where(x => x.rl08402.Equals("N")).Sum(s => s.rl08414).ToString();
+                ib._extend_40 = _f.Where(x => x.rl08402.Equals("N")).Sum(s => s.rl08410).ToString();
+
+
+
+
+            }
+            ib._extend_41 = (_c.rl08246 * _c.rl08230 / 100).ToString();
+            ib._extend_42 = (_c.rl08246 * _c.rl08231 / 100).ToString();
+            ib._extend_43 = (_c.rl08246 * _c.rl08232 / 100).ToString();
+            #region K-L-B
+            if (_e != null)
+            {
+                #region K
+                ib._extend_50 = Set_KLB(_e, _k1, 0, 0);
+                ib._extend_51 = Set_KLB(_e, _k1, 0, 1);
+                ib._extend_52 = Set_KLB(_e, _k1, 0, 2);
+                ib._extend_53 = Set_KLB(_e, _k1, 1, 0);
+                ib._extend_54 = Set_KLB(_e, _k1, 1, 1);
+                ib._extend_55 = Set_KLB(_e, _k1, 1, 2);
+                ib._extend_56 = Set_KLB(_e, _k1, 2, 0);
+                ib._extend_57 = Set_KLB(_e, _k1, 2, 1);
+                ib._extend_58 = Set_KLB(_e, _k1, 2, 2);
+                ib._extend_59 = Set_KLB(_e, _k1, 3, 0);
+                ib._extend_60 = Set_KLB(_e, _k1, 3, 1);
+                ib._extend_61 = Set_KLB(_e, _k1, 3, 2);
+                ib._extend_62 = Set_KLB(_e, _k1, 4, 0);
+                ib._extend_63 = Set_KLB(_e, _k1, 4, 1);
+                ib._extend_64 = Set_KLB(_e, _k1, 4, 2);
+                ib._extend_65 = Set_KLB(_e, _k1, 5, 0);
+                ib._extend_66 = Set_KLB(_e, _k1, 5, 1);
+                ib._extend_67 = Set_KLB(_e, _k1, 5, 2);
+                ib._extend_68 = Set_KLB(_e, _k1, 6, 0);
+                ib._extend_69 = Set_KLB(_e, _k1, 6, 1);
+                ib._extend_70 = Set_KLB(_e, _k1, 6, 2);
+                ib._extend_71 = Set_KLB(_e, _k1, 7, 0);
+                ib._extend_72 = Set_KLB(_e, _k1, 7, 1);
+                ib._extend_73 = Set_KLB(_e, _k1, 7, 2);
+                ib._extend_74 = Set_KLB(_e, _k1, 8, 0);
+                ib._extend_75 = Set_KLB(_e, _k1, 8, 1);
+                ib._extend_76 = Set_KLB(_e, _k1, 8, 2);
+                ib._extend_77 = Set_KLB(_e, _k1, 9, 0);
+                ib._extend_78 = Set_KLB(_e, _k1, 9, 1);
+                ib._extend_79 = Set_KLB(_e, _k1, 9, 2);
+                ib._extend_80 = Set_KLB(_e, _k1, 10, 0);
+                ib._extend_81 = Set_KLB(_e, _k1, 10, 1);
+                ib._extend_82 = Set_KLB(_e, _k1, 10, 2);
+                ib._extend_83 = Set_KLB(_e, _k1, 11, 0);
+                ib._extend_84 = Set_KLB(_e, _k1, 11, 1);
+                ib._extend_85 = Set_KLB(_e, _k1, 11, 2);
+                #endregion
+                #region L
+                ib._extend_86 = Set_KLB(_e, _l1, 0, 0);
+                ib._extend_87 = Set_KLB(_e, _l1, 0, 1);
+                ib._extend_88 = Set_KLB(_e, _l1, 0, 2);
+                ib._extend_89 = Set_KLB(_e, _l1, 1, 0);
+                ib._extend_90 = Set_KLB(_e, _l1, 1, 1);
+                ib._extend_91 = Set_KLB(_e, _l1, 1, 2);
+                ib._extend_92 = Set_KLB(_e, _l1, 2, 0);
+                ib._extend_93 = Set_KLB(_e, _l1, 2, 1);
+                ib._extend_94 = Set_KLB(_e, _l1, 2, 2);
+                ib._extend_95 = Set_KLB(_e, _l1, 3, 0);
+                ib._extend_96 = Set_KLB(_e, _l1, 3, 1);
+                ib._extend_97 = Set_KLB(_e, _l1, 3, 2);
+                ib._extend_98 = Set_KLB(_e, _l1, 4, 0);
+                ib._extend_99 = Set_KLB(_e, _l1, 4, 1);
+                ib._extend_100 = Set_KLB(_e, _l1, 4, 2);
+                ib._extend_101 = Set_KLB(_e, _l1, 5, 0);
+                ib._extend_102 = Set_KLB(_e, _l1, 5, 1);
+                ib._extend_103 = Set_KLB(_e, _l1, 5, 2);
+                ib._extend_104 = Set_KLB(_e, _l1, 6, 0);
+                ib._extend_105 = Set_KLB(_e, _l1, 6, 1);
+                ib._extend_106 = Set_KLB(_e, _l1, 6, 2);
+                ib._extend_107 = Set_KLB(_e, _l1, 7, 0);
+                ib._extend_108 = Set_KLB(_e, _l1, 7, 1);
+                ib._extend_109 = Set_KLB(_e, _l1, 7, 2);
+                ib._extend_110 = Set_KLB(_e, _l1, 8, 0);
+                ib._extend_111 = Set_KLB(_e, _l1, 8, 1);
+                ib._extend_112 = Set_KLB(_e, _l1, 8, 2);
+                ib._extend_113 = Set_KLB(_e, _l1, 9, 0);
+                ib._extend_114 = Set_KLB(_e, _l1, 9, 1);
+                ib._extend_115 = Set_KLB(_e, _l1, 9, 2);
+                ib._extend_116 = Set_KLB(_e, _l1, 10, 0);
+                ib._extend_117 = Set_KLB(_e, _l1, 10, 1);
+                ib._extend_118 = Set_KLB(_e, _l1, 10, 2);
+                ib._extend_119 = Set_KLB(_e, _l1, 11, 0);
+                ib._extend_120 = Set_KLB(_e, _l1, 11, 1);
+                ib._extend_121 = Set_KLB(_e, _l1, 11, 2);
+                #endregion
+                #region B
+                ib._extend_122 = Set_KLB(_e, _b1, 0, 0);
+                ib._extend_123 = Set_KLB(_e, _b1, 0, 1);
+                ib._extend_124 = Set_KLB(_e, _b1, 0, 2);
+                ib._extend_125 = Set_KLB(_e, _b1, 1, 0);
+                ib._extend_126 = Set_KLB(_e, _b1, 1, 1);
+                ib._extend_127 = Set_KLB(_e, _b1, 1, 2);
+                ib._extend_128 = Set_KLB(_e, _b1, 2, 0);
+                ib._extend_129 = Set_KLB(_e, _b1, 2, 1);
+                ib._extend_130 = Set_KLB(_e, _b1, 2, 2);
+                ib._extend_131 = Set_KLB(_e, _b1, 3, 0);
+                ib._extend_132 = Set_KLB(_e, _b1, 3, 1);
+                ib._extend_133 = Set_KLB(_e, _b1, 3, 2);
+                ib._extend_134 = Set_KLB(_e, _b1, 4, 0);
+                ib._extend_135 = Set_KLB(_e, _b1, 4, 1);
+                ib._extend_136 = Set_KLB(_e, _b1, 4, 2);
+                ib._extend_137 = Set_KLB(_e, _b1, 5, 0);
+                ib._extend_138 = Set_KLB(_e, _b1, 5, 1);
+                ib._extend_139 = Set_KLB(_e, _b1, 5, 2);
+                ib._extend_140 = Set_KLB(_e, _b1, 6, 0);
+                ib._extend_141 = Set_KLB(_e, _b1, 6, 1);
+                ib._extend_142 = Set_KLB(_e, _b1, 6, 2);
+                ib._extend_143 = Set_KLB(_e, _b1, 7, 0);
+                ib._extend_144 = Set_KLB(_e, _b1, 7, 1);
+                ib._extend_145 = Set_KLB(_e, _b1, 7, 2);
+                ib._extend_146 = Set_KLB(_e, _b1, 8, 0);
+                ib._extend_147 = Set_KLB(_e, _b1, 8, 1);
+                ib._extend_148 = Set_KLB(_e, _b1, 8, 2);
+                ib._extend_149 = Set_KLB(_e, _b1, 9, 0);
+                ib._extend_150 = Set_KLB(_e, _b1, 9, 1);
+                ib._extend_151 = Set_KLB(_e, _b1, 9, 2);
+                ib._extend_152 = Set_KLB(_e, _b1, 10, 0);
+                ib._extend_153 = Set_KLB(_e, _b1, 10, 1);
+                ib._extend_154 = Set_KLB(_e, _b1, 10, 2);
+                ib._extend_155 = Set_KLB(_e, _b1, 11, 0);
+                ib._extend_156 = Set_KLB(_e, _b1, 11, 1);
+                ib._extend_157 = Set_KLB(_e, _b1, 11, 2);
+                #endregion
+                #region KLB税率
+                ib._extend_158 = Set_KLB(_e, _k1, 0, 3);
+                ib._extend_159 = Set_KLB(_e, _l1, 0, 3);
+                ib._extend_160 = Set_KLB(_e, _b1, 0, 3);
+                #endregion
+                #region KLB合计
+                ib._extend_161 = _e.Where(x => x.rl08302.Substring(2, 2).Equals(_k1) || x.rl08302.Substring(2, 2).Equals(_l1) || x.rl08302.Substring(2, 2).Equals(_b1))
+                    .Select(x => x.rl08309).Sum().ToString();
+                ib._extend_162 = _e.Where(x => x.rl08302.Substring(2, 2).Equals(_k1) || x.rl08302.Substring(2, 2).Equals(_l1) || x.rl08302.Substring(2, 2).Equals(_b1))
+                    .Select(x => x.rl08313).Sum().ToString();
+                #endregion
+            }
+            #endregion
+            #region 工事别
+            if (_e != null)
+            {
+                ib._extend_170 = extend_170_186(_e, _k1, __A);
+                ib._extend_171 = extend_170_186(_e, _l1, __A);
+                ib._extend_172 = extend_170_186(_e, _b1, __A);
+                ib._extend_173 = (Convert.ToDecimal(ib._extend_170) + Convert.ToDecimal(ib._extend_171) + Convert.ToDecimal(ib._extend_172)).ToString();
+                ib._extend_174 = extend_170_186(_e, _k1, __M);
+                ib._extend_175 = extend_170_186(_e, _l1, __M);
+                ib._extend_176 = extend_170_186(_e, _b1, __M);
+                ib._extend_177 = (Convert.ToDecimal(ib._extend_174) + Convert.ToDecimal(ib._extend_175) + Convert.ToDecimal(ib._extend_176)).ToString();
+                ib._extend_178 = extend_170_186(_e, _k1, __E);
+                ib._extend_179 = extend_170_186(_e, _l1, __E);
+                ib._extend_180 = extend_170_186(_e, _b1, __E);
+                ib._extend_181 = (Convert.ToDecimal(ib._extend_178) + Convert.ToDecimal(ib._extend_179) + Convert.ToDecimal(ib._extend_180)).ToString();
+                ib._extend_182 = extend_170_186(_e, _k1, __P);
+                ib._extend_183 = extend_170_186(_e, _l1, __P);
+                ib._extend_184 = extend_170_186(_e, _b1, __P);
+                ib._extend_185 = (Convert.ToDecimal(ib._extend_182) + Convert.ToDecimal(ib._extend_183) + Convert.ToDecimal(ib._extend_184)).ToString();
+            }
+            #endregion
+            return ib;
+        }
+        private string extend_170_186(IEnumerable<szrl083> _e, string _klb, string worknot)
+        {
+            try
+            {
+                if (worknot.Equals("P"))
+                {
+                    return _e
+                        .Where(x => x.rl08302.Contains(_klb) && x.rl08303.Contains(worknot))
+                        .Select(s => s.rl08309)
+                        .Sum()
+                        .ToString();
+                }
+                else
+                {
+                    return _e
+                        .Where(x => x.rl08302.Contains(_klb) && x.rl08303.Contains(worknot) && !x.rl08303.Contains("P"))
+                        .Select(s => s.rl08309)
+                        .Sum()
+                        .ToString();
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+        /// <summary>
+        /// 查询KLBDE 合计含税和不含税小计总和
+        /// </summary>
+        /// <param name="t1">传入"K1" "L1"....</param>
+        /// <param name="t2">true:含税;false:不含税</param>
+        /// <param name="_e">此实行预算的KLBDE导入表</param>
+        /// <returns></returns>
+        private string extend(string t1, bool t2, IEnumerable<szrl083> _e)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    IQueryable<szrl112> query_szrl112s = this._szrl112Repository.GetModels();
+                    return (from x in _e
+                            join y in query_szrl112s
+                            on x.rl08304 equals y.rl11201
+                            where y.rl11205.Equals(t1)
+                            select t2.Equals(true) ? x.rl08309 : x.rl08313).Sum().ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        /// <summary>
+        /// 赋值KLB
+        /// </summary>
+        /// <param name="_e">此版本KLBDE明细导入</param>
+        /// <param name="t1">"K1" "L1" "B1"</param>
+        /// <param name="_short">序号</param>
+        /// <param name="_genre">类型</param>
+        /// <returns></returns>
+        private string Set_KLB(IEnumerable<szrl083> _e, string t1, int _short, int _genre)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    /*
+                     查询KLB的二级目录 对rl11203排序
+                     判断 KLBDE明细导入中是否有此二级目录的明细
+                     如果有 则输出
+                     */
+                    IEnumerable<szrl083> query_szrl083s = _e.Where(x => x.rl08302.Substring(2, 2).Equals(t1));
+                    string[] two_directory = query_szrl083s
+                        .OrderBy(o => o.rl08303)
+                        .Select(x => x.rl08303)
+                        .Distinct().ToArray();
+                    if (_short + 1 > two_directory.Length)
+                    {
+                        return "";
+                    }
+                    else
+                    {
+                        string two_name = two_directory[_short];
+                        if (_genre.Equals(0))
+                        {
+                            return this._szrl112Repository.GetModels(x => x.rl11204.Equals(two_name)).Select(x => x.rl11203).FirstOrDefault() + two_name;
+                        }
+                        else if (_genre.Equals(1))
+                        {
+                            return query_szrl083s.Where(x => x.rl08303.Equals(two_name))
+                            .Select(x => x.rl08309).Sum().ToString();
+                        }
+                        else if (_genre.Equals(2))
+                        {
+                            return query_szrl083s.Where(x => x.rl08303.Equals(two_name))
+                           .Select(x => x.rl08313).Sum().ToString();
+                        }
+                        else
+                        {
+                            return query_szrl083s.Where(x => x.rl08303.Equals(two_name))
+                           .Select(x => x.rl08311).FirstOrDefault().ToString();
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        /// <summary>
+        /// 保存实行预算
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="_szrl082"></param>
+        /// <returns></returns>
+        public IOperateResult Add(IRequestGetter context, szrl082 _szrl082)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    List<szrl083> _szrl083s = context.GetValue<List<szrl083>>("p1", GetterType.JToken);//接收json
+                    List<szrl084> _szrl084s = context.GetValue<List<szrl084>>("p2", GetterType.JToken);//接收json
+                    string _save082 = context.GetValue<string>("p3");
+                    string _save083 = context.GetValue<string>("p4");
+                    string _save084 = context.GetValue<string>("p5");
+                    string _save081 = context.GetValue<string>("p6");
+                    string _zuofanid = context.GetValue<string>("p7");
+                    string _rl08227s = context.GetValue<string>("_rl08227s");
+                    List<szrl086> _szrl086s = context.GetValue<List<szrl086>>("p8", GetterType.JToken);//接收json
+                    List<string> p9 = context.GetValue<List<string>>("p9", GetterType.JToken);
+                    List<string> p10 = context.GetValue<List<string>>("p10", GetterType.JToken);
+                    List<string> p11 = context.GetValue<List<string>>("p11", GetterType.JToken);
+                    // string[] p11== context.GetValue<string[]>("p11");
+
+                    //判断klbde明细导入的税率是否正确
+                    //判断导入或者添加的明细是否已经存在
+                    #region 是否需求判断 导入或者添加的明细是否已经存在 ???
+                    //foreach (var item in _szrl083s)
+                    //{
+                    //    if (string.IsNullOrWhiteSpace(item.rl08301))
+                    //    {
+                    //        string _rl11201 = this._szrl112Repository.GetModels(x => x.rl11203.Equals(item.rl08304)).Select(x => x.rl11201).FirstOrDefault();
+                    //        if (string.IsNullOrWhiteSpace(_rl11201))
+                    //        {
+                    //            return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "KLBDE导入明细");
+                    //        }
+                    //    }
+                    //}
+                    #endregion
+                    List<decimal> _rl08311_list = new List<decimal>();
+                    if (_szrl083s != null)
+                    {
+                        foreach (var item in _szrl083s)
+                        {
+                            if (_rl08311_list.Count > 0)
+                            {
+                                foreach (var item2 in _rl08311_list)
+                                {
+                                    if (item2 != item.rl08311)
+                                    {
+                                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "保存失败,请正确输入KLBDE明细导入的税率!");
+                                    }
+                                }
+                            }
+                            decimal _rl08311_pd = this._szrl083Repository.GetModels(x => x.rl08302.Equals(item.rl08302) && x.rl08316.Equals(_zuofanid)).Select(x => x.rl08311).FirstOrDefault();
+                            if (!item.rl08311.Equals(_rl08311_pd) && !_rl08311_pd.Equals(0))
+                            {
+                                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "保存失败,请正确输入KLBDE明细导入的税率!");
+                            }
+                            _rl08311_list.Add(item.rl08311);
+                        }
+                    }
+                    SaveVoucher_083(_szrl083s, _zuofanid);
+                    SaveVoucher_084(_szrl084s, _zuofanid);
+                    SaveVoucher_086(_szrl086s, _zuofanid);
+                    szrl085 _szrl085 = new szrl085();
+                    _szrl085.rl08501 = _save081;
+                    _szrl085.rl08502 = _save082;
+                    _szrl085.rl08503 = _save083;
+                    _szrl085.rl08504 = _save084;
+                    _szrl085.rl08505 = fn_rl08505(_save083);
+                    if (string.IsNullOrWhiteSpace(_szrl085.rl08501))
+                    {
+                        _szrl085.rl08501 = null;
+                        _szrl085.rl08506 = _zuofanid;
+                        _szrl085.rl08507 = "000000";
+                        _szrl085.rl08508 = "";
+                        this._szrl085Repository.Add(_szrl085);
+                    }
+                    else
+                    {
+                        szrl085 ent_szrl085 = this._szrl085Repository.Find(x => x.rl08501.Equals(_szrl085.rl08501));
+                        this._szrl085Repository.Update(ent_szrl085, _szrl085, new CopySettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore,
+                            DefaultValueHandling = DefaultValueHandling.Include
+                        });
+                    }
+                    if (string.IsNullOrWhiteSpace(_szrl082.rl08201))
+                    {
+                        //_szrl082.rl08202 = DateTime.Now.ToString("yyyy-MM-dd");
+                        _szrl082.rl08202 = string.Empty;
+                        _szrl082.rl08203 = "000000";
+                        _szrl082.rl08204 = _zuofanid;
+                        _szrl082.rl08205 = DateTime.Now.ToString("yyyy-MM-dd");
+                        _szrl082.rl08212 = string.Empty;
+                        _szrl082.rl08226 = "";
+                        //_szrl082.rl08227 = _rl08227s;
+                        _szrl082.rl08234 = "";
+                        _szrl082.rl08235 = "";
+                        _szrl082.rl08236 = 0;
+                        _szrl082.rl08237 = "";
+                        _szrl082.rl08238 = "";
+                        _szrl082.rl08239 = "";
+                        _szrl082.rl08240 = "";
+                        _szrl082.rl08241 = 0;
+                        _szrl082.rl08242 = "";
+                        _szrl082.rl08243 = "";
+
+
+
+                        szrl018 query_szrl018 = this._szrl018Repository.GetModels(x => x.rl01801.Equals(_zuofanid)).FirstOrDefault();
+                        //为城建税及び附加赋值准备
+                        decimal s1 = _szrl083s.Where(x => !x.rl08304.Substring(0, 2).Equals("J3")).Sum(x => x.rl08309);//所有含税金额
+
+                        decimal s2 = this._szrl083Repository.GetModels(x => x.rl08316.Equals(_zuofanid) && x.rl08317.Equals(_szrl082.rl08203) && !x.rl08304.Substring(0, 2).Equals("J3")).ToArray()
+                                                .Sum(x => x.rl08309);
+
+                        decimal y1 = _szrl083s.Where(x => !x.rl08304.Substring(0, 2).Equals("J3")).Sum(x => x.rl08313);//所有含税金额
+                        decimal y2 = this._szrl083Repository.GetModels(x => x.rl08316.Equals(_zuofanid) && x.rl08317.Equals(_szrl082.rl08203) && !x.rl08304.Substring(0, 2).Equals("J3")).ToArray()
+                            .Sum(x => x.rl08313);
+                        decimal g1 = _szrl083s.Where(x => x.rl08304.Substring(0, 2).Equals("B1")).Sum(x => x.rl08309);//所有含税金额
+                        decimal g2 = this._szrl083Repository.GetModels(x => x.rl08316.Equals(_zuofanid) && x.rl08317.Equals(_szrl082.rl08203) && x.rl08304.Substring(0, 2).Equals("B1")).ToArray()
+                            .Sum(x => x.rl08313);
+                        if (query_szrl018.rl01835 == 3)//城建税及び附加为3%时赋值
+                        {
+                            _szrl082.rl08228 = (_szrl082.rl08217 - (s1 + s2) - (y1 + y2) - (g1 + g2)) / ((1 + 0.03m) * 0.03m) * (_szrl082.rl08244 / 100);
+                        }
+                        else//不等于3%时赋值
+                        {
+                            _szrl082.rl08228 = (_szrl082.rl08218 - (s1 + s2) - (y1 + y2) - (g1 + g2)) * (_szrl082.rl08244 / 100);
+                        }
+                        //_szrl082.rl08228=
+                        decimal h1 = _szrl083s.Sum(x => x.rl08309);//所有含税金额
+                        decimal h2 = this._szrl083Repository.GetModels(x => x.rl08316.Equals(_zuofanid) && x.rl08317.Equals(_szrl082.rl08203)).ToArray().Sum(x => x.rl08309);
+                        decimal h3 = _szrl083s.Sum(x => x.rl08313);//所有含税金额
+                        decimal h4 = this._szrl083Repository.GetModels(x => x.rl08316.Equals(_zuofanid) && x.rl08317.Equals(_szrl082.rl08203)).ToArray().Sum(x => x.rl08313);
+                        _szrl082.rl08229 = h1 + h2;
+                        _szrl082.rl08246 = h3 + h4;
+                        //_szrl082.rl08230 = _szrl082.rl08246 * _szrl082.rl08230;
+                        _szrl082.rl08233 = _szrl082.rl08246 + (_szrl082.rl08232 * _szrl082.rl08246);//总额=小计含税+不含税
+                        _szrl082.rl08220 = _szrl082.rl08233;
+                        _szrl082.rl08221 = _szrl082.rl08219 - _szrl082.rl08220;
+                        _szrl082.rl08222 = _szrl082.rl08221 / _szrl082.rl08219;
+                        _szrl082.rl08224 = (_szrl082.rl08219 - _szrl082.rl08246) / _szrl082.rl08219;
+                        this._szrl082Repository.Add(_szrl082);
+
+
+
+                        //控制klbde税率是否相等???
+                        //foreach (var item in _szrl083s)
+                        //{
+                        //    //var query_szrl083sright = this._szrl083Repository.GetModels(x => x.rl08302.Equals(item.rl08302) && x.rl08316.Equals(_zuofanid) &&)
+
+                        //}
+                    }
+                    else
+                    {
+                        var ent_szrl082 = this._szrl082Repository.Find(x => x.rl08201.Equals(_szrl082.rl08201));
+                        this._szrl082Repository.Update(ent_szrl082, _szrl082, new Gmail.DDD.Extensions.CopySettings
+                        {
+                            NullValueHandling = Gmail.DDD.Extensions.NullValueHandling.Ignore,//排除null
+                            DefaultValueHandling = Gmail.DDD.Extensions.DefaultValueHandling.Include//覆盖默认值
+                                                                                                    //,
+                                                                                                    //Validation = (name, x, y) => {
+                                                                                                    //    if(name = "rl08241")
+                                                                                                    //        y> x
+                                                                                                    //        return true;
+
+                            //}
+                        });
+                    }
+                    Grid_Del(p9, p10, p11);
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "保存成功!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "保存失败!");
+            }
+        }
+        /// <summary>
+        /// 前端grid删除的行,在此处从数据库删除
+        /// </summary>
+        /// <param name="p9"></param>
+        /// <param name="p10"></param>
+        /// <param name="p11"></param>
+        public void Grid_Del(List<string> p9, List<string> p10, List<string> p11)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    IEnumerable<szrl083> query_szrl083s = this._szrl083Repository.GetModels(x => p9.Contains(x.rl08301));
+                    IEnumerable<szrl084> query_szrl084s = this._szrl084Repository.GetModels(x => p10.Contains(x.rl08401));
+                    IEnumerable<szrl086> query_szrl086s = this._szrl086Repository.GetModels(x => p11.Contains(x.rl08601));
+                    var eee = this._szrl086Repository.GetModels(x => p11.Contains(x.rl08601)).ToList();
+                    this._szrl083Repository.RemoveRange(query_szrl083s);
+                    this._szrl084Repository.RemoveRange(query_szrl084s);
+                    this._szrl086Repository.RemoveRange(query_szrl086s);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        /// <summary>
+        /// 实行预算承认
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult Recognize(IRequestGetter context)
+        {
+            try
+            {
+                string zuofanid = context.GetValue<string>("zuofanid");
+                string versionnumber = context.GetValue<string>("versionnumber");
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    szrl082 ent_szrl082 = this._szrl082Repository.Find(x => x.rl08204.Equals(zuofanid) && x.rl08203.Equals(versionnumber));
+                    ent_szrl082.rl08241 = 1;
+                    ent_szrl082.rl08236 = 1;
+                    //审核人
+                    ent_szrl082.rl08239 = UserContext.Pj00402;
+                    ent_szrl082.rl08240 = DateTime.Now.ToString("yyyy/MM/dd");
+                    if (ent_szrl082.rl08203.Equals("000000"))
+                    {
+                        ent_szrl082.rl08237 = UserContext.Pj00402;
+                        ent_szrl082.rl08238 = DateTime.Now.ToString("yyyy/MM/dd");
+                        ent_szrl082.rl08202 = DateTime.Now.ToString("yyyy-MM-dd");//初回时执行
+                    }
+                    this._szrl082Repository.Update(ent_szrl082);
+                    IEnumerable<szrl082> ent_szrl082s = this._szrl082Repository.GetModels(x => x.rl08204.Equals(zuofanid) && !x.rl08203.Equals(versionnumber));
+                    foreach (var item in ent_szrl082s)
+                    {
+                        item.rl08236 = 0;
+                        this._szrl082Repository.Update(item);
+                    }
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "审核成功!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "审核失败!");
+            }
+        }
+
+        /// <summary>
+        /// 实行预算删除
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult Remove(IRequestGetter context)
+        {
+            try
+            {
+                string zuofanid = context.GetValue<string>("zuofanid");
+                string versionnumber = context.GetValue<string>("versionnumber");
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    szrl082 ent_szrl082 = this._szrl082Repository.Find(x => x.rl08204.Equals(zuofanid) && x.rl08203.Equals(versionnumber));
+                    if (ent_szrl082.rl08241.Equals(1))
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "此实行预算已审核,不可删除!");
+                    }
+                    this._szrl082Repository.Remove(ent_szrl082);
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "删除成功!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "系统异常,删除失败!");
+            }
+        }
+
+        #endregion
+        #region ===============================特记事项===============================
+        /// <summary>
+        /// 显示特记事项
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult SpecialNotes(IRequestGetter context)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string zuofanid = context.GetValue<string>("zuofanid");
+                    string version_number = context.GetValue<string>("version_number");
+                    List<szrl086> list = this._szrl086Repository.GetModels(x => x.rl08602.Equals(zuofanid) && x.rl08603.Equals(version_number)).OrderBy(o => o.rl08601).ToList();
+                    return OperateResultFactory.GridOperateResult(list);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        /// <summary>
+        /// 添加修改
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult SpecialNotes_Add(IRequestGetter context)
+        {
+            try
+            {
+                List<szrl086> _szrl086s = context.GetValue<List<szrl086>>("list_086", GetterType.JToken);//接收json
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    foreach (var item in _szrl086s)
+                    {
+                        if (string.IsNullOrWhiteSpace(item.rl08601))
+                        {
+                            this._szrl086Repository.Add(item);
+                        }
+                        else
+                        {
+                            szrl086 ent_szrl086 = this._szrl086Repository.Find(item.rl08601);
+                            this._szrl086Repository.Update(ent_szrl086, item, new CopySettings
+                            {
+                                NullValueHandling = NullValueHandling.Ignore,
+                                DefaultValueHandling = DefaultValueHandling.Include
+                            });
+                        }
+                    }
+                    scope.SaveChanges();
+                }
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "保存成功!");
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "保存失败!");
+            }
+
+        }
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult SpecialNotes_Del(IRequestGetter context)
+        {
+            try
+            {
+                string[] rl08601 = context.GetValue<string[]>("rl08601");
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    foreach (var item in rl08601)
+                    {
+                        szrl086 ent_szrl086 = this._szrl086Repository.GetModels(x => x.rl08601.Equals(item)).FirstOrDefault();
+                        if (ent_szrl086 != null)
+                        {
+                            this._szrl086Repository.Remove(ent_szrl086);
+                        }
+                    }
+                    scope.SaveChanges();
+                }
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, null);
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "保存失败!");
+            }
+        }
+        public void SaveVoucher_086(List<szrl086> vParams, string zuofanid)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    if (vParams != null)
+                    {
+                        List<szrl086> context = IsNull_string(vParams, zuofanid);
+                        foreach (var item in context)
+                        {
+                            if (string.IsNullOrWhiteSpace(item.rl08601))
+                            {
+                                if (!string.IsNullOrWhiteSpace(item.rl08605))
+                                {
+                                    this._szrl086Repository.Add(item);
+                                }
+                            }
+                            else
+                            {
+                                szrl086 ent_szrl086 = this._szrl086Repository.Find(x => x.rl08601.Equals(item.rl08601));
+                                this._szrl086Repository.Update(ent_szrl086, item, new CopySettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore,
+                                    DefaultValueHandling = DefaultValueHandling.Include
+                                });
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        public List<szrl086> IsNull_string(List<szrl086> vParams, string zuofanid)
+        {
+            foreach (var item in vParams)
+            {
+                if (string.IsNullOrWhiteSpace(item.rl08601))
+                {
+                    item.rl08602 = item.rl08602 ?? zuofanid;
+                    item.rl08603 = item.rl08603 ?? "000000";
+                    item.rl08604 = item.rl08604 ?? string.Empty;
+                    item.rl08605 = item.rl08605 ?? string.Empty;
+                    item.rl08606 = item.rl08606 ?? string.Empty;
+                    item.rl08608 = item.rl08608 ?? string.Empty;
+                }
+            }
+            return vParams;
+        }
+
+
+        #endregion
+        #region =================================KLBDE模块=================================
+        /// <summary>
+        /// 显示KLBDE标签
+        /// </summary>
+        /// <param name="vParams"></param>
+        /// <returns></returns>
+        public IOperateResult GetKLBDEInfo(IRequestGetter vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string zuofanid = vParams.GetValue<string>("zuofanid");
+                    string versionnumber = vParams.GetValue<string>("versionnumber");
+                    List<szrl083> query_szrl083s = this._szrl083Repository.GetModels(x => x.rl08316.Equals(zuofanid) && x.rl08317.Equals(versionnumber)).ToList();
+                    string[] rl08302s = query_szrl083s.Select(x => x.rl08302).Distinct().ToArray();
+                    //
+
+
+                    List<KLBDE> new_query_szrl083s = new List<KLBDE>();
+                    foreach (var item in rl08302s)//一级目录
+                    {
+                        string[] rl08303s = query_szrl083s.Where(x => x.rl08302.Equals(item)).Select(x => x.rl08303).Distinct().ToArray();
+                        KLBDE _s_083_1 = new KLBDE();
+                        _s_083_1.rl08302 = item;
+                        _s_083_1.rl08310 = query_szrl083s.Where(x => x.rl08302.Equals(item)).Sum(s => s.rl08309);
+                        _s_083_1.rl08314 = query_szrl083s.Where(x => x.rl08302.Equals(item)).Sum(s => s.rl08313);
+                        new_query_szrl083s.Add(_s_083_1);
+                        foreach (var item2 in rl08303s)//二级目录
+                        {
+                            IQueryable<szrl112> m_szrl112 = this._szrl112Repository.GetModels(x => x.rl11202.Equals(item) && x.rl11204.Equals(item2));
+                            if (m_szrl112 != null)
+                            {
+                                KLBDE _s_083_2 = new KLBDE();
+                                _s_083_2.rl08303 = item2;
+                                _s_083_2.rl08310 = query_szrl083s.Where(x => x.rl08302.Equals(item) && x.rl08303.Equals(item2)).Sum(s => s.rl08309);
+                                _s_083_2.rl08314 = query_szrl083s.Where(x => x.rl08302.Equals(item) && x.rl08303.Equals(item2)).Sum(s => s.rl08313);
+                                new_query_szrl083s.Add(_s_083_2);
+                                foreach (var item3 in query_szrl083s)//明细
+                                {
+                                    if (item3.rl08302.Equals(item) && item3.rl08303.Equals(item2))
+                                    {
+                                        KLBDE _s_083_3 = new KLBDE();
+                                        _s_083_3.rl08301 = item3.rl08301;
+                                        // _s_083_3.rl08304 = item3.rl08304;
+                                        _s_083_3.rl08304 = this._szrl112Repository.GetModels(x => x.rl11201.Equals(item3.rl08304)).Select(x => x.rl11203).FirstOrDefault();
+                                        _s_083_3.rl08305 = item3.rl08305;
+                                        _s_083_3.rl08306 = item3.rl08306;
+                                        _s_083_3.rl08307 = item3.rl08307;
+                                        _s_083_3.rl08308 = item3.rl08308;
+                                        _s_083_3.rl08309 = item3.rl08309;
+                                        _s_083_3.rl08311 = item3.rl08311;
+                                        _s_083_3.rl08312 = item3.rl08312;
+                                        _s_083_3.rl08313 = item3.rl08313;
+                                        _s_083_3.rl08315 = item3.rl08315;
+                                        _s_083_3.rl08316 = item3.rl08316;
+                                        _s_083_3.rl08317 = item3.rl08317;
+                                        _s_083_3.rl08318 = item3.rl08318;
+                                        new_query_szrl083s.Add(_s_083_3);
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    return OperateResultFactory.GridOperateResult(new_query_szrl083s);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        /// <summary>
+        /// 显示材料科明细--用于勾选
+        /// 不显示勾选过的材料明细
+        /// </summary>
+        /// <param name="vParams"></param>
+        /// <returns></returns>
+        public IOperateResult GetSzrl11Info(IPageContext context)
+        {
+            try
+            {
+                /*
+                查询KLBDE保存的已有的明细
+                查询材料科所有材料明细
+                过滤
+                 */
+                IPagedList pagedList = null;
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string rl08316 = context.GetValue<string>("zuofanid");
+                    string rl11211 = context.GetValue<string>("rl11211");
+                    int rl11211_max = rl11211_Max(rl11211);
+                    IQueryable<szrl112> query_szrl112s = this._szrl112Repository.GetModels(x => x.rl11209.Substring(0, 10).Equals(rl11211) && x.rl11211.Length.Equals(rl11211_max)).OrderBy(o => o.rl11201);
+                    pagedList = query_szrl112s.ToPagedList<szrl112>(context);
+                    return OperateResultFactory.GridOperateResult(pagedList);
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.GridOperateResult(new List<szrl112>());
+            }
+        }
+        //获取最末级本级目录编码长度
+        public int rl11211_Max(string rl11211)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    var _next_lower_level = this._szrl112Repository.GetModels(x => x.rl11209.Equals(rl11211)).ToList();
+                    int _last_stage = rl11211.Length;
+                    if (_next_lower_level.Count != 0)
+                    {
+                        foreach (var item in _next_lower_level)
+                        {
+                            int _same_level = rl11211_Max(item.rl11211);
+                            if (_same_level > _last_stage)
+                            {
+                                _last_stage = _same_level;
+                            }
+                        }
+                    }
+                    return _last_stage;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        /// <summary>
+        /// 保存勾选的明细
+        /// </summary>
+        /// <param name="vParams"></param>
+        /// <returns></returns>
+        public void SaveVoucher_083(List<szrl083> vParams, string zuofanid)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    if (vParams != null)
+                    {
+                        foreach (var item in vParams)
+                        {
+                            //计算合计
+                            szrl083 query_szrl083 = Reassignment_083(item);
+                            query_szrl083.rl08304 = this._szrl112Repository.GetModels(x => x.rl11203.Equals(query_szrl083.rl08304)).Select(x => x.rl11201).FirstOrDefault() ?? string.Empty;
+                            if (string.IsNullOrWhiteSpace(query_szrl083.rl08301))
+                            {
+                                query_szrl083.rl08316 = zuofanid;
+                                query_szrl083.rl08317 = "000000";
+                                query_szrl083.rl08318 = "";
+                                this._szrl083Repository.Add(query_szrl083);
+                            }
+                            else
+                            {
+                                szrl083 ent_szrl083 = this._szrl083Repository.Find(x => x.rl08316.Equals(query_szrl083.rl08316) && x.rl08317.Equals(query_szrl083.rl08317) && x.rl08304.Equals(query_szrl083.rl08304));
+                                this._szrl083Repository.Update(ent_szrl083, query_szrl083, new CopySettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore,
+                                    DefaultValueHandling = DefaultValueHandling.Include
+                                });
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        /// <summary>
+        /// 重新赋值
+        /// </summary>
+        /// <param name="_szrl083"></param>
+        /// <returns></returns>
+        private szrl083 Reassignment_083(szrl083 _szrl083)
+        {
+
+            if (_szrl083.rl08308 == 0)
+            {
+                _szrl083.rl08308 = _szrl083.rl08312 * (1 + _szrl083.rl08311 / 100);
+            }
+            if (_szrl083.rl08309 == 0)
+            {
+                _szrl083.rl08309 = _szrl083.rl08307 * _szrl083.rl08308;
+            }
+            if (_szrl083.rl08312 == 0)
+            {
+                _szrl083.rl08312 = _szrl083.rl08308 / (1 + _szrl083.rl08311 / 100);
+            }
+            if (_szrl083.rl08313 == 0)
+            {
+                // _szrl083.rl08313 = _szrl083.rl08312 * _szrl083.rl08312;
+                _szrl083.rl08313 = _szrl083.rl08307 * _szrl083.rl08312;
+            }
+            //_szrl083.rl08310 = _szrl083.rl08308 + _szrl083.rl08309;
+            //_szrl083.rl08314 = _szrl083.rl08312 + _szrl083.rl08313;
+            return _szrl083;
+        }
+        /// <summary>
+        /// 查询一级菜单
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<szrl112> LevelMenu()
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    IEnumerable<szrl112> query_szrl112s = this._szrl112Repository.GetModels(x => x.rl11215.Equals(1)).ToArray();
+                    return query_szrl112s;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        /// <summary>
+        /// 查询二级菜单
+        /// </summary>
+        /// <param name="levelmenu">一级菜单本级编码</param>
+        /// <returns></returns>
+        public IEnumerable<szrl112> LevelMenu2(string _levelmenu)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    IEnumerable<szrl112> query_szrl112s = this._szrl112Repository.GetModels(x => x.rl11215.Equals(2) && x.rl11209.Equals(_levelmenu)).ToArray();
+                    return query_szrl112s;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        public string fn_rl08505(string _save083)
+        {
+            string[] _rl08503s = _save083.Split(';');
+            string rl08505 = null;
+            foreach (var item in _rl08503s)
+            {
+                if (!string.IsNullOrWhiteSpace(item))
+                {
+                    rl08505 = (Convert.ToDecimal(rl08505) + Convert.ToDecimal(item)).ToString();//这样写有问题 提出来 rl08505默认为0
+                }
+            }
+            return rl08505;
+        }
+        public IOperateResult DeleteVoucher_083(KLBDE item)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    //szrl083 _szrl083s = vParams.GetValue<szrl083>("_szrl083s", GetterType.JToken);//接收json
+                    //foreach (var item in _szrl083s)
+                    //{
+                    if (string.IsNullOrWhiteSpace(item.rl08316) || string.IsNullOrWhiteSpace(item.rl08317))
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "删除失败,请正确选择明细!");
+                    }
+                    szrl082 ent_szrl082 = this._szrl082Repository.GetModels(x => x.rl08204.Equals(item.rl08316) && x.rl08203.Equals(item.rl08317)).FirstOrDefault();
+                    if (ent_szrl082 == null)
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "删除失败,不存在此明细的实行预算!");
+                    }
+                    if (ent_szrl082.rl08241.Equals(1))
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "此明细的实行预算已审核,不可删除!");
+                    }
+                    szrl083 ent_szrl083 = this._szrl083Repository.Find(x => x.rl08301.Equals(item.rl08301));
+                    this._szrl083Repository.Remove(ent_szrl083);
+                    scope.SaveChanges();
+                    // }
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "删除成功!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "删除失败!");
+            }
+        }
+        /// <summary>
+        /// 判断klbde的税率是否正确
+        /// </summary>
+        /// <param name="_szrl083s"></param>
+        /// <returns></returns>
+        public bool IsRinght_083(List<szrl083> _szrl083s)
+        {
+            return true;
+        }
+        /// <summary>
+        /// klbde导入
+        /// </summary>
+        /// <param name="excel"></param>
+        /// <returns></returns>
+        public IOperateResult ImportDataByExcel(MaterialExcel_klbde excel)
+        {
+            if (excel != null)
+            {
+                try
+                {
+                    ImportExcelInfo info = new ImportExcelInfo() { ExcelFilePath = excel.ExcelFilePath, DataRange = excel.DataRange, SheetName = excel.ExcelWookSheet };
+                    DataTable dt = _excelService.ImportData(info);
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        using (var scope = _scopeFactory.CreateScope())
+                        {
+                            // 添加到数据库
+                            List<szrl083> itemList = new List<szrl083>();
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                var item = new szrl083();
+                                //excel 取数返回json
+                                item.rl08302 = Convert.ToString(dr[excel.rl08302]).Trim();
+                                item.rl08303 = Convert.ToString(dr[excel.rl08303]).Trim();
+                                item.rl08304 = Convert.ToString(dr[excel.rl08304]);
+                                item.rl08305 = Convert.ToString(dr[excel.rl08305]);
+                                item.rl08306 = Convert.ToString(dr[excel.rl08306]);
+                                item.rl08307 = Convert.ToDecimal(dr[excel.rl08307]);
+                                item.rl08315 = Convert.ToString(dr[excel.rl08315]);
+                                item.rl08308 = Convert.ToDecimal(dr[excel.rl08308]);
+                                item.rl08311 = Convert.ToDecimal(dr[excel.rl08311]);
+                                if (!string.IsNullOrWhiteSpace(item.rl08304))
+                                {
+                                    szrl112 query_szrl112 = this._szrl112Repository.GetModels(x => x.rl11203.Equals(item.rl08304)).FirstOrDefault();
+                                    if (query_szrl112 != null)
+                                    {
+                                        itemList.Add(item);
+                                    }
+                                }
+                            }
+                            return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, null, itemList);
+                        }
+                    }
+                    else
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "未在EXCEL中找到相应的数据导入！");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "导入出现异常！");
+                }
+            }
+            return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "导入失败");
+        }
+
+        /// <summary>
+        /// klbde导入
+        /// </summary>
+        /// <param name="excel"></param>
+        /// <returns></returns>
+        public IOperateResult ImportDataByExcel2(MaterialExcel_aj excel)
+        {
+            if (excel != null)
+            {
+                try
+                {
+                    ImportExcelInfo info = new ImportExcelInfo() { ExcelFilePath = excel.ExcelFilePath, DataRange = excel.DataRange, SheetName = excel.ExcelWookSheet };
+                    DataTable dt = _excelService.ImportData(info);
+                    if (dt != null && dt.Rows.Count > 0)
+                    {
+                        using (var scope = _scopeFactory.CreateScope())
+                        {
+                            // 添加到数据库
+                            List<szrl084> itemList = new List<szrl084>();
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                var item = new szrl084();
+                                //excel 取数返回json
+                                item.rl08402 = Convert.ToString(dr[excel.rl08402]).Trim();
+                                item.rl08403 = Convert.ToString(dr[excel.rl08403]).Trim();
+                                item.rl08410 = Convert.ToDecimal(dr[excel.rl08410]);
+                                item.rl08411 = Convert.ToDecimal(dr[excel.rl08411]);
+                                item.rl08414 = Convert.ToDecimal(dr[excel.rl08414]);
+                                if (!string.IsNullOrWhiteSpace(item.rl08402) && !string.IsNullOrWhiteSpace(item.rl08403))
+                                {
+                                    itemList.Add(item);
+                                }
+                            }
+                            return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, null, itemList);
+                        }
+                    }
+                    else
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "未在EXCEL中找到相应的数据导入！");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "导入出现异常！");
+                }
+            }
+            return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "导入失败");
+        }
+        #endregion
+        #region =================================A~J模块=================================
+        public Dictionary<string, string> dic_084()
+        {
+            Dictionary<string, string> d = new Dictionary<string, string>();
+            d.Add("工事用消耗資材", "A");
+            d.Add("現場臨時員労務費", "C");
+            d.Add("仮設事務費", "D2");
+            d.Add("監督費(賃率・旅費)", "F");
+            d.Add("工具損料", "G");
+            d.Add("保険料　(受注金額*0.18%)", "H");
+            d.Add("雑費", "J1");
+            d.Add("办公用品/事務用品費", "J2");
+            d.Add("城建税及び附加等", "J3");
+            d.Add("差旅费/交通費", "J4");
+            d.Add("通讯费/通信費", "J5");
+            d.Add("交際費(受注額*0.2%)", "J6");
+            d.Add("福利费/福利費", "J8");
+            d.Add("保管運搬費", "M");
+            d.Add("企画設計費(機器納入設計企画)", "N");
+            return d;
+        }
+        /// <summary>
+        /// 取对应的key
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public string GetDicKey(string value)
+        {
+            Dictionary<string, string> d = dic_084();
+            string kvp_key = string.Empty;
+            foreach (KeyValuePair<string, string> kvp in d)
+            {
+                if (kvp.Value.Equals(value))
+                {
+                    kvp_key = kvp.Key;
+                }
+            }
+            return kvp_key;
+        }
+        /// <summary>
+        /// A~J明细导入保存
+        /// </summary>
+        /// <param name="vParams"></param>
+        /// <returns></returns>
+        public void SaveVoucher_084(List<szrl084> vParams, string _zuofanid)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    if (vParams != null)
+                    {
+                        foreach (var item in vParams)
+                        {
+                            item.rl08403 = GetDicKey(item.rl08402);
+                            szrl084 query_szrl084 = Reassignment_084(item);
+                            // query_szrl084.rl08404 = this._szrl112Repository.GetModels(x => x.rl11203.Equals(query_szrl084.rl08404)).Select(x => x.rl11201).FirstOrDefault() ?? string.Empty;
+                            if (string.IsNullOrWhiteSpace(query_szrl084.rl08401))
+                            {
+                                query_szrl084.rl08404 = "";
+                                query_szrl084.rl08405 = "";
+                                query_szrl084.rl08407 = "";
+                                query_szrl084.rl08415 = _zuofanid;
+                                query_szrl084.rl08416 = "000000";
+                                query_szrl084.rl08417 = "";
+                                this._szrl084Repository.Add(query_szrl084);
+                            }
+                            else
+                            {
+                                szrl084 ent_szrl084 = this._szrl084Repository.Find(x => x.rl08415.Equals(query_szrl084.rl08415) && x.rl08416.Equals(query_szrl084.rl08416) && x.rl08404.Equals(query_szrl084.rl08404));
+                                this._szrl084Repository.Update(ent_szrl084, query_szrl084, new CopySettings
+                                {
+                                    NullValueHandling = NullValueHandling.Ignore,
+                                    DefaultValueHandling = DefaultValueHandling.Include
+                                });
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+        private szrl084 Reassignment_084(szrl084 _szrl084)
+        {
+            _szrl084.rl08414 = _szrl084.rl08410;
+            return _szrl084;
+        }
+        public IOperateResult DeleteVoucher_084(AJ item)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    szrl082 ent_szrl082 = this._szrl082Repository.GetModels(x => x.rl08204.Equals(item.rl08415) && x.rl08203.Equals(item.rl08416)).FirstOrDefault();
+                    if (ent_szrl082 == null)
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "删除失败,不存在此明细的实行预算!");
+                    }
+                    if (ent_szrl082.rl08241.Equals(1))
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "此明细的实行预算已审核,不可删除!");
+                    }
+                    szrl084 ent_szrl084 = this._szrl084Repository.Find(x => x.rl08401.Equals(item.rl08401));
+                    this._szrl084Repository.Remove(ent_szrl084);
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "删除成功!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "删除失败!");
+            }
+        }
+
+        /// <summary>
+        /// 显示A~J明细
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult GetajInfo(IRequestGetter context)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string _rl08415 = context.GetValue<string>("rl08415");
+                    string _rl08416 = context.GetValue<string>("rl08416");
+                    IEnumerable<szrl084> query_szrl084s = this._szrl084Repository.GetModels(x => x.rl08415.Equals(_rl08415) && x.rl08416.Equals(_rl08416)).ToArray();
+                    List<AJ> query_ajs = new List<AJ>();
+                    foreach (var item in query_szrl084s)
+                    {
+                        AJ _aj = new AJ();
+                        _aj.rl08401 = item.rl08401;
+                        _aj.rl08402 = item.rl08402;
+                        _aj.rl08403 = item.rl08403;
+                        _aj.rl08410 = item.rl08410;
+                        _aj.rl08411 = item.rl08411;
+                        _aj.rl08414 = item.rl08414;
+                        _aj.rl08415 = item.rl08415;
+                        _aj.rl08416 = item.rl08416;
+                        _aj.rl08417 = item.rl08417;
+                        query_ajs.Add(_aj);
+                    }
+                    return OperateResultFactory.GridOperateResult(query_ajs);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        #endregion
+        #region ===============================计划进度===============================
+        /// <summary>
+        /// 用于审核时保存计划进度
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult btn_saveSzrl085(HttpCollection context)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string _zuofanid = context.GetValue<string>("p1");
+                    string versionnumber = context.GetValue<string>("p2");
+                    string _save082 = context.GetValue<string>("p3");
+                    string _save083 = context.GetValue<string>("p4");
+                    string _save084 = context.GetValue<string>("p5");
+                    string _save081 = context.GetValue<string>("p6");
+                    string _changeType = context.GetValue<string>("p7");
+
+                    szrl085 _szrl085 = new szrl085();
+                    _szrl085.rl08501 = _save081;
+                    _szrl085.rl08502 = _save082;
+                    _szrl085.rl08503 = _save083;
+                    _szrl085.rl08504 = _save084;
+                    _szrl085.rl08505 = fn_rl08505(_save083);
+                    _szrl085.rl08506 = _zuofanid;
+                    _szrl085.rl08507 = versionnumber;
+                    _szrl085.rl08508 = _changeType;
+
+                    if (string.IsNullOrWhiteSpace(_szrl085.rl08501))
+                    {
+                        _szrl085.rl08501 = null;
+                        this._szrl085Repository.Add(_szrl085);
+                    }
+                    else
+                    {
+                        szrl085 ent_szrl085 = this._szrl085Repository.Find(x => x.rl08501.Equals(_szrl085.rl08501));
+                        this._szrl085Repository.Update(ent_szrl085, _szrl085, new CopySettings
+                        {
+                            NullValueHandling = NullValueHandling.Ignore,
+                            DefaultValueHandling = DefaultValueHandling.Include
+                        });
+                    }
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "保存成功!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "保存失败!");
+            }
+        }
+        #endregion
+        #region Excel导出
+        public IEnumerable<szrl082> Exprot(string zuofanid, string banben)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    szrl082 _szrl082 = this._szrl082Repository.Find(x => x.rl08204.Equals(zuofanid) && x.rl08203.Equals(banben));
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+        //--------------------------------------
+        /// <summary>
+        /// 前端grid删除的行,在此处从数据库删除(停用)
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public IOperateResult ux_del(IRequestGetter context)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string[] p1 = context.GetValue<string[]>("p1");
+                    string[] p2 = context.GetValue<string[]>("p2");
+                    string[] p3 = context.GetValue<string[]>("p3");
+                    IEnumerable<szrl083> query_szrl083s = this._szrl083Repository.GetModels(x => p1.Contains(x.rl08301));
+                    IEnumerable<szrl084> query_szrl084s = this._szrl084Repository.GetModels(x => p1.Contains(x.rl08401));
+                    IEnumerable<szrl086> query_szrl086s = this._szrl086Repository.GetModels(x => p1.Contains(x.rl08601));
+                    this._szrl083Repository.RemoveRange(query_szrl083s);
+                    this._szrl084Repository.RemoveRange(query_szrl084s);
+                    this._szrl086Repository.RemoveRange(query_szrl086s);
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "删除成功!");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "删除失败!");
+            }
+        }
+        /// <summary>
+        /// 获取版本号
+        /// </summary>
+        /// <returns></returns>
+        public List<szrl082> VersioNnumber(IRequestGetter context)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string zuofanid = context.GetValue<string>("zuofanid");
+                    List<szrl082> query_szrl082 = new List<szrl082>();
+                    query_szrl082 = this._szrl082Repository.GetModels(x => x.rl08204.Equals(zuofanid)).OrderBy(o => o.rl08203).ToList();
+                    if (query_szrl082.Count() == 0)
+                    {
+                        szrl082 sz = new szrl082() { rl08203 = "000000" };
+                        query_szrl082.Add(sz);
+                    }
+                    return query_szrl082;
+                }
+            }
+            catch (Exception ex)
+            {
+                List<szrl082> query_szrl082 = new List<szrl082>();
+                return query_szrl082;
+            }
+        }
+
+        #endregion
+    }
+}

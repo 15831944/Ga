@@ -1,0 +1,205 @@
+﻿<div class="easyui-layout">
+    <div data-options="region:'north', collapsible: false" style="height: 35px;">
+        <div class="tree-search">
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="changeMaterialCode_Edit1()">修改材料编码</a>
+            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="saveItem_Edit1()">保存</a>
+            @*<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteItem_Edit1()">删除</a>*@
+        </div>
+    </div>
+    <div data-options="region:'center'">
+        <form id="form_szrl111_edit1" method="post" novalidate style="margin:0;padding:20px 10px 0 40px;">
+            <div style="display:none;">
+                <input id="rl11101" type="hidden" name="rl11101" />
+                <input id="rl11111" type="hidden" name="rl11111" />
+                <input id="rl11112" type="hidden" name="rl11112" />
+                <input id="attachFileId_edit_szrl111" type="hidden" name="attachFileId" value="@ViewBag.attachFileId" />
+                <input id="input_hd_materialInfo" type="hidden" />
+                <input type="hidden" id="input_hd_model_szrl111" value="@ViewBag.model_szrl111" />
+            </div>
+            <table class="form100-table table-panel">
+                <thead>
+                    <tr style="height: 10px;">
+                        <th style="width: 70px;"></th>
+                        <th style="width: 340px;"></th>
+                        <th style="width: 70px;"></th>
+                        <th style="width: 340px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="form100-table-tr">
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>材料分类</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11102" type="hidden" name="rl11102" />
+                            <input id="rl11102_text" name="MaterialDirName" class="easyui-textbox" editable="false" required="true" data-options="buttonText:'选择',prompt:'请点击按钮选择...',buttonIcon:'icon-search'" style="width:250px;height:32px;">
+                        </td>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>材料编码</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11103" type="text" name="rl11103" class="easyui-textbox" />
+                        </td>
+                    </tr>
+                    <tr class="form100-table-tr">
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>材料名称</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11104" type="text" name="rl11104" required="true" class="easyui-textbox" />
+                        </td>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>规格型号</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11105" type="text" name="rl11105" class="easyui-textbox" />
+                        </td>
+                    </tr>
+                    <tr class="form100-table-tr">
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>品牌</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11106" type="text" name="rl11106" class="easyui-textbox" />
+                        </td>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>产地</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            @*<input id="rl11107" type="text" name="rl11107" class="easyui-textbox" />*@
+                            <select id="rl11107" class="easyui-combobox" name="rl11107" data-options="editable: false" style="width:250px;">
+                                <option value="" selected="selected">无</option>
+                                <option value="国产">国产</option>
+                                <option value="进口">进口</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>属性</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input id="rl11108" type="text" name="rl11108" class="easyui-textbox" />
+                        </td>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>计量单位</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            @*<input id="rl11109" type="text" name="rl11109" class="easyui-textbox" />*@
+                            <input id="rl11109" name="rl11109" class="easyui-combobox" required="true" editable="false" data-options="valueField: 'pa01301',textField: 'pa01302',url: '/AreasCode030/szrl111/GetMeasureUnits'" style="width: 250px;">
+                        </td>
+                    </tr>
+                    <tr class="form100-table-tr">
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>备注</label>
+                        </td>
+                        <td class="form100-table-td2" colspan="3">
+                            <input id="rl11110" type="text" name="rl11110" class="easyui-textbox" multiline="true" style="width: 650px;height: 100px;" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+<div id="selectMaterialDirContainer_szrl111_edit1" style="display:none"></div>
+<script type="text/javascript">
+    // 保存材料
+    function saveItem_Edit1() {
+        rlform1101.submitForm('form_szrl111_edit1', '/AreasCode030/szrl111/AddMaterial', null, function (result) {
+            if (result.success) {
+                //var item = $.parseJSON(result.Pamrms);
+                //$('#form_szrl111_edit1').form('load', item);
+                //rlform1101.messenger.showMessage('保存成功！');
+            }
+            var win = window.parent;
+            win.closeEditDialog();
+            win.refreshDatagrid_index();
+        });
+    }
+
+    function deleteItem_Edit1() {
+
+    }
+
+    // 表单初始化
+    function initForm_szrl111_edit1() {
+        var jModel_szrl111 = $('#input_hd_model_szrl111');
+        var modelStr = jModel_szrl111.val();
+        if (!rlform1101.isNullOrWhitespace(modelStr)) {
+            var data = $.parseJSON(modelStr);
+            $('#form_szrl111_edit1').form('load', data);
+        }
+        jModel_szrl111.remove();
+        //$('#rl11102_text').textbox('setValue', $('#rl11102').val());
+
+        var did = $.getUrlParam('did');
+        if (!rlform1101.isNullOrWhitespace(did)) {
+            var node = window.parent.getSelectedDirNode_index_szrl111();
+            if (!rlform1101.isNull(node) && node.pid !== '') {
+                $('#rl11102_text').textbox('setValue', node.text);
+                $('#rl11102').val(node.id);
+                //$.post('/AreasCode030/szrl111/NewMaterialCode', { dirId: node.id }, function (data) {
+                //    $('#rl11103').textbox('setValue', data);
+                //});
+            }
+        }
+        var id = $.getUrlParam('id');
+        if (!rlform1101.isNullOrWhitespace(id)) {
+            $('#rl11103').textbox('readonly');
+        }
+
+        $('a', $('#rl11102_text').next('span')).click(function () {
+            var cDirId = $('#rl11102').val();
+            showMaterialDirTreeDlg_szrl111_edit1('/AreasCode030/szrl111/MaterialDirTree?all=0&cDirId=' + cDirId);
+        });
+    }
+
+    // 显示选择材料目录窗口
+    function showMaterialDirTreeDlg_szrl111_edit1(url) {
+        var toolbar = [{
+            text: '确定选择',
+            iconCls: 'icon-save',
+            handler: handleSelectParentMaterialDir_szrl111_edit1
+        }];
+        var content = '<iframe id="changeMaterialDirIframe_edit1" src="' + url + '" width="100%" height="99%" frameborder="0" scrolling="no"></iframe>';
+        $('#selectMaterialDirContainer_szrl111_edit1').dialog({
+            title: '选择目录',
+            width: 600,
+            height: 500,
+            closed: false,
+            cache: false,
+            content: content,
+            modal: true,
+            toolbar: toolbar
+        });
+    }
+
+
+    // 修改材料分类信息
+    function fillParentDirInfo_szrl111_edit1(win) {
+        var node = win.getSelectedNode();
+        if (!rlform1101.isNull(node)) {
+            $('#rl11102_text').textbox('setValue', node.text);
+            $('#rl11102').val(node.id);
+            //$.post('/AreasCode030/szrl111/NewMaterialCode', { dirId: node.id }, function (data) {
+            //    $('#rl11103').textbox('setValue', data);
+            //});
+        }
+    }
+
+    // 选择材料目录后事件，修改对应的材料分类信息
+    function handleSelectParentMaterialDir_szrl111_edit1() {
+        var win = $('#changeMaterialDirIframe_edit1')[0].contentWindow;
+        fillParentDirInfo_szrl111_edit1(win);
+        $('#selectMaterialDirContainer_szrl111_edit1').dialog('close');
+    }
+
+
+    // 修改材料编码，使材料编码可编辑
+    function changeMaterialCode_Edit1() {
+        $('#rl11103').textbox({ readonly: false });
+    }
+
+    
+</script>

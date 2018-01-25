@@ -1,0 +1,169 @@
+﻿
+    <table id="dg_buildingCertList" class="easyui-datagrid" style="width:1000px;height: 280px; border:none;"
+           url="/AreasCode030/szrl100/GetBuildingIncCerts?id=@ViewBag.SupplierId"
+           toolbar="#toolbar_buildingCertList" pagination="false"
+           rownumbers="false" fitColumns="false" singleSelect="true">
+        <thead>
+            <tr>
+                <th field="RowNo" data-options="width:80, halign: 'center'">序号</th>
+                <th field="Info" data-options="width: 900, halign: 'center'">建筑企业资质清单</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="toolbar_buildingCertList">
+        <a id="btnAddBuildingCert" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newItem_BuildingCert()" >新增</a>
+        <a id="btnRemoveBuildingCert" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="deleteItem_BuildingCert()" >删除</a>
+    </div>
+    <div id="signedNameWin" style="display:none;"></div>
+    <div id="inputResultCache_BuildingCert">
+
+    </div>
+
+    <script>
+        window.localBuildingIncCertCount_BuildingCert = 0;
+        // 工事分包商选择时，需要至少一项建筑企业资质
+        function helpSubmitMainForm_BuildingCert(isGongshiFlag) {
+            var isLocalFlag = isLocalSave_BuildingCert();
+            if (isLocalFlag) {
+                var jValue = $('#input_hd_localBuildingIncCertInfo');
+                var jCacheItems = $('#inputResultCache_BuildingCert .CertInfo');
+                var rows = [];
+                for (var i = 0; i < jCacheItems.length; i++) {
+                    var jItem = $(jCacheItems[i]);
+                    rows.push(jItem.val());
+                }
+                if (isGongshiFlag && rows.length == 0) {
+                    return false;
+                }
+                var value = rows.join(';');
+                jValue.val(value);
+            }
+            return true;
+        }
+
+        // 禁用按钮
+        function disableBtns_BuildingCert() {
+            var isLocalFlag = isLocalSave_BuildingCert();
+            // 未保存前不需禁用
+            if (!isLocalFlag) {
+                var operateFlag = eval($('#input_hd_OperateFlag').val());
+                if (!operateFlag) {
+                    $('#btnAddBuildingCert').linkbutton('disable');
+                    $('#btnRemoveBuildingCert').linkbutton('disable');
+                }
+            }
+        }
+        $(function () {
+            disableBtns_BuildingCert();
+        });
+
+        // 新增
+        function newItem_BuildingCert() {
+            $('#dlg_BuildingCert').dialog('open').dialog('center').dialog('setTitle', '新增');
+            $('#rl10303').textbox('setValue', '');
+        }
+
+        // 保存
+        function saveItem_BuildingCert() {
+            var localSaveFlag = isLocalSave_BuildingCert();
+            if (localSaveFlag) {
+                localSave_BuildingCert();
+                $('#dlg_BuildingCert').dialog('close');        // close the dialog
+            }
+            else {
+                var id = $('#input_hd_SupplierId_BuildingCert').val(),
+                    info = $('#rl10303').textbox('getValue');
+                if (rlform1101.isNullOrWhitespace(info)) {
+                    rlform1101.messenger.showMessage("建筑企业资质不能为空！");
+                    return;
+                }
+                rlform1101.post(
+                    '/AreasCode030/szrl100/AddBuildingIncCert',
+                    { rl10302: id, rl10303: info },
+                    function (result) {
+                        $('#dlg_BuildingCert').dialog('close');        // close the dialog
+                        $('#dg_buildingCertList').datagrid('reload');    // reload the user data
+                    }
+                );
+            }
+            
+        }
+
+        // 执行本地保存
+        function localSave_BuildingCert() {
+            var id = $('#input_hd_SupplierId_BuildingCert').val(),
+                info = $('#rl10303').val();
+            createItemLocalSave_BuildingCert(info);
+            localReloadGrid_BuildingCert();
+        }
+
+        // 保存本地数据项
+        function createItemLocalSave_BuildingCert(info) {
+            localBuildingIncCertCount_BuildingCert += 1;
+            var id = 'input_hd_cache_' + localBuildingIncCertCount_BuildingCert.toString();
+            var newItem = $('<input class="CertInfo" type="hidden" />').attr('id', id).val(info);
+            $('#inputResultCache_BuildingCert').append(newItem);
+        }
+
+        // 删除
+        function deleteItem_BuildingCert() {
+            var row = $('#dg_buildingCertList').datagrid('getSelected');
+            var localSaveFlag = isLocalSave_BuildingCert();
+            if (localSaveFlag) {
+                localDeleteItem_BuildingCert(row);
+            }
+            else {
+                $.messager.confirm('确认消息', '是否删除？', function (r) {
+                    if (r) {
+                        rlform1101.post('/AreasCode030/szrl100/RemoveBuildingIncCert', { id: row.ID }, function (result) {
+                            $('#dg_buildingCertList').datagrid('reload');    // reload the user data
+                        });
+                    }
+                });
+            }
+        }
+
+        // 本地删除选中项
+        function localDeleteItem_BuildingCert(row) {
+            var id = row.ID;
+            var jDataInput = $('#inputResultCache_BuildingCert').children('#' + id);
+            jDataInput.remove();
+            localReloadGrid_BuildingCert();
+        }
+
+        // 本地刷新表格
+        function localReloadGrid_BuildingCert() {
+            var jCacheItems = $('#inputResultCache_BuildingCert .CertInfo');
+            var rows = [];
+            for (var i = 0; i < jCacheItems.length; i++) {
+                var jItem = $(jCacheItems[i]);
+                rows.push({ ID: jItem.attr('id'), RowNo: i + 1, Info: jItem.val() });
+            }
+            $('#dg_buildingCertList').datagrid('loadData', rows);
+        }
+
+        // 执行本地保存
+        function isLocalSave_BuildingCert() {
+            var id = $('#input_hd_SupplierId_BuildingCert').val();
+            var localSaveFlag = rlform1101.isNullOrWhitespace(id);
+            return localSaveFlag;
+        }
+    </script>
+
+
+    <div id="dlg_BuildingCert" class="easyui-dialog" style="width:400px;height:250px;"
+         closed="true" buttons="#dlg_BuildingCert_buttons">
+        <form id="myform_Remark" method="post" novalidate style="margin:0;padding:20px 10px">
+            <input id="input_hd_SupplierId_BuildingCert" type="hidden" value="@ViewBag.SupplierId" name="rl10302" />
+            <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">建筑企业资质信息</div>
+            <div style="margin-bottom:10px">
+                <label>建筑企业资质：</label>
+                <input id="rl10303" name="rl10303" class="easyui-textbox" style="width:250px;">
+            </div>
+        </form>
+    </div>
+    <div id="dlg_BuildingCert_buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveItem_BuildingCert()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg_BuildingCert').dialog('close')" style="width:90px">取消</a>
+    </div>
+

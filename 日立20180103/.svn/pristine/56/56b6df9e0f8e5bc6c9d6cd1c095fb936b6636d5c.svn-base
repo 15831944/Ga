@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Service;
+using PM2.Models.Code030;
+using PM2.Models.Code001;
+using Gmail.DDD.PagedList;
+using Gmail.DDD.Mvc;
+
+namespace PM2.Service.Code030
+{
+    public interface Iszrl130Server : IService
+    {
+        IOperateResult QueryTopGridDataFor130(HttpCollection vParams);
+        IOperateResult QueryGridDataFor130(HttpCollection vParams);
+        IOperateResult DelBBH(HttpCollection vParams);
+        IOperateResult Insert131(HttpCollection vParams);
+        IOperateResult AdmitByYSCL(HttpCollection vParams);
+        IOperateResult AdmitByPayPlan(HttpCollection vParams);
+        IOperateResult IsCanChanges(HttpCollection vParams);
+    }
+}

@@ -1,0 +1,491 @@
+﻿
+@{
+    ViewBag.Title = "采购合同验收";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderStyles{
+    <style type="text/css">
+    </style>
+}
+@section body{
+    <div data-options="region:'north'">
+        <div class="header">
+            <div class="left-layout">
+                <a hrer="javascript:;" class="btn-back">返回</a>
+                <h1>采购合同验收</h1>
+            </div>
+            <div class="center-layout"></div>
+            <div id="BtnGroup" class="right-layout">
+                <a href="javascript:;" class="easyui-linkbutton" id="ChangeYSCL_121">变更</a>
+                <a href="javascript:;" class="easyui-linkbutton" id="CancelYSCL_121">取消</a>
+                <a href="javascript:;" class="easyui-linkbutton" id="DetailYSCL_121">详情</a>
+                <a href="javascript:;" class="easyui-linkbutton" id="HandeYSCL_121">处理</a>
+                <a href="javascript:;" class="easyui-linkbutton" id="SaveYSCL_121">保存</a>
+                <a href="javascript:;" class="easyui-linkbutton" id="DelYSCL_121"  disabled="true">删除</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center'">
+        <div class="easyui-layout">
+            <div data-options="region:'west',split:true,width:230">
+                <div class="easyui-layout">
+                    <div data-options="region:'center'">
+                        <div class="nano">
+                            <div class="nano-content">
+                                <ul id="szrlxxxTree" style="margin:10px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-options="region:'north'">
+                        <div class="tree-search">
+                            <div id="forsomesearch" class="search-layout">
+                                <input id="searchTree" class="easyui-searchbox" style="width:100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-options="region:'center'">
+                <div class="easyui-layout">
+                    <div data-options="region:'center'">
+                        <div id="tt" class="easyui-tabs">
+                            <div title="验收信息">
+                                <div class="nano">
+                                    <div class="nano-content">
+                                        <div class="control-group" id="tt_0">
+                                            <div class="control-group-content">
+                                                <div class="control-text"><label>作番号：</label><p style="min-width:13em;">2017-05-01</p></div>
+                                                <div class="control-text"><label>合同号：</label><p style="min-width:13em;" id="">SHPCS-R-P10-018-1</p></div>
+                                                <div class="control-text"><label>合同金额：</label><p style="min-width:13em;" id="">2016年5月15改定版</p></div>
+                                                <br />
+                                                <div class="control-text"><label>合同内容：</label><p style="min-width:23em;" id=""></p></div>
+                                                <div class="control-text"><label>供应商：</label><p style="min-width:22em;" id=""></p></div><br />
+                                                <br />
+                                                <div class="control-text"><label>制单人：</label><p style="min-width:12em;" id=""></p></div>
+                                                <div class="control-text"><label>制单日期：</label><p style="min-width:12em;" id=""></p></div>
+                                                <div class="control-text"><label>审核人：</label><p style="min-width:12em;" id=""></p></div>
+                                                <div class="control-text"><label>审核日期：</label><p style="min-width:12em;" id=""></p></div>
+                                            </div>
+                                        </div>
+                                        <div style="margin:20px 23px 0 20px;border-bottom:none;">
+                                            <table id="YJH_Grid" style="width:1100px;min-height:150px;text-align:center;overflow:auto;border-bottom:none;">
+                                                <thead>
+                                                    <tr>
+                                                        <th data-options="field: 'rl01903',align:'center',width:150">検収済</th>
+                                                        <th data-options="field: 'rl01904',align:'center',width:100">日期</th>
+                                                        <th data-options="field: 'rl01909',align:'center',width:100">%</th>
+                                                        <th data-options="field: 'rl02403',align:'center',width:100">金额</th>
+                                                        <th data-options="field: 'rl02404',align:'center',width:100">検収日期</th>
+                                                        <th data-options="field: 'rl01909',align:'center',width:100">%</th>
+                                                        <th data-options="field: 'rl02403',align:'center',width:100">金额</th>
+                                                        <th data-options="field: 'rl02405',align:'center',width:50">附件</th>
+                                                        <th data-options="field: 'rl02403',align:'center',width:150">备注</th>
+                                                        <th data-options="field: 'rl02405',align:'center',width:100">状态</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                        <div style="margin:0px 23px 0 20px;">
+                                            <table id="BCJH_Grid" cellpadding="0" cellspacing="0" style="width:1100px;min-height:150px;text-align:center;">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="4">原定验收日期</th>
+                                                        <th colspan="5">本次实际验收/后续修正计划</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th data-options="field: 'rl12102',
+                                                            align:'center',
+                                                            width:150,
+                                                            formatter:function(value,row){
+                                                            if(value == '1'){ return '今回検収'; }
+                                                            if(value == '2'){ return '今月再度検収予定'; }
+                                                            if(value == '3'){ return '来月以後検収予定'; }
+                                                            }
+                                                            ">検収済</th>
+                                                        <th data-options="field: 'rl12103',align:'center',width:100, 
+                                                             formatter:function(value,row,index){  
+                                                              if(value.length == 10){
+                                                                 return value.substring(0,7);
+                                                              }
+                                                               else{return value;} 
+                                                            }">日期</th>
+                                                        <th data-options="field: 'rl12104',
+                                                            align:'center',
+                                                            width:100,
+                                                             formatter:function(value,row){
+                                                                 return value + '%'
+                                                            }
+                                                            ">%</th>
+                                                        <th data-options="field: 'rl12105',align:'center',width:100">金额</th>
+                                                        <th data-options="field: 'rl12106',
+                                                            align:'center'
+                                                            ,width:100,
+                                                             formatter:function(value,row,index){
+                                                            if(index == 0){
+                                                            return value;
+                                                            }
+                                                            else{
+                                                              if(value.length == 10){
+                                                                 return value.substring(0,7);
+                                                              }
+                                                               else{return value;}
+                                                            }
+                                                            },
+                                                            editor: { type: 'datebox' }
+                                                            ">検収日期</th>
+                                                        <th data-options="field: 'rl12107',
+                                                            align:'center',
+                                                            width:100,
+                                                             formatter:function(value,row,index){  
+                                                                   if(index == 0 || index ==1){ return value + '%'; }
+                                                                   else{
+                                                                          if(value==0){ return ''; }
+                                                                          else{   return value + '%';  }
+                                                                   }  
+                                                            },
+                                                            editor: { type: 'numberbox', options: { precision: 2 } }
+                                                            ">%</th>
+                                                        <th data-options="field: 'rl12108',
+                                                            align:'center',
+                                                            width:100,
+                                                            editor: { type: 'numberbox', options: { precision: 2 } }, 
+                                                             formatter:function(value,row,index){ 
+                                                                   if(index == 0 || index ==1){ return value; }
+                                                                   else{
+                                                                          if(value==0){ return ''; }
+                                                                          else{   return value;  }
+                                                                   } 
+                                                            }
+                                                            ">金额</th>
+                                                        <th data-options="field: 'rl12109',
+                                                            align:'center',
+                                                            width:50,
+                                                            formatter:function(value,row){
+                                                                 return '';
+                                                            }">附件</th>
+                                                        <th data-options="field: 'rl12110',
+                                                            align:'center',
+                                                            width:150,
+                                                            editor: { type: 'textbox' }
+                                                            ">备注</th>
+                                                        <th data-options="field: 'rl12111',
+                                                            align:'center',
+                                                            width:100,
+                                                             formatter:function(value,row){
+                                                                 if(value == 0){ return '未提出';}
+                                                                 if(value == 1){ return '提出済'; }
+                                                                 if(value == 2){ return '承認済'; }
+                                                                 if(value == 3){ return '调达处理中'; }
+                                                                 if(value == 4){ return '检收完了'; } 
+                                                                 if(value == 5){ return 'AP発行済'; }  
+                                                            },
+                                                            ">状态</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div title="附件">
+                                等桑大侠的附件模块
+                            </div>
+                            <div title="协同办公">
+                                等桑大侠的协同办公模块
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FooterScript{
+    <script>
+        (function () {
+            $(function () {
+                //当前编辑行索引
+                var editIndex = undefined;
+                //合同金额
+                var Hetongjine_121 = 20000;   //到时候用ViewData[""]保存金额
+                //作番ID
+                var zuofanid = undefined;
+                //采购合同ID
+                var caigouhetongbanbenid = undefined;
+                //表单是否可以编辑
+                var CanEdit121Grid = true;
+                //当前页面所有记录百分比总和 cmtps:改为0，到时候上面那个grid加载的时候为这个字段赋值
+                var _szrl121bfb = 50; 
+                //当前页面所有记录金额总和 cmtps:改为0，到时候上面那个grid加载的时候为这个字段赋值
+                var _szrl121je = 10000; 
+
+                function endEditing() {
+                    if (editIndex == undefined) { return true }
+                    if ($('#BCJH_Grid').datagrid('validateRow', editIndex)) {
+                        $('#BCJH_Grid').datagrid('endEdit', editIndex);
+                        editIndex = undefined;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                //页面选择行
+                onClick121Row = function (index) {
+                    //如果是第一行，一定是今回验收，则关闭编辑器
+                    JinHuiYanShou(index);
+                    if (CanEdit121Grid) {       //到时候要判断是查看还是什么
+                        if (endEditing()) {
+                            $('#BCJH_Grid').datagrid('selectRow', index)
+                                .datagrid('beginEdit', index);
+                            editIndex = index; 
+                        } else {
+                            $('#BCJH_Grid').datagrid('selectRow', editIndex);
+                        }
+                    }
+                }
+
+                $("#BCJH_Grid").datagrid({
+                    url: "/AreasCode030/szrl121/QueryGridDataFor121",
+                    rownumbers: true,
+                    singleSelect: true,
+                    onClickRow: onClick121Row,
+                    onLoadSuccess: function (data) {
+                        //【办法合并，当编辑行启用时，合并单元格已经无效！！！】
+                        //var mark = 1;                           //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+                        //var mark2 = 1;
+                        //for (var i = 1; i < data.rows.length; i++) {
+                        //    //验收济合并单元格
+                        //    if (data.rows[i]['rl12102'] == data.rows[i - 1]['rl12102']) {   //后一行的值与前一行的值做比较，相同就需要合并
+                        //        mark += 1;
+                        //        $(this).datagrid('mergeCells', {
+                        //            index: i + 1 - mark,       //datagrid的index，表示从第几行开始合并；紫色的内容需是最精髓的，就是记住最开始需要合并的位置
+                        //            field: 'rl12102',          //合并单元格的区域，就是clomun中的filed对应的列
+                        //            rowspan: mark              //纵向合并的格数，如果想要横向合并，就使用colspan：mark
+                        //        });
+                        //    } else {
+                        //        mark = 1;                      //一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+                        //    }
+
+                        //    //状态合并单元格
+                        //    if (data.rows[i]['rl12111'] == data.rows[i - 1]['rl12111']) {
+                        //        mark2 += 1;
+                        //        $(this).datagrid('mergeCells', {
+                        //            index: i + 1 - mark2,
+                        //            field: 'rl12111',
+                        //            rowspan: mark2
+                        //        });
+                        //    } else {
+                        //        mark2 = 1;
+                        //    }
+                        //}
+                    },
+                    onBeginEdit: function (rowIndex, rowData) {
+                        var editors = $('#BCJH_Grid').datagrid('getEditors', rowIndex);
+                        if (rowIndex == 0) {
+                            var Row0Editor = editors[0];
+                            var Row1Editor = editors[1];
+                            var row = $('#BCJH_Grid').datagrid('getRows')[rowIndex];
+                            Row0Editor.target.numberbox({
+                                onChange: function (newValue, oldValue) {
+                                    Row1Editor.target.numberbox('setValue', newValue * Hetongjine_121 / 100);
+                                    row['rl12107'] = newValue;
+                                    row['rl12108'] = newValue * Hetongjine_121 / 100;
+                                }
+                            });
+                            Row1Editor.target.numberbox({
+                                onChange: function (newValue, oldValue) {
+                                    Row0Editor.target.numberbox('setValue', newValue / Hetongjine_121 * 100)
+                                    row['rl12107'] = newValue / Hetongjine_121 * 100;
+                                    row['rl12108'] = newValue; 
+                                }
+                            });
+                        }
+                        else {
+                            var Row1Editor = editors[1];
+                            var Row2Editor = editors[2];
+                            var row = $('#BCJH_Grid').datagrid('getRows')[rowIndex];
+                            Row1Editor.target.numberbox({
+                                onChange: function (newValue, oldValue) {
+                                    Row2Editor.target.numberbox('setValue', newValue * Hetongjine_121 / 100);
+                                    row['rl12107'] = newValue;
+                                    row['rl12108'] = newValue * Hetongjine_121 / 100;
+                                }
+                            });
+                            Row2Editor.target.numberbox({
+                                onChange: function (newValue, oldValue) {
+                                    Row1Editor.target.numberbox('setValue', newValue / Hetongjine_121 * 100)
+                                    row['rl12107'] = newValue / Hetongjine_121 * 100;
+                                    row['rl12108'] = newValue;
+                                }
+                            });
+                        }
+                    }
+                });
+
+                $("#YJH_Grid").datagrid({
+                    rownumbers: true,
+                    singleSelect: true,
+                });
+
+                //页面的保存按钮
+                $("#SaveYSCL_121").click(function () {
+                    Save121GridData();
+                    debugger;
+                    //保存之前判断所有的日期、比例、金额是否正确
+                    var rows = $('#BCJH_Grid').datagrid('getRows');
+                    debugger;
+                    var Str = "";
+                    var SumRate = 0;
+                    var SumJinE = 0;
+                    for (var i = 0; i < rows.length; i++) {
+                        //if (rows[i]['rl12106'].toString() == "") {
+                        //    Str = "第" + (i + 1) + "行,请选择検収日期";
+                        //    alert(Str);
+                        //    return false;
+                        //}
+                        if (rows[i]['rl12107'].toString() == "") {
+                            Str = "第" + (i + 1) + "行,请输入比例";
+                            alert(Str);
+                            return false;
+                        }
+                        if (rows[i]['rl12108'].toString() == "") {
+                            Str = "第" + (i + 1) + "行,请输入金额";
+                            alert(Str);
+                            return false;
+                        }
+                        if (i >= 2) {
+                            if (rows[0]['rl12106'].toString() != "" && rows[i]['rl12106'].toString() != "") {
+                                //日期判断还有问题，要判断月份，这里只是判断了大于当前日期而已
+                                if (new Date(Date.parse(rows[0]['rl12106'].toString())) >= new Date(Date.parse(rows[i]['rl12106'].toString()))) {
+                                    Str = "本次实际验收/后续修正计划中的月份错误，请检查";
+                                    alert(Str);
+                                    return false;
+                                }
+                            }
+                        }
+                        SumRate += (rows[i]['rl12107'] == "" ? 0 : parseFloat(rows[i]['rl12107']));
+                        SumJinE += (rows[i]['rl12108'] == "" ? 0 : parseFloat(rows[i]['rl12108']));
+                    }
+                    if (SumRate + _szrl121bfb != 100) {
+                        $.messager.show({
+                            title: '不能保存',
+                            msg: '验收比例必须等于100%',
+                        });
+                        return false;
+                    }
+                    if (SumJinE + _szrl121je != Hetongjine_121) {
+                        $.messager.show({
+                            title: '不能保存',
+                            msg: '金额必须等于合同金额',
+                        });
+                        return false;
+                    }
+                    //当所有校验都通过的时候，保存进数据库
+                    $.ajax({
+                        url: "/AreasCode030/szrl121/Insert121",
+                        data: {
+                            BCJH_Grid_data: JSON.stringify($('#BCJH_Grid').datagrid('getRows'))
+                        },
+                        type: "post",
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.success) {
+                                alert("保存成功！"); 
+                                //cmtps ：到时候还要刷新页面
+                            }
+                            else { alert("系统出错，请联系管理员！"); }
+                        },
+                        error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                }); 
+                //页面的处理按钮
+                $("#HandeYSCL_121").click(function () {
+                    //$('#BCJH_Grid').datagrid('options').url = "/AreasCode030/szrl121/Hande121Btn";
+                    //$('#BCJH_Grid').datagrid('options').queryParams = {
+                    //    caigouhetongbanbenid: caigouhetongbanbenid,
+                    //    zuofanid: zuofanid
+                    //};
+                    //$("#BCJH_Grid").datagrid('reload'); 
+                    CanEdit121Grid = true;
+                    $("#DelYSCL_121").linkbutton('enable');
+                    $("#HandeYSCL_121").linkbutton('enable');
+                });
+                //页面的删除按钮
+                $("#HandeYSCL_121").click(function () {
+                    window.location.reload;
+                });
+                window.onload = function () {
+                    Contro121Btn();
+                }
+                //控制按钮是否可用
+                Contro121Btn = function () {
+                    $.ajax({
+                        url: "/AreasCode030/szrl121/Contro121Btn",
+                        data: {
+                            caigouhetongbanbenid: caigouhetongbanbenid
+                        },
+                        type: "post",
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.success) {
+                                if (obj.Pamrms.Status == "true")
+                                {  
+                                    $("#HandeYSCL_121").linkbutton("disable");
+                                    $("#SaveYSCL_121").linkbutton("disable");
+                                    $("#DelYSCL_121").linkbutton("disable");
+                                    CanEdit121Grid = false;
+                                    alert(obj.Pamrms.Msg);
+                                }
+                            }
+                            else { alert("系统出错，请联系管理员！"); }
+                        },
+                        error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                }
+                //保存数据并退出编辑
+                Save121GridData = function () {
+                    //取消选中当前的行
+                    if (editIndex != undefined) {
+                        $("#BCJH_Grid").datagrid("unselectRow", editIndex);
+                    }
+                    //edit_035_grid退出编辑，保存好数据
+                    $('#BCJH_Grid').datagrid('endEdit', editIndex);
+                };
+                //关闭编辑器
+                JinHuiYanShou = function (index) {
+                    if (index == 0) {
+                        var e = $("#BCJH_Grid").datagrid('getColumnOption', "rl12106");
+                        e.editor = {};
+                    }
+                    else {
+                        var e = $("#BCJH_Grid").datagrid('getColumnOption', "rl12106");
+                        e.editor = { type: 'datebox' };
+                    }
+                }
+                //制保留2位小数，如：2，会在2后面补上00.即2.00
+                function toDecimal2(x) {
+                    var f = parseFloat(x);
+                    if (isNaN(f)) {
+                        return false;
+                    }
+                    var f = Math.round(x * 100) / 100;
+                    var s = f.toString();
+                    var rs = s.indexOf('.');
+                    if (rs < 0) {
+                        rs = s.length;
+                        s += '.';
+                    }
+                    while (s.length <= rs + 2) {
+                        s += '0';
+                    }
+                    return s;
+                }
+            });
+        }());
+    </script>
+}
+

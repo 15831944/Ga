@@ -1,0 +1,189 @@
+﻿
+<table id="dg_remarkList" class="easyui-datagrid" style="width:950px;height: 280px; border:none;"
+       url="/AreasCode030/szrl100/GetRemarkList?id=@ViewBag.SupplierId"
+       toolbar="#toolbar_remarkList" pagination="false"
+       rownumbers="false" fitColumns="false" singleSelect="true">
+    <thead>
+        <tr>
+            <th field="RowNo" data-options="width: 80, halign: 'center'">序号</th>
+            <th field="Remark" data-options="width: 800, halign: 'center'" formatter="formatter_Remark">备注</th>
+        </tr>
+    </thead>
+</table>
+<div id="toolbar_remarkList">
+    <a id="btnAddRemark" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newItem_Remark()">新增</a>
+    <a id="btnRemoveRemark" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="deleteItem_Remark()">删除</a>
+</div>
+<div id="signedNameWin_Remark" style="display:none;"></div>
+<div id="inputResultCache_Remark">
+
+</div>
+
+<script>
+    window.localBuildingIncCertCount_Remark = 0;
+    // 主表单保存前执行
+    function helpSubmitMainForm_Remark() {
+        var isLocalFlag = isLocalSave_Remark();
+        if (isLocalFlag) {
+            var jValue = $('#input_hd_localRemarkListInfo');
+            var jCacheItems = $('#inputResultCache_Remark .CertInfo');
+            var rows = [];
+            for (var i = 0; i < jCacheItems.length; i++) {
+                var jItem = $(jCacheItems[i]);
+                rows.push(jItem.val());
+            }
+            if (rows.length == 0) {
+                return false;
+            }
+            var value = rows.join(';');
+            jValue.val(value);
+        }
+        return true;
+    }
+
+    // 执行本地保存
+    function localSave_Remark() {
+        var id = $('#input_hd_SupplierId_Remark').val(),
+            info = $('#rl10203').val();
+        createItemLocalSave_Remark(info);
+        localReloadGrid_Remark();
+    }
+
+    // 本地保存数据
+    function createItemLocalSave_Remark(info) {
+        localBuildingIncCertCount_Remark += 1;
+        var id = 'input_hd_cache_' + localBuildingIncCertCount_Remark.toString();
+        var newItem = $('<input class="CertInfo" type="hidden" />').attr('id', id).val(info);
+        $('#inputResultCache_Remark').append(newItem);
+    }
+
+    // 本地删除项
+    function localDeleteItem_Remark(row) {
+        var id = row.ID;
+        var jDataInput = $('#inputResultCache_Remark').children('#' + id);
+        jDataInput.remove();
+        localReloadGrid_Remark();
+    }
+
+    // 本地刷新表格
+    function localReloadGrid_Remark() {
+        var jCacheItems = $('#inputResultCache_Remark .CertInfo');
+        var rows = [];
+        for (var i = 0; i < jCacheItems.length; i++) {
+            var jItem = $(jCacheItems[i]);
+            rows.push({ ID: jItem.attr('id'), RowNo: i + 1, Remark: jItem.val() });
+        }
+        $('#dg_remarkList').datagrid('loadData', rows);
+    }
+
+    // 执行本地保存
+    function isLocalSave_Remark() {
+        var id = $('#input_hd_SupplierId_Remark').val();
+        var localSaveFlag = rlform1101.isNullOrWhitespace(id);
+        return localSaveFlag;
+    }
+
+
+    // 禁用按钮
+    function disableBtns_Remark() {
+        var operateFlag = eval($('#input_hd_OperateFlag').val());
+        if (!operateFlag) {
+            $('#btnAddRemark').linkbutton('disable');
+            $('#btnRemoveRemark').linkbutton('disable');
+        }
+    }
+
+    // 初始化
+    $(function () {
+        disableBtns_Remark();
+
+        $('#dg_remarkList').datagrid({
+            onLoadSuccess: function () {
+                $(".easyui-tooltip").tooltip({
+                    onShow: function () {
+                        $(this).tooltip('tip').css({
+                            borderColor: '#000'
+                        });
+                    }
+                });
+            }
+        });
+
+    });
+
+    // 新增
+    function newItem_Remark() {
+        $('#dlg_Remark').dialog('open').dialog('center').dialog('setTitle', '新增');
+        $('#rl10203').textbox('setValue', '');
+    }
+
+    // 保存
+    function saveItem_Remark() {
+        var localSaveFlag = isLocalSave_Remark();
+        if (localSaveFlag) {
+            localSave_Remark();
+            $('#dlg_Remark').dialog('close');        // close the dialog
+        }
+        else {
+            var id = $('#input_hd_SupplierId_Remark').val(),
+                remark = $('#rl10203').textbox('getValue');
+            if (rlform1101.isNullOrWhitespace(remark)) {
+                rlform1101.messenger.showMessage("备注不能为空！");
+                return;
+            }
+            rlform1101.post(
+                '/AreasCode030/szrl100/AddRemark',
+                { rl10202: id, rl10203: remark },
+                function (result) {
+                    $('#dlg_Remark').dialog('close');        // close the dialog
+                    $('#dg_remarkList').datagrid('reload');    // reload the user data
+                }
+            );
+        }
+    }
+
+    // 删除选中项
+    function deleteItem_Remark() {
+        var row = $('#dg_remarkList').datagrid('getSelected');
+        var localSaveFlag = isLocalSave_Remark();
+        if (localSaveFlag) {
+            localDeleteItem_Remark(row);
+        }
+        else {
+            $.messager.confirm('确认消息', '是否删除？', function (r) {
+                if (r) {
+                    //var row = $('#dg_remarkList').datagrid('getSelected');
+                    rlform1101.post('/AreasCode030/szrl100/RemoveRemark', { id: row.ID }, function (result) {
+                        if (!result.success) {
+                            $.messager.show({
+                                title: 'Error',
+                                msg: result.Message
+                            });
+                        }
+                        $('#dg_remarkList').datagrid('reload');    // reload the user data
+                    });
+                }
+            });
+        }
+    }
+
+    function formatter_Remark(value, data, index) {
+        return '<span title="' + value + '" class="easyui-tooltip">' + value + '</span>'
+    }
+</script>
+
+
+<div id="dlg_Remark" class="easyui-dialog" style="width:400px;height:250px;"
+     closed="true" buttons="#dlg_Remark_buttons">
+    <form id="myform_Remark" method="post" novalidate style="margin:0;padding:20px 50px">
+        <input id="input_hd_SupplierId_Remark" type="hidden" value="@ViewBag.SupplierId" name="rl10202" />
+        <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">备注</div>
+        <div style="margin-bottom:10px">
+            <input id="rl10203" name="rl10203" class="easyui-textbox" label="备注：" style="width:100%" data-options="validType:['length[1, 200]']">
+        </div>
+    </form>
+</div>
+<div id="dlg_Remark_buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveItem_Remark()" style="width:90px">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg_Remark').dialog('close')" style="width:90px">取消</a>
+</div>

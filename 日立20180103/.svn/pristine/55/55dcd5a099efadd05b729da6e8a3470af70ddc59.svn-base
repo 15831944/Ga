@@ -1,0 +1,59 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Models.Code031
+{
+    /// <summary>
+    /// 状态
+    /// </summary>
+    public enum szrl125_R12507
+    {
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        Init = -1,
+
+        /// <summary>
+        /// 预付款
+        /// </summary>
+        APayment = 0,
+
+        /// <summary>
+        /// 验收款
+        /// </summary>
+        BPayment = 1,
+
+        /// <summary>
+        /// [调整支付计划]预付款
+        /// </summary>
+        CPayment = 2,
+
+        /// <summary>
+        /// [调整支付计划]验收款
+        /// </summary>
+        DPayment = 3,
+
+        /// <summary>
+        /// [带入验收计划]预付款
+        /// </summary>
+        EPayment = 4,
+
+        /// <summary>
+        /// [带入验收计划]验收款
+        /// </summary>
+        FPayment = 5,
+
+        /// <summary>
+        /// 流转审批中
+        /// </summary>
+        GPayment = 6,
+
+        /// <summary>
+        /// [已审核]支付结束
+        /// </summary>
+        HPayment = 7
+    }
+}

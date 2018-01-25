@@ -1,0 +1,794 @@
+﻿
+@{
+    ViewBag.Title = "营业合同验收和收款计划更新";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderStyles{
+   <style type="text/css">
+      
+    </style>
+}
+
+@section body{
+
+
+
+    <div data-options="region:'north'">
+        <div class="header">
+            <div class="left-layout">
+                <a hrer="javascript:;" class="btn-back">返回</a>
+                <h1>营业合同验收和收款更新</h1>
+            </div>
+            <div class="center-layout"></div>
+            <div id="BtnGroup" class="right-layout">
+                <a href="javascript:;" id="btnUpdate" class="easyui-linkbutton" >更新</a>
+                <a href="javascript:;" id="btnRecognize" class="easyui-linkbutton">承认</a>
+                @*<a href="javascript:;" id="btnSave" class="easyui-linkbutton">保存</a>*@
+                <a href="javascript:;" id="btnExcel" class="easyui-linkbutton">导出</a>
+                <a href="javascript:;" id="btnPrint" class="easyui-linkbutton">打印</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center'">
+        <div class="easyui-layout">
+            <div data-options="region:'west',split:true,width:230">
+                <div class="easyui-layout">
+                    <div data-options="region:'center'">
+                        <div class="nano">
+                            <div class="nano-content">
+                                @*<iframe frameborder="0" src="/AreasCode030/szrl033/szrl033DirTree?f=1" style="width:100%;height:90%;"></iframe>*@
+                                <ul id="szrl030Tree" style="margin:10px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-options="region:'north'">
+                        <div class="tree-search">
+                            <div id="forsomesearch" class="search-layout">
+                                <input id="searchTree" class="easyui-searchbox" style="width:100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-options="region:'center'">
+                <div class="easyui-layout">
+                    <div data-options="region:'center'">
+                        <div id="tt" class="easyui-tabs">
+                            <div title="表纸">
+                                <div class="nano">
+                                    <div class="nano-content">
+                                        <div class="control-group" id="tt_0">
+                                            <div class="control-group-content">
+                                                <div class="control-text">
+                                                    <label>合同序列号：</label>
+                                                    <input id="hetongxuliehao" style="min-width:13em;" disabled="disabled" />
+                                                </div>
+                                                <div class="control-text">
+                                                    <label>合同名称：</label>
+                                                    <input id="hetongmingcheng" style="min-width:20em;" disabled="disabled" />
+                                                </div>
+                                                <div class="control-text">
+                                                    <label>合同金额：</label>
+                                                    <input id="hetongjine" class="easyui-numberbox" style="min-width:13em;" required="true" precision="2" groupSeparator=","  disabled="disabled" />
+                                                    <input type="hidden" id="hetongjine_hide" />
+                                                </div>
+                                                <div class="control-text">
+                                                    <label>支付条件：</label>
+                                                    <input id="zhifutiaojian" style="min-width:46em;" disabled="disabled" />
+                                                </div><br />
+                                                <div class="control-text">
+                                                    <label>付款周期：</label>
+                                                    <input id="fukuanzhouqi" class="easyui-numberbox" style="min-width:10em;" required="true" precision="2" /> 天
+                                                </div>
+                                                <div class="control-text">
+                                                    <label>开票预计周期.：</label>
+                                                    <input id="kaipiaoyujizhouqi" class="easyui-numberbox" style="min-width:10em;" required="true" precision="2" disabled="disabled" /> 天
+                                                </div>
+                                                <br />
+                                                <div class="control-text"><label>制单人：</label><input id="zhidanren" class="textbox-text" style="min-width:10em;" disabled="disabled" /></div>
+                                                <div class="control-text"><label>制单日期：</label><input id="zhidanriqi" class="textbox-text" style="min-width:10em;" disabled="disabled" /></div>
+                                                <div class="control-text"><label>审核人：</label><input id="shenheren" class="textbox-text" style="min-width:10em;" disabled="disabled" /></div>
+                                                <div class="control-text"><label>审核日期：</label><input id="shenheriqi" class="textbox-text" style="min-width:10em;" disabled="disabled" /></div>
+                                            </div>
+                                        </div>
+                                        <div style="margin:20px 23px 0 45px;">
+                                            <table id="YJH_Grid" cellpadding="0" cellspacing="0" style="width:1010px;height:278px;text-align:center;overflow:auto;"></table>
+                                        </div>
+
+                                        <div style="margin:0px 23px 0 45px;">
+                                            <table id="SKJH_Grid" cellpadding="0" cellspacing="0" style="width:1010px;height:250px;text-align:center;overflow:auto;"></table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div title="附件">
+                                等桑大侠的附件模块
+                            </div>
+                            <div title="协同办公">
+                                等桑大侠的协同办公模块
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section FooterScript{
+    <script>
+        (function () {
+            $(function () {
+                //树选择的合同id
+                var hetongid = undefined;
+                //YJH_Grid的数据源
+                var YJH_Grid_data;
+                //SKJH_Grid的数据源
+                var SKJH_Grid_data;
+                //判断页面数据是否从30、32表中读取
+                var IsReadFrom3032;
+                //当前编辑行索引
+                var editIndex = undefined;
+                function endEditing() {
+                    if (editIndex == undefined) { return true }
+                    if ($('#YJH_Grid').datagrid('validateRow', editIndex)) {
+                        //var ed = $('#dg').datagrid('getEditor', { index: editIndex, field: 'productid' });
+                        //var productname = $(ed.target).combobox('getText');
+                        //$('#YJH_Grid').datagrid('getRows')[editIndex]['productname'] = productname;
+                        $('#YJH_Grid').datagrid('endEdit', editIndex);
+                        editIndex = undefined;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                //单击YJH_Grid表触发的函数
+                function onClickRow(index) {
+                    debugger;
+                    if (!IsYYS(index) && !IsReadFrom3032) {       //判断是否是已验收状态，如果是的话不给编辑
+                        //if (editIndex != index) {     ----如果加了这个判断，有可能重复点当前行的时候无法编辑
+                        if (endEditing()) {
+                            $('#YJH_Grid').datagrid('selectRow', index)
+                                .datagrid('beginEdit', index);
+                            editIndex = index;
+                            szrl030setEditing(index);
+                        } else {
+                            $('#YJH_Grid').datagrid('selectRow', editIndex);
+                        }
+                        //}
+                    }
+                }
+                //列编辑运算
+                function szrl030setEditing(index) {
+                    var editors = $('#YJH_Grid').datagrid('getEditors', index);
+                    var hetongjineNum = $("#hetongjine_hide").val();
+                    editors[2].target.numberbox({
+                        onChange: function () {
+                            calculate(hetongjineNum, editors[2].target.val(), index);
+                        }
+                    });
+                    function calculate(hetongjineNum, gridjeEditor, index) {
+                        var cost = ((gridjeEditor / hetongjineNum) * 100).toFixed(2);
+                        $(editors[1].target).numberbox('setValue', cost);
+
+                        //var row = $("#YJH_Grid").datagrid("getSelected");
+                        //row["XinBL"] = cost;
+                    }
+                }
+                //添加一行
+                function append() {
+                    if (endEditing()) {
+                        $('#YJH_Grid').datagrid('appendRow', { status: 'P' });
+                        editIndex = $('#YJH_Grid').datagrid('getRows').length - 1;
+                        $('#YJH_Grid').datagrid('selectRow', editIndex)
+                            .datagrid('beginEdit', editIndex);
+                        szrl030setEditing(editIndex);
+                    }
+                    //szrl030setEditing(editIndex);
+                }
+                //删除一行
+                function removeit() {
+                    if (editIndex == undefined) { return }
+                    $('#YJH_Grid').datagrid('cancelEdit', editIndex)
+                        .datagrid('deleteRow', editIndex);
+                    if (YJH_Grid_data["rows"].length > 0) {
+                        YJH_Grid_data["rows"].splice(editIndex, 0);
+                    }
+                    $('#YJH_Grid').datagrid('loadData', YJH_Grid_data);
+                    SaveChangeforYJH_Grid();
+                    editIndex = undefined;
+                }
+                //判断是否可以编辑【已验收状态】
+                function IsYYS(index) {
+                    //if (YJH_Grid_data["total"] >= (index + 1)) {
+                    if (YJH_Grid_data["rows"][index]["ZhuangTai"] != undefined) {
+                        if (YJH_Grid_data["rows"][index]["ZhuangTai"].toString() == "已验收" || YJH_Grid_data["rows"][index]["ZhuangTai"].toString() == "1" || YJH_Grid_data["rows"][index]["ZhuangTai"] == 1) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                //选择了款项性质时候绑定到YJH_Grid_data数据源
+                function selYJH(rowIndex, rowData) {
+                    if (editIndex != undefined) {
+                        debugger;
+                        //$('#YJH_Grid').datagrid('loadData', YJH_Grid_data);
+                        var editors1 = $('#YJH_Grid').datagrid('getEditors', editIndex);
+                        //$(editors1[0].target).combogrid('setText', rowData["rl02302"]);
+                        $(editors1[0].target).combogrid('setValue', rowData["rl02302"]);
+                        YJH_Grid_data["rows"][editIndex]["XinKXXZ"] = rowData["rl02301"];
+                    }
+                }
+                //绑定基础资料【grid上面的数据】
+                BindData = function (data) {
+                    if (data.length > 0) {
+                        $("#hetongxuliehao").val(data[0]["hetongxuliehao"]);
+                        $("#hetongmingcheng").val(data[0]["hetongmingcheng"]);
+                        $("#hetongjine").numberbox('setValue', data[0]["hetongjine"]);
+                        $("#hetongjine_hide").val(data[0]["hetongjine"]);
+                        $("#zhifutiaojian").val(data[0]["zhifutiaojian"]);
+                        $("#fukuanzhouqi").numberbox('setValue', data[0]["fukuanzhouqi"]);
+                        $("#kaipiaoyujizhouqi").numberbox('setValue', data[0]["kaipiaoyujizhouqi"]);
+                        $("#zhidanren").val(data[0]["zhidanren"]);
+                        $("#zhidanriqi").val(data[0]["zhidanriqi"]);
+                        $("#shenheren").val(data[0]["shenheren"]);
+                        $("#shenheriqi").val(data[0]["shenheriqi"]); 
+                        $("#hetongjine").numberbox("disable");
+                    }
+                }
+                //清空基础资料【grid上面的数据】
+                initData = function () {
+                    $("#hetongxuliehao").val("");
+                    $("#hetongmingcheng").val("");
+                    $("#hetongjine").numberbox('setValue', "");
+                    $("#zhifutiaojian").val("");
+                    $("#fukuanzhouqi").numberbox('setValue', "");
+                    $("#kaipiaoyujizhouqi").numberbox('setValue', "");
+                    $("#zhidanren").val("");
+                    $("#zhidanriqi").val("");
+                    $("#shenheren").val("");
+                    $("#shenheriqi").val("");
+                    $("#hetongjine_hide").val("");
+                    //$("#btnUpdate").linkbutton("disable");
+                    //$("#btnRecognize").linkbutton("disable");
+                    //$("#btnExcel").linkbutton("disable");
+                    //$("#btnPrint").linkbutton("disable");
+                    IsReadFrom3032 = false;
+                }
+                //制保留2位小数，如：2，会在2后面补上00.即2.00
+                function toDecimal2(x) {
+                    var f = parseFloat(x);
+                    if (isNaN(f)) {
+                        return false;
+                    }
+                    var f = Math.round(x * 100) / 100;
+                    var s = f.toString();
+                    var rs = s.indexOf('.');
+                    if (rs < 0) {
+                        rs = s.length;
+                        s += '.';
+                    }
+                    while (s.length <= rs + 2) {
+                        s += '0';
+                    }
+                    return s;
+                }
+                //当输入合同金额失去焦点(blur)
+                //$("#hetongjine").numberbox({
+                //    onChange: function () {
+                //        debugger;
+                //        //$("#hetongjine").numberbox().next('span').find('input').blur(function () {
+                //        //当改变合同金额时，隐藏的标签也要同时改变
+                //        $("#hetongjine_hide").val($("#hetongjine").numberbox('getValue'));
+                //        //var editors = $('#YJH_Grid').datagrid('getEditors', 0);
+                //        //$(editors[2].target).numberbox('setValue', 10);
+                //        if (YJH_Grid_data != undefined) {
+                //            //动态遍历状态不为【已验收】状态的数据，修改新比例
+                //            for (var i = 0; i < YJH_Grid_data["total"]; i++) {
+                //                YJH_Grid_data["rows"][i]["XinBL"] = toDecimal2(Number((YJH_Grid_data["rows"][i]["XinJE"]) / Number($("#hetongjine_hide").val())) * 100);
+                //            }
+                //            $('#YJH_Grid').datagrid('loadData', YJH_Grid_data);
+                //            SaveChangeforYJH_Grid();
+                //        }
+                //    }
+                //});
+                //当输入付款周期失去焦点(blur)
+                $("#fukuanzhouqi").numberbox({
+                    onChange: function () {
+                        //$("#fukuanzhouqi").numberbox().next('span').find('input').blur(function () {
+                        if (YJH_Grid_data != undefined) {
+                            $('#YJH_Grid').datagrid('loadData', YJH_Grid_data);
+                            SaveChangeforYJH_Grid();
+                        }
+                    }
+                });
+                //获取YJHGrid的数据源
+                getYJHGridData = function (hetongid) {
+                    $.ajax({
+                        url: "/AreasCode030/szrl030/QueryGridData",
+                        data: {
+                            "hetongid": hetongid  //hetong id
+                        },
+                        type: "post",
+                        async: false,
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            YJH_Grid_data = obj;
+                        },
+                        error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                };
+                //退出编辑，保存数据进YJH_Grid_data对象,加载YJH_Grid
+                SaveChangeforYJH_Grid = function () {
+                    //取消选中当前的行
+                    if (editIndex != undefined) {
+                        $("#YJH_Grid").datagrid("unselectRow", editIndex);
+                    }
+                    //YJH_Grid退出编辑，保存好数据
+                    for (var i = 0; i < $('#YJH_Grid').datagrid('getChanges').length + YJH_Grid_data["total"]; i++) {
+                        $('#YJH_Grid').datagrid('endEdit', i);   //【这句话会把修改过的值自动保存到YJH_Grid_data里面】
+                    }
+                    //YJH_Grid如果有新增的行就加进去YJH_Grid_data数据源
+                    if (YJH_Grid_data["rows"].length != $('#YJH_Grid').datagrid("getRows").length) {
+                        var target_YJH_data = $('#YJH_Grid').datagrid('getChanges');
+                        for (var x = 0; x < target_YJH_data.length; x++) {
+                            YJH_Grid_data["rows"].push(target_YJH_data[x]);
+                        }
+                    }
+                    //把上面的grid数据源添加到下面的gird数据源里边
+                    SKJH_Grid_data = YJH_Grid_data;
+                    var dd;
+                    for (var y = 0; y < YJH_Grid_data["rows"].length; y++) {
+                        dd = new Date(YJH_Grid_data["rows"][y]["XinYSRQ"]);
+                        dd.setDate(dd.getDate() + Number($("#fukuanzhouqi").numberbox('getValue')) + Number($("#kaipiaoyujizhouqi").numberbox('getValue')));
+                        SKJH_Grid_data["rows"][y]["XinSKRQ"] = dd.format("yyyy-MM-dd");
+                    }
+                    $('#SKJH_Grid').datagrid('loadData', SKJH_Grid_data);
+                }
+                //保存之前，判断每行是否都填入了值
+                IsInputVal = function () {
+
+                    return true;
+                }
+                //格式化时间格式
+                Date.prototype.format = function (format) {
+                    var o = {
+                        "M+": this.getMonth() + 1, //month
+                        "d+": this.getDate(), //day
+                        "h+": this.getHours(), //hour
+                        "m+": this.getMinutes(), //minute
+                        "s+": this.getSeconds(), //second
+                        "q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+                        "S": this.getMilliseconds() //millisecond
+                    }
+                    if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+                        (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+                    for (var k in o) if (new RegExp("(" + k + ")").test(format))
+                        format = format.replace(RegExp.$1,
+                            RegExp.$1.length == 1 ? o[k] :
+                                ("00" + o[k]).substr(("" + o[k]).length));
+                    return format;
+                }
+                //判断页面数据是否从30、32表中读取，如果是，则代表已经更新在走流程
+                QueryBtnPower = function (data) {
+                    IsReadFrom3032 = data;
+                    $("#btnUpdate").linkbutton("disable");
+                    $("#icon_add").linkbutton("disable");
+                    $("#icon_remove").linkbutton("disable");
+                    $("#icon_dr").linkbutton("disable"); 
+                    $("#fukuanzhouqi").numberbox("disable");
+                }
+
+                //tree单击事件调用方法
+                onClickTree = function (hetongid) {
+                    $.ajax({
+                        url: "/AreasCode030/szrl030/QueryBasicData",
+                        data: {
+                            "hetongid": hetongid
+                        },
+                        async: false,
+                        type: "post",
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.success) {
+                                initData();
+                                BindData(obj.Pamrms.query);
+                                getYJHGridData(hetongid);
+                                $('#YJH_Grid').datagrid('loadData', YJH_Grid_data);
+                                SaveChangeforYJH_Grid();
+                                $("#btnUpdate").linkbutton("enable");
+                                //$("#btnRecognize").linkbutton("enable");
+                                //$("#btnExcel").linkbutton("enable");
+                                //$("#btnPrint").linkbutton("enable");
+                                $("#icon_add").linkbutton("enable");
+                                $("#icon_remove").linkbutton("enable");
+                                $("#icon_dr").linkbutton("enable");
+                                //$("#hetongjine").numberbox("enable");
+                                $("#fukuanzhouqi").numberbox("enable");
+                                if (obj.Pamrms.IsReadFrom3032 == true) {
+                                    QueryBtnPower(obj.Pamrms.IsReadFrom3032);
+                                }
+                            }
+                            else {
+                                alert("系统出错，请联系管理员！");
+                            }
+                        },
+                        error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                }
+
+                //页面加载函数
+                window.onload = function () {
+                    initData();
+
+                    $('#szrl030Tree').tree({
+                        url: '/AreasCode030/szrl033/GetContractDirs',
+                        animate: true,
+                        onClick: function (node) {
+                            $(this).tree('expand', node.target);
+                            var selectedNode = $('#szrl030Tree').tree('getSelected');
+                            hetongid = selectedNode.id;
+                            onClickTree(hetongid);
+                        },
+                        onCollapse: function (node) {
+                            $(this).tree('collapseAll', node.target);
+                        }
+                    });
+
+                    $("#YJH_Grid").datagrid({
+                        //url: "/AreasCode030/szrl030/QueryGridData",
+                        //data: {
+                        //    "footer": [
+                        //        {
+                        //            "YuanBL": "100.00",
+                        //            "YuanJE": "100.00"
+                        //        }
+                        //    ]
+                        //},
+                        //data: YJH_Grid_data,
+                        //method: 'post',
+                        fit: false,
+                        loadMsg: "正在加载，请稍等...",
+                        iconCls: 'icon-edit',
+                        onClickRow: onClickRow,
+                        fitColumns: true,
+                        singleSelect: true,
+                        idField: "",
+                        sortable: true,
+                        scrollbarSize: 0,
+                        showFooter: true,
+                        toolbar: [
+                            {
+                                id: "icon_add",
+                                text: '添加',
+                                iconCls: 'icon-add',
+                                handler: function () {
+                                    append();
+                                }
+                            },
+                            {
+                                id: "icon_remove",
+                                text: '删除',
+                                iconCls: 'icon-remove',
+                                handler: function () {
+                                    removeit();
+                                }
+                            },
+                            {
+                                id: "icon_dr",
+                                text: '保存',
+                                iconCls: 'icon-remove',
+                                handler: function () {
+                                    SaveChangeforYJH_Grid();
+                                }
+                            }
+                        ],
+                        columns: [
+                            [
+                                { title: '原验收计划', colspan: 5 },
+                                { title: '更新验收计划', colspan: 4 }
+                            ],
+                            [
+                                {
+                                    field: 'YuanKXXZ', title: '款项性质'
+                                },
+                                {
+                                    field: 'YuanBL', title: '比例', width: 250,
+                                    formatter: function (value, row, index) {
+                                        //var YuanJE = row['YuanJE'];
+                                        //return toDecimal2((YuanJE / $("#hetongjine_hide").val()) * 100);
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else {
+                                            return "";
+                                        }
+                                    }
+                                },
+                                {
+                                    field: 'YuanJE', title: '金额', width: 250,
+                                    formatter: function (value, row, index) {
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else {
+                                            return "";
+                                        }
+                                    }
+                                },
+                                {
+                                    field: 'YuanYSRQ', title: '计划验收日期', width: 350
+                                },
+                                {
+                                    field: 'ZhuangTai', title: '状态', width: 250,
+                                    formatter: function (value, row, index) {
+                                        if (value == "0") {
+                                            return "未验收";
+                                        }
+                                        if (value == "1") {
+                                            return "已验收";
+                                        }
+                                        if (value == "2") {
+                                            return "";
+                                        }
+                                    }
+                                },
+                                {
+                                    field: 'XinKXXZ', title: '款项性质', width: 250,
+                                    editor: {
+                                        type: 'combogrid',
+                                        idField: "rl02301",
+                                        textField: "rl02302",
+                                        options: {
+                                            url: "/AreasCode030/szrl030/QueryKXXZ",
+                                            winParams: {
+                                                title: '款项性质选择',
+                                            },
+                                            panelWidth: 300,
+                                            pagination: true,
+                                            mode: 'remote',
+                                            columns: [[
+                                                { field: 'rl02302', title: '款项性质', width: 280 },
+                                            ]],
+                                            onSelect: selYJH
+                                        }
+                                    }
+                                },
+                                {
+                                    field: 'XinBL', title: '比例', width: 250,
+                                    editor: {
+                                        type: 'numberbox', options: { precision: 2 }
+                                    },
+                                    formatter: function (value, row, index) {
+                                        //var XinJE = row['XinJE'];
+                                        //return toDecimal2((XinJE / $("#hetongjine_hide").val()) * 100);
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else {
+                                            return "";
+                                        }
+                                    }
+                                },
+                                {
+                                    field: 'XinJE', title: '金额', width: 250,
+                                    editor: {
+                                        type: 'numberbox', options: { precision: 2 }
+                                    },
+                                    formatter: function (value, row, index) {
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else {
+                                            return "";
+                                        }
+                                    }
+                                },
+                                {
+                                    field: 'XinYSRQ', title: '计划验收日期', width: 350,
+                                    editor: { type: "datebox" }
+                                }
+                            ]
+                        ]
+                    });
+
+                    $("#SKJH_Grid").datagrid({
+                        data: SKJH_Grid_data,
+                        fit: false,
+                        loadMsg: "正在加载，请稍等...",
+                        iconCls: 'icon-edit',
+                        fitColumns: true,
+                        singleSelect: true,
+                        idField: "",
+                        sortable: true,
+                        scrollbarSize: 0,
+                        showFooter: true,
+                        columns: [
+                            [
+                                { title: '原收款计划', colspan: 5 },
+                                { title: '更新收款计划', colspan: 4 }
+                            ],
+                            [
+                                { field: 'YuanKXXZ', title: '款项性质' },
+                                {
+                                    field: 'YuanBL', title: '比例', width: 250,
+                                    formatter: function (value, row, index) {
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else { return ""; }
+                                    }
+                                },
+                                {
+                                    field: 'YuanJE', title: '金额', width: 250,
+                                    formatter: function (value, row, index) {
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else { return ""; }
+                                    }
+                                },
+                                {
+                                    field: 'YuanSKRQ', title: '计划收款日期', width: 350
+                                },
+                                { field: '-1', title: '', width: 250 },
+                                {
+                                    field: 'XinKXXZ', title: '款项性质', width: 250
+                                },
+                                {
+                                    field: 'XinBL', title: '比例', width: 250,
+                                    formatter: function (value, row, index) {
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else { return ""; }
+                                    }
+                                },
+                                {
+                                    field: 'XinJE', title: '金额', width: 250,
+                                    formatter: function (value, row, index) {
+                                        if (value != null && value != "" && value != undefined && value != 0) {
+                                            return toDecimal2(value);
+                                        }
+                                        else { return ""; }
+                                    }
+                                },
+                                {
+                                    field: 'XinSKRQ', title: '计划收款日期', width: 350
+                                }
+                            ]
+                        ]
+                    });
+
+                };
+
+                //页面更新按钮
+                $('#btnUpdate').linkbutton({
+                    onClick: function () {
+                        if (!confirm("变更计划之前，是否确认已经保存计划？"))
+                        {
+                            return false;
+                        }
+                        SaveChangeforYJH_Grid();
+                        //在更新之前判断所有的值是否都填写了
+                        var rows = $('#YJH_Grid').datagrid('getRows');
+                        var SumRate = 0;
+                        var Str = "";
+                        for (var i = 0; i < rows.length; i++) {
+                            if (rows[i]['XinKXXZ'] == "") {
+                                Str = "第" + (i + 1) + "行,请选择一个款项性质";
+                                alert(Str);
+                                return false;
+                            }
+                            if (rows[i]['XinJE'] == "") {
+                                Str = "第" + (i + 1) + "行,请填写金额（系统自动计算比例）";
+                                alert(Str);
+                                return false;
+                            }
+                            if (rows[i]['XinYSRQ'] == "") {
+                                Str = "第" + (i + 1) + "行,请填写计划验收日期";
+                                alert(Str);
+                                return false;
+                            }
+                            SumRate += (rows[i]['XinBL'] == "" ? 0 : parseFloat(rows[i]['XinBL']));
+                        }
+                        if (SumRate != 100) {
+                            $.messager.show({
+                                title: '不能保存',
+                                msg: '验收比例必须等于100%',
+                            });
+                            return false;
+                        }
+
+
+                        $.ajax({
+                            url: "/AreasCode030/szrl030/Insert3032",
+                            data: {
+                                YJH_Grid_data: JSON.stringify(YJH_Grid_data['rows']),
+                                SKJH_Grid_data: JSON.stringify(SKJH_Grid_data['rows']),
+                                //hetongxuliehao: $("#hetongxuliehao").val(),
+                                //hetongmingcheng: $("#hetongmingcheng").val(),
+                                hetongjine: $("#hetongjine").numberbox('getValue'),
+                                //zhifutiaojian: $("#zhifutiaojian").val(),
+                                fukuanzhouqi: $("#fukuanzhouqi").numberbox('getValue'),
+                                kaipiaoyujizhouqi: $("#kaipiaoyujizhouqi").numberbox('getValue'),
+                                //zhidanren: $("#zhidanren").val(),
+                                //zhidanriqi: $("#zhidanriqi").val(),
+                                //shenheren: $("#shenheren").val(),
+                                //shenheriqi: $("#shenheriqi").val(),
+                                hetongid: hetongid
+                            },
+                            type: "post",
+                            async: false,
+                            success: function (data) {
+                                var obj = $.parseJSON(data);
+                                if (obj.success)
+                                {
+                                    alert("更新成功！");
+                                    onClickTree(hetongid);
+                                }
+                                else { alert("系统出错，请联系管理员！");  }
+                            },
+                            error: function (obj) { alert("系统出错，请联系管理员！"); }
+                        });
+                    }
+                });
+                //页面承认按钮
+                $('#btnRecognize').linkbutton({
+                    onClick: function () {
+                        if (!confirm("确定无误并承认计划！")) {
+                            return false;
+                        }
+                        $.ajax({
+                            url: "/AreasCode030/szrl030/Insert2224",
+                            data: {
+                                hetongid: hetongid
+                            },
+                            type: "post",
+                            async: false,
+                            success: function (data) {
+                                var obj = $.parseJSON(data);
+                                if (obj.success) {
+                                    alert("承认成功！");
+                                    onClickTree(hetongid);
+                                }
+                                else { alert("系统出错，请联系管理员！"); }
+                            },
+                            error: function (obj) { alert("系统出错，请联系管理员！"); }
+                        });
+                    }
+                });
+                //页面导出按钮
+                $('#btnExcel').linkbutton({
+                    onClick: function () {
+                        alert(123);
+                    }
+                });
+                //页面打印蛋妞
+                $('#btnPrint').linkbutton({
+                    onClick: function () {
+                        //    var Print_tab = $('#tt').tabs('getSelected');
+                        //    var Print_index = $('#tt').tabs('getTabIndex', Print_tab);
+                        //    if (Print_index == 0) {
+                        //        printdiv("tt_0");
+                        //    }
+                        //    else if (Print_index == 1) {
+                        //        // printdiv("szrl026From");
+                        //    }
+                        //    else {
+                        //        return false;
+                        //    }
+                        //}
+                        window.print();
+                    }
+                });
+            });
+        }());
+    </script>
+}

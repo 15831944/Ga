@@ -1,0 +1,325 @@
+﻿using Gmail.DDD.Helper;
+using NPOI.HSSF.UserModel;
+using NPOI.HSSF.Util;
+using NPOI.SS.UserModel;
+using NPOI.SS.Util;
+using PM2.Models.Code030;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Service.Code030
+{
+    public class szrl025Execl
+    {
+        void GetSheet(Stream stream)
+        {
+            IWorkbook workbook = new HSSFWorkbook(stream);//从流内容创建Workbook对象
+            ISheet sheet = workbook.GetSheetAt(0);//获取第一个工作表
+            IRow row = sheet.GetRow(0);//获取工作表第一行
+            ICell cell = row.GetCell(0);//获取行的第一列
+            string value = cell.ToString();//获取列的值
+        }
+        #region ================== 导出Excel功能 ======================
+        /// <summary>
+        /// 受注传票明细
+        /// </summary>
+        /// <param name="cbn">szrl026</param>
+        /// <param name="ct1">发包公司名</param>
+        /// <param name="ct2">作番编号</param>
+        /// <param name="ct3">精算日</param>
+        /// <param name="ct4">税率</param>
+        public void VoucheToExcel(List<szrl026CBN> cbn, string ct1, string ct2, string ct3, string ct4)
+        {
+            try
+            {
+                // string path = "~/Content/Areas/AreasCode030/szrl025/excel/受注传票明细.xls";
+                MemoryStream ms = new MemoryStream();
+                IWorkbook workbook = new HSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet();
+                #region 设置行列内容
+                IRow dataRow1 = sheet.CreateRow(0);
+                dataRow1.CreateCell(0).SetCellValue("发包公司名:");
+                dataRow1.CreateCell(2).SetCellValue(ct1);
+                dataRow1.CreateCell(5).SetCellValue("作番编号:");
+                dataRow1.CreateCell(6).SetCellValue(ct2);
+
+                IRow dataRow2 = sheet.CreateRow(1); //创建列
+                dataRow2.CreateCell(0).SetCellValue("精算日:");
+                dataRow2.CreateCell(2).SetCellValue(ct3);
+                dataRow2.CreateCell(5).SetCellValue("税率:");
+                dataRow2.CreateCell(6).SetCellValue(ct4);
+
+
+                IRow dataRow3 = sheet.CreateRow(2);
+                dataRow3.CreateCell(0).SetCellValue("序号");
+                dataRow3.CreateCell(1).SetCellValue("是否变更");
+                dataRow3.CreateCell(2).SetCellValue("合同金额");
+                dataRow3.CreateCell(3).SetCellValue("手配金额");
+                dataRow3.CreateCell(4).SetCellValue("不含税金额");
+                dataRow3.CreateCell(5).SetCellValue("税额");
+                dataRow3.CreateCell(6).SetCellValue("合同书编号");
+                dataRow3.CreateCell(7).SetCellValue("合同名称");
+                dataRow3.CreateCell(8).SetCellValue("合同书签订日");
+                dataRow3.CreateCell(9).SetCellValue("交货期");
+                dataRow3.CreateCell(10).SetCellValue("发行日");
+                dataRow3.CreateCell(11).SetCellValue("发行回数");
+                dataRow3.CreateCell(12).SetCellValue("発行日");
+                dataRow3.CreateCell(13).SetCellValue("预算状");
+                int rowIndex = 3;
+                int cbnIndex = 0;
+                foreach (var item in cbn)
+                {
+                    int i = cbn.IndexOf(item);//获取索引
+                    if (i == cbnIndex)
+                    {
+                        IRow dataRow = sheet.CreateRow(rowIndex);
+                        dataRow.CreateCell(0).SetCellValue(i + 1);
+                        dataRow.CreateCell(1).SetCellValue(item.IsChange);
+                        dataRow.CreateCell(2).SetCellValue(item.ContractSerialNum);
+                        dataRow.CreateCell(3).SetCellValue(item.ContractAmount);
+                        dataRow.CreateCell(4).SetCellValue(item.AllocationAmount);
+                        dataRow.CreateCell(5).SetCellValue(item.TaxFreeMoney);
+                        dataRow.CreateCell(6).SetCellValue(item.Tax);
+                        dataRow.CreateCell(7).SetCellValue(item.ContractNumber);
+                        dataRow.CreateCell(8).SetCellValue(item.ContractName);
+                        dataRow.CreateCell(9).SetCellValue(item.ContractDate);
+                        dataRow.CreateCell(10).SetCellValue(item.DateDelivery);
+                        dataRow.CreateCell(11).SetCellValue(item.CirculationNumber);
+                        dataRow.CreateCell(12).SetCellValue(item.DateIssue);
+                        dataRow.CreateCell(13).SetCellValue(item.BudgetState);
+                    }
+                    rowIndex++;
+                    cbnIndex++;
+                }
+
+                #endregion
+
+
+                ICellStyle style = workbook.CreateCellStyle();
+                IFont font = workbook.CreateFont();
+                font.FontName = "宋体";
+                //font.Color = new HSSFColor.Pink().GetIndex();
+                font.FontHeightInPoints = 12;//字体大小   
+                style.SetFont(font); //将字体样式赋给样式对象   
+                                     //  cell.CellStyle = style; //把样式赋给单元格
+                                     //cell.CellFormula = "公式";
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 2, 4));
+                sheet.AddMergedRegion(new CellRangeAddress(0, 0, 6, 7));
+
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 0, 1));
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 2, 4));
+                sheet.AddMergedRegion(new CellRangeAddress(1, 1, 6, 7));
+
+                workbook.Write(ms);
+                ms.Flush();
+                ms.Position = 0;
+
+                RenderToBrowser(ms, "受注传票明细.xls");
+
+                System.Web.HttpContext.Current.Response.End();
+
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 受注传票标签1导出
+        /// </summary>
+        /// <param name="szrl018"></param>
+        /// <param name="szrl025"></param>
+        /// <param name="z1821"></param>
+        /// <param name="z1922"></param>
+        /// <param name="z2023"></param>
+        public void VoucheToExcel2(szrl018 szrl018, szrl025 szrl025, string z1821, string z1922, string z2023)
+        {
+            try
+            {
+                MemoryStream ms = new MemoryStream();
+                IWorkbook workbook = new HSSFWorkbook();
+                ISheet sheet = workbook.CreateSheet();
+                IRow dataRow1 = sheet.CreateRow(0);
+                dataRow1.CreateCell(0).SetCellValue("更新回数:");
+                dataRow1.CreateCell(1).SetCellValue(szrl025.rl02503);
+                ICell cell = dataRow1.CreateCell(4);
+                cell.SetCellValue("受注传票");
+                // sheet.SetColumnWidth(0, 15 * 256);   //集装箱号
+
+                IRow dataRow2 = sheet.CreateRow(1);
+                dataRow2.CreateCell(0).SetCellValue("更新版发行日:");
+                dataRow2.CreateCell(1).SetCellValue(szrl025.rl02504);
+                if (szrl025.rl02502.Equals(1))
+                {
+                    dataRow2.CreateCell(8).SetCellValue("☑");
+                    dataRow2.CreateCell(9).SetCellValue("期间作番");
+                }
+                else
+                {
+                    dataRow2.CreateCell(8).SetCellValue("口");
+                    dataRow2.CreateCell(9).SetCellValue("期间作番");
+                }
+                IRow datarow3 = sheet.CreateRow(2);
+                datarow3.CreateCell(0).SetCellValue("新建");
+                if (szrl025.rl02505 == 0)
+                {
+                    datarow3.CreateCell(1).SetCellValue("☑");
+                }
+                datarow3.CreateCell(3).SetCellValue("确定通告");
+                if (szrl025.rl02506 == 0)
+                {
+                    datarow3.CreateCell(4).SetCellValue("☑");
+                }
+                datarow3.CreateCell(4).SetCellValue("作番编号");
+
+                datarow3.CreateCell(8).SetCellValue("作番税率:");
+                datarow3.CreateCell(9).SetCellValue(szrl018.rl01835.ToString());
+                datarow3.CreateCell(11).SetCellValue("初次发行日");
+                datarow3.CreateCell(12).SetCellValue(szrl025.rl02508);
+
+                var datarow4 = sheet.CreateRow(3);
+                datarow4.CreateCell(4).SetCellValue(szrl018.rl01806);
+
+                var datarow5 = sheet.CreateRow(4);
+                datarow5.CreateCell(11).SetCellValue("换算日元汇率");
+                datarow5.CreateCell(12).SetCellValue(szrl018.rl01813.ToString());
+
+                var datarow6 = sheet.CreateRow(5);
+                datarow6.CreateCell(0).SetCellValue("更新");
+                if (szrl025.rl02505==1)
+                {
+                    datarow6.CreateCell(1).SetCellValue("☑");
+                }
+                datarow6.CreateCell(3).SetCellValue("指定通告");
+                if (szrl025.rl02506 == 1)
+                {
+                    datarow6.CreateCell(4).SetCellValue("☑");
+                }
+                datarow6.CreateCell(11).SetCellValue("作番管理者");
+                datarow6.CreateCell(11).SetCellValue(szrl018.rl01811);
+
+                var datarow8 = sheet.CreateRow(7);
+                datarow8.CreateCell(0).SetCellValue("发包公司名");
+                datarow8.CreateCell(1).SetCellValue(szrl018.rl01802);
+                datarow8.CreateCell(2).SetCellValue("中转公司名");
+                datarow8.CreateCell(3).SetCellValue(szrl025.rl02507);
+
+                var datarow9 = sheet.CreateRow(8);
+                datarow9.CreateCell(0).SetCellValue("需要者名");
+                datarow9.CreateCell(1).SetCellValue(szrl018.rl01802);
+                datarow9.CreateCell(2).SetCellValue("交货地");
+                datarow9.CreateCell(3).SetCellValue(szrl025.rl02510);
+
+                //var datarow10 = sheet.CreateRow(9);
+                //datarow10.CreateCell(0).SetCellValue("需要者名");
+                //datarow10.CreateCell(1).SetCellValue(szrl018.rl01802);
+                //datarow10.CreateCell(2).SetCellValue("交货地");
+                //datarow10.CreateCell(3).SetCellValue(szrl025.rl02510);
+
+
+
+
+                CellRangeAddress region = new CellRangeAddress(0, 1, 4, 6);
+                sheet.AddMergedRegion(region);
+                ICellStyle style = workbook.CreateCellStyle();
+                //设置单元格的样式：水平对齐居中
+                style.Alignment = HorizontalAlignment.Center;
+                //新建一个字体样式对象
+                IFont font = workbook.CreateFont();
+                //设置字体加粗样式
+                font.Boldweight = short.MaxValue;
+                //使用SetFont方法将字体样式添加到单元格样式中 
+                style.SetFont(font);
+
+
+
+
+                style.BorderBottom = BorderStyle.Thin;
+                style.BorderLeft = BorderStyle.Thin;
+                style.BorderRight = BorderStyle.Thin;
+                style.BorderTop = BorderStyle.Thin;
+                style.BottomBorderColor = HSSFColor.Black.Index;
+                style.LeftBorderColor = HSSFColor.Black.Index;
+                style.RightBorderColor = HSSFColor.Black.Index;
+                style.TopBorderColor = HSSFColor.Black.Index;
+
+
+
+                //将新的样式赋给单元格
+                //   cell.CellStyle = style;
+
+
+
+
+
+
+
+
+
+                workbook.Write(ms);
+                ms.Flush();
+                ms.Position = 0;
+
+                RenderToBrowser(ms, "受注传票.xls");
+
+                System.Web.HttpContext.Current.Response.End();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+
+        /// <summary>
+        /// 输出文件到浏览器
+        /// </summary>
+        /// <param name="ms">Excel文档流</param>
+        /// <param name="context">HTTP上下文</param>
+        /// <param name="fileName">文件名</param>
+        private static void RenderToBrowser(MemoryStream ms, string fileName)
+        {
+            if (System.Web.HttpContext.Current.Request.Browser.Browser == "IE")
+                fileName = System.Web.HttpUtility.UrlEncode(fileName);
+            System.Web.HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment;fileName=" + fileName);
+            System.Web.HttpContext.Current.Response.BinaryWrite(ms.ToArray());
+        }
+        private ISheet createSheet(HSSFWorkbook workBook, string sheetName)
+        {
+            ISheet sheet = workBook.CreateSheet(sheetName);
+            IRow RowHead = sheet.CreateRow(0);
+
+            for (int iColumnIndex = 0; iColumnIndex < 10; iColumnIndex++)
+            {
+                RowHead.CreateCell(iColumnIndex).SetCellValue(Guid.NewGuid().ToString());
+            }
+
+            for (int iRowIndex = 0; iRowIndex < 20; iRowIndex++)
+            {
+                IRow RowBody = sheet.CreateRow(iRowIndex + 1);
+                for (int iColumnIndex = 0; iColumnIndex < 10; iColumnIndex++)
+                {
+                    RowBody.CreateCell(iColumnIndex).SetCellValue(DateTime.Now.Millisecond);
+                    sheet.AutoSizeColumn(iColumnIndex);
+                }
+            }
+            return sheet;
+        }
+        #endregion
+
+    }
+}

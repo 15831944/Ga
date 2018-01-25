@@ -1,0 +1,57 @@
+﻿#region using
+using FluentValidation;
+using Gmail.DDD.Config;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Helper;
+using Gmail.DDD.Repositorys;
+using Gmail.DDD.Service;
+using Gmail.DDD.SSO;
+using PM2.Code;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using Gmail.DDD.Extensions;
+using PM2.Models.Code031;
+using System.Data.Entity;
+using Gmail.DDD.AOP;
+using PM2.Repository.Code031;
+#endregion
+namespace PM2.Service.Code031
+{
+    public class BeforeSaveAttribute : BeforeExecuteAttribute
+    {
+        public BeforeSaveAttribute()
+            : base(true)
+        { }
+
+        #region 保存前验证
+        /// <summary>
+        /// 保存前验证
+        /// </summary>
+        /// <param name="context"></param>
+        protected override void ActionExecute(MethodContext context)
+        {
+            szrl125 szrl125 = context.GetParValue<szrl125>("szrl125");
+            IDbContextScopeFactory scopeFactory = this.Resolve<IDbContextScopeFactory>();
+            Iszrl125Repository_Facade _szrl125Repository = this.Resolve<Iszrl125Repository_Facade>();
+            using (IDbContextReadOnlyScope scope = scopeFactory.CreateReadOnlyScope())
+            {
+                bool isInit = _szrl125Repository.IsInitialize(szrl125.rl12502);
+
+                //0,预付款, 1:验收款 - 初始化数据
+                if ((szrl125.rl12507 == 0 || szrl125.rl12507 == 1) && isInit)
+                    return;
+
+                //其他状态- 当数据为初始化则异常
+                if (isInit)
+                    context.ReturnValue = OperateResultFactory.AjaxOperateResult(OperateResultType.ValidError, null);
+                
+            }
+        }
+        #endregion
+        
+    }
+}

@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using PM2.Models.Code030;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Repositorys;
+using PM2.Models.Code001;
+using Gmail.DDD.JsonConvert;
+using PM2.Code;
+using Gmail.DDD.Mvc;
+using PM2.Models.Code030.szrl033Model;
+using PM2.Models.Code030.Szrl105Model;
+
+namespace PM2.Service.Code030
+{
+    public class szrl121Tree : EasyTreeBase
+    {
+        private IDbContextScopeFactory _scopeFactory;
+        private IEFRepository<szrl001> _szrl001Repository;
+        private IEFRepository<szrl004> _szrl004Repository;
+        private IEFRepository<szrl018> _szrl018Repository;
+        private IEFRepository<szrl025> _szrl025Repository;
+        private IEFRepository<szrl019> _szrl019Repository;
+        private IEFRepository<szrl022> _szrl022Repository; 
+        private IEFRepository<Szrl105> _szrl105Repository;
+        public szrl121Tree(
+             IDbContextScopeFactory scopeFactory,
+             IEFRepository<szrl001> szrl001Repository,
+             IEFRepository<szrl004> szrl004Repository,
+             IEFRepository<szrl018> szrl018Repository,
+             IEFRepository<szrl025> szrl025Repository,
+             IEFRepository<szrl019> szrl019Repository,
+             IEFRepository<szrl022> szrl022Repository,
+             IEFRepository<Szrl105> szrl105Repository
+        )
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl001Repository = szrl001Repository;
+            this._szrl004Repository = szrl004Repository;
+            this._szrl018Repository = szrl018Repository;
+            this._szrl025Repository = szrl025Repository;
+            this._szrl019Repository = szrl019Repository;
+            this._szrl022Repository = szrl022Repository;
+            this._szrl105Repository = szrl105Repository;
+        }
+        /// <summary>
+        /// 获取作番树形结构图数据(区域-客户-作番(立项))
+        /// select * from szrl001--区域
+        ///select* from szrl004--客户
+        ///select* from szrl018--作番
+        /// </summary>
+        /// <returns></returns>
+        public override IOperateResult TreeLoad(IRequestGetter rGetter = null)
+        {
+
+            string _forsome = rGetter.GetValue<string>("forsome");
+            Forsome fs = new Forsome();
+            int[] rl01827s = _forsome == "0" ? fs.Executed : _forsome == "1" ? fs.ExternalActuarial : fs.Whole;
+            IEnumerable<IEasyTreeNode> szrl001 = null;
+            IEnumerable<IEasyTreeNode> szrl004 = null;
+            IEnumerable<IEasyTreeNode> szrl018 = null;
+            IEnumerable<IEasyTreeNode> szrl105 = null;
+
+            using (IDbContextReadOnlyScope scope = this._scopeFactory.CreateReadOnlyScope())
+            {
+                string[] rl01801s = null;
+                string[] rl01802s = null;
+                string[] rl10502s = null;
+                rl10502s = this._szrl105Repository.GetModels(x => x.rl10571 == 1 && x.rl10572 == 1).Select(x => x.rl10502).ToArray();
+
+                #region 获取区域
+                rl01801s = this._szrl018Repository.GetModels(x => x.rl01832.Equals(1)).Select(x => x.rl01801).ToArray();
+                rl01802s = this._szrl018Repository.GetModels(x => x.rl01832.Equals(1) && rl01827s.Contains(x.rl01827) && rl01801s.Contains(x.rl01801)).Select(x => x.rl01802).ToArray();
+                string[] rl00416s = this._szrl004Repository.GetModels(x => x.rl00445.Equals(1) && x.rl00454.Equals(1) && rl01802s.Contains(x.rl00401)).Select(x => x.rl00416).ToArray();
+                szrl001 = this._szrl001Repository.GetModels(x => rl00416s.Contains(x.rl00101)).Select(
+                    x => new EasyTreeNode
+                    {
+                        ID = x.rl00101,
+                        Text = x.rl00103,
+                        ParentId = null,
+                        OrderBy = x.rl00102,
+                        Params = new { nodeType = "szrl001" }
+                    }
+                 ).GroupBy(x => x.Text).Select(t => t.FirstOrDefault()).ToArray();
+                string[] rl00101 = szrl001.Select(x => x.ID).ToArray();
+                #endregion
+                #region 获取客户信息
+                szrl004 = this._szrl004Repository.GetModels(x => rl00101.Contains(x.rl00416)
+                && x.rl00445.Equals(1)
+                && x.rl00454.Equals(1)
+                && rl01802s.Contains(x.rl00401)).Select(
+                    x => new EasyTreeNode
+                    {
+                        ID = x.rl00401,
+                        Text = x.rl00403,
+                        ParentId = string.IsNullOrEmpty(x.rl00416) ? x.rl00401 : x.rl00416,
+                        OrderBy = x.rl00402,
+                        Params = new { nodeType = "szrl004" }
+                    }
+                 ).GroupBy(x => x.Text).Select(t => t.FirstOrDefault()).ToArray();
+                string[] rl00401 = szrl004.Select(x => x.ID).ToArray();
+                #endregion
+                #region 获取作番信息
+                szrl018 = this._szrl018Repository.GetModels(x => rl01801s.Contains(x.rl01801) && rl01802s.Contains(x.rl01802) && rl00401.Contains(x.rl01802) && x.rl01832.Equals(1) && rl01827s.Contains(x.rl01827) && rl10502s.Contains(x.rl01801)).Select(
+                            x => new EasyTreeNode
+                            {
+                                ID = x.rl01801,
+                                Text = x.rl01807,
+                                ParentId = string.IsNullOrEmpty(x.rl01802) ? x.rl01801 : x.rl01802,
+                                OrderBy = x.rl01806,
+                                Params = new { nodeType = "szrl018" }
+                            }
+                         ).GroupBy(x => x.Text).Select(t => t.FirstOrDefault()).ToArray();
+                #endregion
+                #region 采购合同信息
+                szrl105 = this._szrl105Repository.GetModels(x => x.rl10571 == 1 && x.rl10572 == 1).Select(
+                    x => new EasyTreeNode
+                    {
+                        ID = x.rl10501,
+                        Text = x.rl10505,
+                        ParentId = string.IsNullOrEmpty(x.rl10502) ? x.rl10501 : x.rl10502,
+                        OrderBy = x.rl10568,
+                        Params = new { nodeType = x.rl10503 }
+                    }
+                    ).GroupBy(x => x.Text).Select(t => t.FirstOrDefault()).ToArray();
+                #endregion
+            }
+            IEnumerable<IEasyTreeNode> EasyTreeNodes = szrl001.Concat(szrl004).Concat(szrl018).Concat(szrl105);
+            return OperateResultFactory.TreeOperateResult(EasyTreeNodes, "采购合同导航");
+        }
+    }
+}

@@ -1,0 +1,755 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using PM2.Models.Code030;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Repositorys;
+using PM2.Models.Code001;
+using Gmail.DDD.JsonConvert;
+using PM2.Service.Code001;
+using Gmail.DDD.PagedList;
+using Gmail.DDD.Mvc;
+using PM2.Repository.Code030;
+using System.Data.Entity;
+using PM2.Models.Code030.szrl033Model;
+
+namespace PM2.Service.Code030
+{
+    public class szrl035Server : Iszrl035Server
+    {
+        private IDbContextScopeFactory _scopeFactory;
+        private IEFRepository<szrl018> _szrl018Repository;  //作番
+        private IEFRepository<szrl035> _szrl035Repository;  //szrl035.批量验收登记
+        private IEFRepository<szrl004> _szrl004Repository;
+        private IEFRepository<szrl019> _szrl019Repository;  //合同
+        private IEFRepository<szrl022> _szrl022Repository;  //szrl022.营业合同验收收款计划 
+        private IEFRepository<szrl024> _szrl024Repository;  //szrl024.营业合同验收计划明细
+        private IEFRepository<szrl023> _szrl023Repository;  //szrl023.款项性质
+        private IEFRepository<szrl036> _szrl036Repository;  //szrl036.批量验收明细
+        private IEFRepository<szrl033> _szrl033Repository;  //szrl033.营业合同验收登记
+        private IEFRepository<szrl034> _szrl034Repository;  //szrl034.营业合同验收登记明细
+        private IEFRepository<szrl039> _szrl039Repository;  //szrl039.开票通知单
+        private IEFRepository<szrl040> _szrl040Repository;  //szrl040.开票通知明细
+
+        public szrl035Server(
+             IDbContextScopeFactory scopeFactory,
+             IEFRepository<szrl018> szrl018Repository,
+             IEFRepository<szrl035> szrl035Repository,
+             IEFRepository<szrl004> szrl004Repository,
+             IEFRepository<szrl019> szrl019Repository,
+             IEFRepository<szrl022> szrl022Repository,
+             IEFRepository<szrl024> szrl024Repository,
+             IEFRepository<szrl023> szrl023Repository,
+             IEFRepository<szrl036> szrl036Repository,
+             IEFRepository<szrl033> szrl033Repository,
+             IEFRepository<szrl034> szrl034Repository,
+             IEFRepository<szrl039> szrl039Repository,
+             IEFRepository<szrl040> szrl040Repository
+       )
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl018Repository = szrl018Repository;
+            this._szrl035Repository = szrl035Repository;
+            this._szrl004Repository = szrl004Repository;
+            this._szrl019Repository = szrl019Repository;
+            this._szrl022Repository = szrl022Repository;
+            this._szrl024Repository = szrl024Repository;
+            this._szrl023Repository = szrl023Repository;
+            this._szrl036Repository = szrl036Repository;
+            this._szrl033Repository = szrl033Repository;
+            this._szrl034Repository = szrl034Repository;
+            this._szrl039Repository = szrl039Repository;
+            this._szrl040Repository = szrl040Repository;
+        }
+
+        //index的data
+        public IOperateResult QueryGridData(HttpCollection vParams)
+        {
+            try
+            {
+                string ZuoFanId = vParams.GetValue<string>("zuofanid");
+                IQueryable<object> query;
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    var _szrl004s = this._szrl004Repository.GetModels();
+                    query = from a in this._szrl035Repository.GetModels(a => a.rl03502 == ZuoFanId)
+                            join b in this._szrl018Repository.GetModels(b => b.rl01832 == 1)
+                            on a.rl03502 equals b.rl01801
+                            orderby a.rl03503
+                            select new
+                            {
+                                rl03501 = a.rl03501,   //id
+                                rl03503 = a.rl03503,   //批次
+                                rl01806 = b.rl01806,   //作番号
+                                rl01802 = (from k in _szrl004s
+                                           where k.rl00401.Equals(b.rl01802)
+                                           select k.rl00403
+                                    ).FirstOrDefault(),   //客户名称
+                                rl01807 = b.rl01807    //工事名称
+                            };
+                    return OperateResultFactory.GridOperateResult(query.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<szrl035BasicData> QueryBasicData(HttpCollection vParams)
+        {
+            try
+            {
+                string ZuoFanId = vParams.GetValue<string>("zuofanid");
+                string plysid = vParams.GetValue<string>("plysid");
+                IQueryable<szrl035BasicData> query;
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    if (plysid == "add")
+                    {
+                        query = from a in this._szrl018Repository.GetModels(a => a.rl01801 == ZuoFanId && a.rl01832 == 1)
+                                join c in this._szrl004Repository.GetModels(c=>c.rl00454 == 1 && c.rl00445 ==1)
+                                on a.rl01802 equals c.rl00401
+                                select new szrl035BasicData
+                                {
+                                    rl03503 = "",            //批次
+                                    rl01806 = a.rl01806,     //作番号
+                                    rl01802 = c.rl00403,     //客户名称
+                                    rl01807 = a.rl01807      //工事名称
+                                };
+                    }
+                    else
+                    {
+                        query = from a in this._szrl018Repository.GetModels(a => a.rl01801 == ZuoFanId && a.rl01832 == 1)
+                                join c in this._szrl004Repository.GetModels(c => c.rl00454 == 1 && c.rl00445 == 1)
+                                on a.rl01802 equals c.rl00401
+                                join d in this._szrl035Repository.GetModels()
+                                on a.rl01801 equals d.rl03502
+                                where d.rl03501 == plysid
+                                select new szrl035BasicData
+                                {
+                                    rl03508 = d.rl03508,       //审批状态
+                                    rl03503 = d.rl03503,     //批次
+                                    rl01806 = a.rl01806,     //作番号
+                                    rl01802 = c.rl00403,     //客户名称
+                                    rl01807 = a.rl01807      //工事名称
+                                }; 
+                    }
+                    return query.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult QueryYSJHGridData(HttpCollection vParams)
+        {
+            try
+            {
+                string ZuoFanId = vParams.GetValue<string>("zuofanid");
+                //ZuoFanId = "279584cc-22df-4b63-894a-5ae836f129b5";
+                IQueryable<object> query;
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    IQueryable<szrl024> szrl024s = this._szrl024Repository.GetModels();
+                    IQueryable<szrl036> szrl036s = this._szrl036Repository.GetModels();
+                    var _036array = this._szrl036Repository.GetModels().Select(a => a.rl03603);
+                    query = from a in this._szrl018Repository.GetModels(a => a.rl01832 == 1)
+                            join b in this._szrl019Repository.GetModels(b => b.rl01964 == 1 && b.rl01971 == 1)
+                            on a.rl01801 equals b.rl01906
+                            join c in this._szrl022Repository.GetModels()
+                            on b.rl01902 equals c.rl02202
+                            join d in this._szrl024Repository.GetModels()
+                            on c.rl02201 equals d.rl02402
+                            join e in this._szrl023Repository.GetModels()
+                            on d.rl02403 equals e.rl02301
+
+                            let rl03603s = szrl036s.Select(a1 => a1.rl03603)
+                            //let xCount = szrl024s.Count(x => x.rl02402.Equals(c.rl02201))
+                            where d.rl02404 == 100 && d.rl02408 == 0 && b.rl01971 == 1 && b.rl01964 == 1 &&
+                                  a.rl01801 == ZuoFanId && c.rl02213 == 1 && c.rl02208 == 1
+                                   && !rl03603s.Contains(c.rl02201)
+                            select new szrl035ysjhData
+                            {
+                                rl02401 = d.rl02401,  //明细id
+                                rl02402 = d.rl02402,  //验收计划id
+                                rl02403 = e.rl02302,  //款项性质名称
+                                kxxzid = d.rl02403,   //款项性质id
+                                rl02404 = d.rl02404,
+                                rl02405 = d.rl02405,
+                                rl02406 = d.rl02406,
+                                rl02408 = d.rl02408,
+                                rl01903 = b.rl01903
+                            };
+                    var i = query.Count();
+                    return OperateResultFactory.GridOperateResult(query.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult QueryPLYSDJGridData(HttpCollection vParams)
+        {
+            try
+            {
+                string ZuoFanId = vParams.GetValue<string>("zuofanid");
+                List<szrl035ysjhData> _035ysjh_lst = vParams.GetValue<List<szrl035ysjhData>>("ysjharry", GetterType.JToken);
+                //ZuoFanId = "279584cc-22df-4b63-894a-5ae836f129b5";
+                string ysjhID = "";          //验收计划id
+                if (_035ysjh_lst != null && _035ysjh_lst.Count() != 0)
+                {
+                    foreach (var item in _035ysjh_lst)
+                    {
+                        ysjhID += item.rl02402 + ",";
+                    }
+                    ysjhID = ysjhID.Substring(0, ysjhID.LastIndexOf(","));
+                }
+                string[] ysjhID_Array = ysjhID.Split(',');
+                IQueryable<object> query;
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    query = from a in _szrl022Repository.GetModels(b => b.rl02213 == 1 && b.rl02208 == 1)
+                            join b in _szrl024Repository.GetModels()
+                            on a.rl02201 equals b.rl02402
+                            join c in _szrl019Repository.GetModels(c => c.rl01964 == 1 && c.rl01971 == 1)
+                            on a.rl02202 equals c.rl01902
+                            join d in this._szrl023Repository.GetModels()
+                            on b.rl02403 equals d.rl02301
+                            where ysjhID_Array.Contains(b.rl02402) && c.rl01971 == 1 && c.rl01964 == 1
+                            select new szrl035plysdjData
+                            {
+                                rl03601 = "",
+                                rl02201 = a.rl02201,
+                                rl02401 = b.rl02401,
+                                rl01903 = c.rl01903,
+                                rl01904 = c.rl01904,
+                                rl01909 = c.rl01909,
+                                rl02403 = d.rl02302,
+                                rl02404 = b.rl02404,
+                                rl02405 = b.rl02405,
+                                rl02406 = b.rl02406,
+                                rl02408 = b.rl02408,
+                                rl03606Name = "",
+                                wgzm = "0",
+                                ysrq = "",
+                                yszmqdr = ""
+                            };
+
+                    return OperateResultFactory.GridOperateResult(query.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult Insert3536(HttpCollection vParams)
+        {
+            try
+            {
+                List<szrl035plysdjData> PLYSDJ_Grid_data = vParams.GetValue<List<szrl035plysdjData>>("PLYSDJ_Grid_data", GetterType.JToken);
+                string ZuoFanId = vParams.GetValue<string>("zuofanid");
+                //这个是035的主键id，如果有值代表更新，如果值=add，代表插入
+                string plysid = vParams.GetValue<string>("plysid");
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    if (plysid == "add")
+                    {
+                        //当前批次
+                        string _035CurrentBatch = this._szrl035Repository.GetModels().Select(z => z.rl03503).Max();
+                        if (_035CurrentBatch == null)
+                        {
+                            _035CurrentBatch = "001";
+                        }
+                        else
+                        {
+                            //补零方法
+                            _035CurrentBatch = (Convert.ToInt64(_035CurrentBatch) + 1).ToString().PadLeft(3, '0');
+                        }
+                        //当前guid
+                        string _035guid = Guid.NewGuid().ToString();
+                        szrl035 _035model = new szrl035()
+                        {
+                            rl03501 = _035guid,
+                            rl03502 = ZuoFanId,
+                            rl03503 = _035CurrentBatch,
+                            rl03504 = UserContext.Pj00401,
+                            rl03505 = DateTime.Now.ToString("yyyy-MM-dd"),
+                            rl03506 = "",
+                            rl03507 = "",
+                            rl03508 = 0,
+                            rl03509 = UserContext.Pj00401,
+                            rl03510 = DateTime.Now.ToString("yyyy-MM-dd"),
+                            rl03511 = ""
+                        };
+                        this._szrl035Repository.Add(_035model);
+                        foreach (var item in PLYSDJ_Grid_data)
+                        {
+                            byte rl03606 = 0;
+                            switch (item.rl03606Name)
+                            {
+                                case "内部": rl03606 = 0; break;
+                                case "外部": rl03606 = 1; break;
+                                case "0": rl03606 = 0; break;
+                                case "1": rl03606 = 1; break;
+                            }
+                            szrl036 _036model = new szrl036()
+                            {
+                                rl03601 = Guid.NewGuid().ToString(),
+                                rl03602 = _035guid,
+                                rl03603 = item.rl02201,
+                                rl03604 = item.ysrq,
+                                rl03605 = item.yszmqdr,
+                                rl03606 = rl03606,
+                                rl03607 = Convert.ToByte(item.wgzm)
+                            };
+                            this._szrl036Repository.Add(_036model);
+                        }
+                    }
+                    else
+                    {
+                        szrl035 _035oldmodel = this._szrl035Repository.GetModels(a => a.rl03501 == plysid).ToList().FirstOrDefault();
+                        List<szrl036> _036lst = this._szrl036Repository.GetModels(b => b.rl03602 == _035oldmodel.rl03501).ToList();
+                        _035oldmodel.rl03502 = ZuoFanId;
+                        _035oldmodel.rl03503 = _035oldmodel.rl03503;
+                        _035oldmodel.rl03504 = UserContext.Pj00401;
+                        _035oldmodel.rl03505 = DateTime.Now.ToString("yyyy-MM-dd");
+                        _035oldmodel.rl03506 = "";
+                        _035oldmodel.rl03507 = "";
+                        _035oldmodel.rl03508 = 0;
+                        _035oldmodel.rl03509 = UserContext.Pj00401;
+                        _035oldmodel.rl03510 = DateTime.Now.ToString("yyyy-MM-dd");
+                        _035oldmodel.rl03511 = "";
+                        this._szrl035Repository.Update(_035oldmodel);
+
+                        //判断更新或者插入了一条记录
+                        for (var x = 0; x < PLYSDJ_Grid_data.Count(); x++)
+                        {
+                            if (PLYSDJ_Grid_data[x].rl03601 != "")
+                            {
+                                for (var y = 0; y < _036lst.Count(); y++)
+                                {
+                                    //如果有主键并且相等，代表这条记录是更新的
+                                    if (PLYSDJ_Grid_data[x].rl03601 == _036lst[y].rl03601)
+                                    {
+                                        byte rl03606 = 0;
+                                        switch (PLYSDJ_Grid_data[x].rl03606Name)
+                                        {
+                                            case "内部": rl03606 = 0; break;
+                                            case "外部": rl03606 = 1; break;
+                                            case "0": rl03606 = 0; break;
+                                            case "1": rl03606 = 1; break;
+                                        }
+                                        _036lst[y].rl03602 = _035oldmodel.rl03501;
+                                        _036lst[y].rl03603 = PLYSDJ_Grid_data[x].rl02201;
+                                        _036lst[y].rl03604 = PLYSDJ_Grid_data[x].ysrq;
+                                        _036lst[y].rl03605 = PLYSDJ_Grid_data[x].yszmqdr;
+                                        _036lst[y].rl03606 = rl03606;
+                                        _036lst[y].rl03607 = Convert.ToByte(PLYSDJ_Grid_data[x].wgzm);
+                                        this._szrl036Repository.Update(_036lst[y]);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //如果没有主键，代表这条记录是新增的
+                                byte rl03606 = 0;
+                                switch (PLYSDJ_Grid_data[x].rl03606Name)
+                                {
+                                    case "内部": rl03606 = 0; break;
+                                    case "外部": rl03606 = 1; break;
+                                    case "0": rl03606 = 0; break;
+                                    case "1": rl03606 = 1; break;
+                                }
+                                szrl036 _036model = new szrl036()
+                                {
+                                    rl03601 = Guid.NewGuid().ToString(),
+                                    rl03602 = _035oldmodel.rl03501,
+                                    rl03603 = PLYSDJ_Grid_data[x].rl02201,
+                                    rl03604 = PLYSDJ_Grid_data[x].ysrq,
+                                    rl03605 = PLYSDJ_Grid_data[x].yszmqdr,
+                                    rl03606 = rl03606,
+                                    rl03607 = Convert.ToByte(PLYSDJ_Grid_data[x].wgzm)
+                                };
+                                this._szrl036Repository.Add(_036model);
+                            }
+                        }
+
+                        //判断是否删除了一条记录 如果有主键，但不等于本地data，代表这条记录已经被删除                        
+                        if (PLYSDJ_Grid_data.Count() < _036lst.Count())
+                        {
+                            string a = "", b = "";
+                            foreach (var item in PLYSDJ_Grid_data)
+                            {
+                                a += item.rl03601 + ",";
+                            }
+                            foreach (var item in _036lst)
+                            {
+                                b += item.rl03601 + ",";
+                            }
+                            var a_ary = a.Split(','); //PLYSDJ_Grid_data
+                            var b_ary = b.Split(','); //_036lst
+                            var expectedList = b_ary.Except(a_ary); //取差集 (_036lst有，PLYSDJ_Grid_data沒有)
+                            List<szrl036> del036lst = (from del in this._szrl036Repository.GetModels()
+                                                       where expectedList.Contains(del.rl03601)
+                                                       select del).ToList();
+                            foreach (var item in del036lst)
+                            {
+                                this._szrl036Repository.Remove(item);
+                            }
+                        }
+                    }
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult Query036GridData(HttpCollection vParams)
+        {
+            try
+            {
+                string ZuoFanId = vParams.GetValue<string>("zuofanid");
+                string plysid = vParams.GetValue<string>("plysid");
+                IQueryable<object> query;
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    if (plysid == "add")
+                    {
+                        //其实只是返回空结果集
+                        query = from a in this._szrl036Repository.GetModels()
+                                where a.rl03601 == "xxxxxxxxxxxxxx"
+                                select a;
+                    }
+                    else
+                    {
+                        query = from a in this._szrl036Repository.GetModels(a => a.rl03602 == plysid)
+                                join b in this._szrl024Repository.GetModels()
+                                on a.rl03603 equals b.rl02402
+                                join c in this._szrl022Repository.GetModels(b => b.rl02213 == 1 && b.rl02208 == 1)
+                                on b.rl02402 equals c.rl02201
+                                join d in this._szrl019Repository.GetModels(d => d.rl01964 == 1 && d.rl01971 == 1)
+                                on c.rl02202 equals d.rl01902
+                                join e in this._szrl023Repository.GetModels()
+                                on b.rl02403 equals e.rl02301
+                                select new szrl035plysdjData
+                                {
+                                    rl03601 = a.rl03601,   //便于做更新操作
+                                    rl02201 = c.rl02201,
+                                    rl02401 = b.rl02401,
+                                    rl01903 = d.rl01903,
+                                    rl01904 = d.rl01904,
+                                    rl01909 = d.rl01909,
+                                    rl02403 = e.rl02302,
+                                    rl02404 = b.rl02404,
+                                    rl02405 = b.rl02405,
+                                    rl02406 = b.rl02406,
+                                    rl02408 = b.rl02408,
+                                    rl03606Name = a.rl03606.ToString(),
+                                    wgzm = a.rl03607.ToString(),
+                                    ysrq = a.rl03604,
+                                    yszmqdr = a.rl03605
+                                }; 
+                    }
+                    return OperateResultFactory.GridOperateResult(query.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        //删除index的data
+        public IOperateResult DelGridData(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string plysid = vParams.GetValue<string>("plysid");
+                    var _035model = this._szrl035Repository.GetModels(a => a.rl03501 == plysid).ToList().FirstOrDefault();
+                    if (_035model.rl03508 == 0)
+                    {
+                        if (_035model != null)
+                        {
+                            this._szrl035Repository.Remove(_035model);
+                        }
+                        var _036lst = this._szrl036Repository.GetModels(b => b.rl03602 == plysid).ToList();
+                        if (_036lst != null)
+                        {
+                            foreach (var item in _036lst)
+                            {
+                                this._szrl036Repository.Remove(item);
+                            }
+                        }
+                        scope.SaveChanges();
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+                    }
+                    else
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "该单据已经承认，无法删除！");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        //承认btn
+        public IOperateResult AdmitPLYSDJData(HttpCollection vParams)
+        {
+            try
+            {
+                string plysid = vParams.GetValue<string>("plysid");
+                IQueryable<szrl033and034> query;
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    var dt_now = DateTime.Now.ToString("yyyy-MM-dd");
+                    var admit = from a in this._szrl035Repository.GetModels(a => a.rl03501 == plysid)
+                                select a;
+                    var admitmodel = admit.ToList().FirstOrDefault();
+                    admitmodel.rl03506 = UserContext.Pj00401;
+                    admitmodel.rl03507 = dt_now;
+                    admitmodel.rl03508 = 1;
+                    admitmodel.rl03509 = UserContext.Pj00401;
+                    admitmodel.rl03510 = dt_now;
+                    this._szrl035Repository.Update(admitmodel);
+
+                    //024表相关记录要变成已验收
+                    List<string> admit_024 = (from a in this._szrl036Repository.GetModels()
+                                              join b in this._szrl022Repository.GetModels()
+                                              on a.rl03603 equals b.rl02201
+                                              join c in this._szrl024Repository.GetModels()
+                                              on b.rl02201 equals c.rl02402
+                                              select c.rl02401).ToList();
+                    for(var i =0;i<admit_024.Count();i++ )
+                    {
+                        var id = admit_024[i];
+                        var _024model = this._szrl024Repository.GetModels(a => a.rl02401 == id).ToList().FirstOrDefault();
+                        _024model.rl02408 = 1;
+                        this._szrl024Repository.Update(_024model);
+                    }
+
+
+                    query = from a in this._szrl036Repository.GetModels(a => a.rl03602 == plysid)
+                            join b in this._szrl022Repository.GetModels(b => b.rl02213 == 1 && b.rl02208 == 1)
+                            on a.rl03603 equals b.rl02201
+                            join c in this._szrl019Repository.GetModels(c => c.rl01964 == 1 && c.rl01971 == 1)
+                            on b.rl02202 equals c.rl01902
+                            join d in this._szrl035Repository.GetModels()
+                            on a.rl03602 equals d.rl03501
+                            join e in this._szrl024Repository.GetModels()
+                            on b.rl02201 equals e.rl02402
+                            select new szrl033and034
+                            {
+                                //rl03301 = d.rl03501,
+                                rl03302 = c.rl01902,
+                                rl03303 = c.rl01903,
+                                rl03304 = c.rl01909,
+                                rl03305 = c.rl01919,
+                                rl03306 = a.rl03607,
+                                rl03307 = "",
+                                rl03308 = "",
+                                rl03309 = d.rl03504,
+                                rl03310 = d.rl03505,
+                                rl03311 = UserContext.Pj00401,
+                                rl03312 = dt_now,
+                                rl03313 = 1,
+                                rl03314 = UserContext.Pj00401,
+                                rl03315 = dt_now,
+                                rl03316 = c.rl01904,
+                                rl03401 = a.rl03601,
+                                rl03403 = e.rl02401,
+                                rl03404 = e.rl02403,
+                                rl03405 = e.rl02404,
+                                rl03406 = e.rl02405,
+                                rl03407 = e.rl02406,
+                                rl03408 = a.rl03604,
+                                rl03409 = e.rl02405,
+                                rl03410 = a.rl03605,
+                                rl03411 = a.rl03606,
+                                rl03412 = 1,
+                                rl03413 = ""
+                            };
+                    List<szrl033and034> _033a034lst = new List<szrl033and034>();
+                    _033a034lst = query.ToList();
+                    foreach (var item in _033a034lst)
+                    {
+                        var _033guid = Guid.NewGuid().ToString();
+                        //    var _034guid = Guid.NewGuid().ToString();
+                        szrl033 _szrl033model = new szrl033()
+                        {
+                            rl03301 = _033guid,
+                            rl03302 = item.rl03302,
+                            rl03303 = item.rl03303,
+                            rl03304 = item.rl03304,
+                            rl03305 = item.rl03305,
+                            rl03306 = item.rl03306,
+                            rl03307 = item.rl03307,
+                            rl03308 = item.rl03308,
+                            rl03309 = item.rl03309,
+                            rl03310 = item.rl03310,
+                            rl03311 = item.rl03311,
+                            rl03312 = item.rl03312,
+                            rl03313 = item.rl03313,
+                            rl03314 = item.rl03314,
+                            rl03315 = item.rl03315,
+                            rl03316 = item.rl03316
+                        };
+                        //List<szrl034> _034lst = new List<szrl034>{  };
+                        szrl034 _szrl034model = new szrl034()
+                        {
+                            rl03401 = item.rl03401,
+                            rl03402 = _033guid,
+                            rl03403 = item.rl03403,
+                            rl03404 = item.rl03404,
+                            rl03405 = item.rl03405,
+                            rl03406 = item.rl03406,
+                            rl03407 = item.rl03407,
+                            rl03408 = item.rl03408,
+                            rl03409 = item.rl03409,
+                            rl03410 = item.rl03410,
+                            rl03411 = item.rl03411,
+                            rl03412 = item.rl03412,
+                            rl03413 = item.rl03413
+                        };
+                        //_szrl033model.szrl034List = _034lst;
+                        this._szrl033Repository.Add(_szrl033model);
+                        this._szrl034Repository.Add(_szrl034model);
+                    };
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        //生成开票通知btn
+        public IOperateResult SCKPTZ_035(HttpCollection vParams)
+        {
+            try
+            {
+                string ZuoFanId = vParams.GetValue<string>("zuofanid");
+                string plysid = vParams.GetValue<string>("plysid");
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    //查该记录是否已经开票通知
+                    string IsKPTZ = this._szrl035Repository.GetModels(a => a.rl03501 == plysid).Select(b=>b.rl03511).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(IsKPTZ))
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, IsKPTZ); 
+                    }
+                    else
+                    {
+                        var dtnow = DateTime.Now.ToString("yyyy-MM-dd");
+                        //039guid
+                        string _039guid = Guid.NewGuid().ToString();
+                        //作番号
+                        string zfh = this._szrl018Repository.GetModels(a => a.rl01801 == ZuoFanId).Select(a => a.rl01806).FirstOrDefault();
+                        //当前流水号
+                        string CurrentLSH = this._szrl039Repository.GetModels(b => b.rl03902.Contains(zfh)).Select(b => b.rl03902.Substring(b.rl03902.Length - 3, 3)).Max();
+                        //035model，更新rl03511
+                        var _035model = this._szrl035Repository.GetModels(a => a.rl03501 == plysid).FirstOrDefault();
+                        //查看是否已经做开票通知
+                        //string kptzlsh = zfh + "-"
+
+                        if (CurrentLSH == null)
+                        {
+                            string nowyear = DateTime.Now.Year.ToString();
+                            CurrentLSH = zfh + "-" + nowyear.Substring(nowyear.Length - 2, 2) + "001";
+                        }
+                        else
+                        {
+                            string nowyear = DateTime.Now.Year.ToString();
+                            CurrentLSH = zfh + "-" + nowyear.Substring(nowyear.Length - 2, 2) + (Convert.ToInt64(CurrentLSH) + 1).ToString().PadLeft(3, '0');
+                        }
+
+                        szrl039 _039model = new szrl039()
+                        {
+                            rl03901 = _039guid,
+                            rl03902 = CurrentLSH,
+                            rl03903 = ZuoFanId,
+                            rl03904 = UserContext.Pj00401,
+                            rl03905 = dtnow,
+                            rl03906 = "",
+                            rl03907 = "",
+                            rl03908 = 0,
+                            rl03909 = UserContext.Pj00401,
+                            rl03910 = dtnow
+                        };
+                        this._szrl039Repository.Add(_039model);
+
+                        var query = from a in this._szrl036Repository.GetModels(a => a.rl03602 == plysid)
+                                    join b in this._szrl022Repository.GetModels(b => b.rl02208 == 1 && b.rl02213 == 1)
+                                    on a.rl03603 equals b.rl02201
+                                    join c in this._szrl024Repository.GetModels()
+                                    on b.rl02201 equals c.rl02402
+                                    join d in this._szrl019Repository.GetModels(d => d.rl01964 == 1 && d.rl01971 == 1)
+                                    on b.rl02202 equals d.rl01902
+                                    select new
+                                    {
+                                        rl04002 = _039guid,
+                                        rl04003 = d.rl01902,
+                                        rl04004 = dtnow,
+                                        rl04005 = "",
+                                        rl04006 = "",
+                                        rl04007 = c.rl02405,
+                                        rl04008 = c.rl02405,
+                                        rl04009 = 0,
+                                        rl04010 = "",
+                                        rl04011 = a.rl03601
+                                    };
+                        query.ForEach((item, isEnd) =>
+                        {
+                        //040guid
+                        string _040guid = Guid.NewGuid().ToString();
+                            szrl040 _szrl040model = new szrl040()
+                            {
+                                rl04001 = _040guid,
+                                rl04002 = item.rl04002,
+                                rl04003 = item.rl04003,
+                                rl04004 = item.rl04004,
+                                rl04005 = item.rl04005,
+                                rl04006 = item.rl04006,
+                                rl04007 = item.rl04007,
+                                rl04008 = item.rl04008,
+                                rl04009 = item.rl04009,
+                                rl04010 = item.rl04010,
+                                rl04011 = item.rl04011
+                            };
+                            this._szrl040Repository.Add(_szrl040model);
+                        });
+                        _035model.rl03511 = _039guid;
+                        this._szrl035Repository.Update(_035model);
+                        scope.SaveChanges();
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, _039guid);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+    }
+}

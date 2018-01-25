@@ -1,0 +1,144 @@
+﻿@model PM2.Models.Code001.LoginModel
+@{
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@{
+    this.ViewBag.Title = "GMAIL";
+}
+@section Header {
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+}
+@section HeaderStyles {
+    <link rel="stylesheet" href="@this.Url.Content("~/Content/Views/Login/css/reset.css")">
+    <link rel="stylesheet" href="@this.Url.Content("~/Content/Views/Login/css/supersized.css")">
+    <link rel="stylesheet" href="@this.Url.Content("~/Content/Views/Login/css/style.css")">
+}
+@section Body {
+    <body>
+
+        <div class="page-container">
+            <h1>用户登录</h1>
+            <form id="loginFrom" method="post" action="/Login/UserLoginAsync">
+                @Html.Hidden("BackURL", @Request.QueryString["BackURL"])
+                @Html.EditorFor(x => x.LoginCode, new { dataoptions = "required: true, prompt: '登录账号'", style = "height:30px; width:300px" })
+                <br />
+                @Html.EditorFor(x => x.PassWord, new { style = "height:30px; width:300px" })
+                <br />
+                @Html.EditorFor(x => x.Account, new { style = "height:30px; width:300px;" })
+                <br />
+                @Html.EditorFor(x => x.RememBerMe, new { style = "height:30px; width:100px;" }) 7天免登录
+                <br />
+                <a href="javascript:void(0)" id="loginButton" class="easyui-linkbutton" style="width:120px; height:38px;">进入系统</a>
+                <div class="error"><span>+</span></div>
+            </form>
+            <div class="connect">
+                <p>Or connect with:</p>
+                <p>
+                    <a class="facebook" href=""></a>
+                    <a class="twitter" href=""></a>
+                </p>
+            </div>
+        </div>
+        <div align="center">..Test..</div>
+
+    </body>
+}
+@section FooterScript {
+   <script src="@this.Url.Content("~/Content/Views/Login/js/supersized.3.2.7.min.js")"></script>
+   <script src="@this.Url.Content("~/Content/Views/Login/js/supersized-init.js")"></script>
+   <script type="text/javascript">
+       $(document).ready(function () {
+
+           $('#loginButton').linkbutton({
+               onClick: function () {
+
+                   //$.post("/Login/UserLoginAsync", {
+                   //    data: JSON.stringify({
+                   //        LoginCode: $('#LoginCode').textbox("getValue"),
+                   //        PassWord: $('#PassWord').passwordbox("getValue"),
+                   //        Account: $('#Account').combo("getValue"),
+                   //        RememBerMe: $('#RememBerMe').switchbutton("options").checked
+                   //    })
+                   //}, function (data) {
+                   //     var obj = $.parseJSON(data);
+                   //     if (obj.success) {
+                   //         if (obj.Pamrms) {
+                   //             window.location.href = obj.Pamrms.BackURL;
+                   //         }
+                   //         else {
+                   //             window.location.href = '/Home/Index';
+                   //         }
+                   //     } else {
+                   //         $.messager.alert('友情提示', obj.Message, 'error');
+                   //     }
+                   //});
+
+                   //$.ajax({
+                   //    type: "POST",
+                   //    url: "/Login/UserLoginAsync",
+                   //    contentType: "application/json; charset=utf-8",
+                   //    data: JSON.stringify({
+                   //        LoginCode: $('#LoginCode').textbox("getValue"),
+                   //        PassWord: $('#PassWord').passwordbox("getValue"),
+                   //        Account: $('#Account').combo("getValue"),
+                   //        RememBerMe: $('#RememBerMe').switchbutton("options").checked
+                   //    }),
+                   //    dataType: "json",
+                   //    success: function (data) {
+                   //        if (data.success) {
+                   //            if (data.Pamrms) {
+                   //                window.location.href = data.Pamrms.BackURL;
+                   //            }
+                   //            else {
+                   //                window.location.href = '/Home/Index';
+                   //            }
+                   //        } else {
+                   //            $.messager.alert('友情提示', data.Message, 'error');
+                   //        }
+                   //    },
+                   //    error: function (data) {
+
+                   //    }
+                   //});
+
+               }
+           });
+
+           $('#loginButton').linkbutton({
+               onClick: function () {
+                   $('#loginFrom').form('submit', {
+                       onSubmit: function (_param) {
+                           var isValid = $(this).form('validate');
+                           if (!isValid) {
+                               $.messager.alert('友情提示', '请填写用户名密码!', 'info');
+                           }
+                           return isValid;
+                       },
+                       success: function (data) {
+                           $.messager.progress('close');
+                           var obj = $.parseJSON(data);
+                           if (obj.success) {
+                               if (obj.Pamrms) {
+                                   window.location.href = obj.Pamrms.BackURL;
+                               }
+                               else {
+                                   window.location.href = '/Home/Index';
+                               }
+                           } else {
+                               $.messager.alert('友情提示', obj.Message, 'error');
+                           }
+
+                       }
+                   });
+
+               }
+           });
+
+       });
+   </script>
+
+}

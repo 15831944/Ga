@@ -1,0 +1,160 @@
+using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Data;
+using PM2.Code;
+using Gmail.DDD.Entity;
+
+namespace PM2.Models.Code030.Szrl105Model
+{
+    //szrl005
+    public class Szrl005 : Enttity
+    {
+
+        /// <summary>
+        /// rl00501
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00501 { get; set; }
+        /// <summary>
+        /// rl00502
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00502 { get; set; }
+        /// <summary>
+        /// rl00503
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00503 { get; set; }
+        /// <summary>
+        /// rl00504
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00504 { get; set; }
+        /// <summary>
+        /// rl00505
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00505 { get; set; }
+        /// <summary>
+        /// rl00506
+        /// </summary>        
+        [EasyTextbox]
+        public int rl00506 { get; set; }
+        /// <summary>
+        /// rl00507
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00507 { get; set; }
+        /// <summary>
+        /// rl00508
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00508 { get; set; }
+        /// <summary>
+        /// rl00509
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00509 { get; set; }
+        /// <summary>
+        /// rl00510
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00510 { get; set; }
+        /// <summary>
+        /// rl00511
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00511 { get; set; }
+        /// <summary>
+        /// rl00512
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00512 { get; set; }
+        /// <summary>
+        /// rl00513
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00513 { get; set; }
+        /// <summary>
+        /// rl00514
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00514 { get; set; }
+        /// <summary>
+        /// rl00515
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00515 { get; set; }
+        /// <summary>
+        /// rl00516
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00516 { get; set; }
+        /// <summary>
+        /// rl00517
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00517 { get; set; }
+        /// <summary>
+        /// rl00518
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00518 { get; set; }
+        /// <summary>
+        /// rl00519
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00519 { get; set; }
+        /// <summary>
+        /// rl00520
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00520 { get; set; }
+        /// <summary>
+        /// rl00521
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00521 { get; set; }
+        /// <summary>
+        /// rl00522
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00522 { get; set; }
+
+
+        /// <summary>
+        /// rl00523
+        /// </summary>        
+        [EasyTextbox]
+        public byte rl00523 { get; set; }
+
+        /// <summary>
+        /// rl00524
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00524 { get; set; }
+        /// <summary>
+        /// rl00525
+        /// </summary>        
+        [EasyTextbox]
+        public decimal rl00525 { get; set; }
+        /// <summary>
+        /// rl00526
+        /// </summary>        
+        [EasyTextbox]
+        public decimal rl00526 { get; set; }
+        /// <summary>
+        /// rl00527
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00527 { get; set; }
+        /// <summary>
+        /// rl00528
+        /// </summary>        
+        [EasyTextbox]
+        public string rl00528 { get; set; }
+
+    }
+}
+

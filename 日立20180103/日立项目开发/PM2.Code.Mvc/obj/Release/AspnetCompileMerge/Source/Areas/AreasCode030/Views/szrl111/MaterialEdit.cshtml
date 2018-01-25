@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "材料维护";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script type="text/javascript">
+
+    </script>
+}
+
+@section HeaderStyles{
+    <link href="~/Content/Areas/AreasCode030/szrl100/css/szrl100.css" rel="stylesheet" />
+    <style type="text/css">
+        table.form100-table tr {
+            height: 40px;
+        }
+
+        table.form100-table td input {
+            width: 250px;
+        }
+    </style>
+}
+
+@section Body{
+    <div class="easyui-layout">
+        <div data-options="region:'center'">
+            <div id="tt" class="easyui-tabs">
+                <div id="tb1" title="材料维护">
+                    <div class="nano">
+                        <div class="nano-content">
+                            @Html.Partial("_MaterialEdit1", null, this.ViewData)
+                        </div>
+                    </div>
+                </div>
+                <div id="tb1" title="材料附件">
+                    <div class="nano">
+                        <div class="nano-content">
+                            @*@Html.Partial("_MaterialEdit2", null, this.ViewData)*@
+                            @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section FooterScript{
+    <script type="text/javascript">
+        $(function () {
+            initForm_szrl111_edit1();
+
+            // 附件初始化
+            var id = $('#rl11101').val();
+            if (rlform1101.isNullOrWhitespace(id)) {
+                id = $('#attachFileId_edit_szrl111').val();
+            }
+            window.sdpk007uxWinClass.Init(id, true);
+            window.sdpk007uxWinClass.Load();
+        });
+    </script>
+}

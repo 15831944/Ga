@@ -1,0 +1,84 @@
+﻿using Gmail.DDD.Entity;
+using PM2.Code;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Models.Code030
+{
+    public class szrl124 : Enttity
+    {
+        /// <summary>
+        /// rl12401
+        /// </summary>        
+        [EasyTextbox]
+        public string rl12401 { get; set; }
+        /// <summary>
+        /// rl12402
+        /// </summary>        
+        [EasyTextbox]
+        public byte rl12402 { get; set; }
+        /// <summary>
+        /// rl12403
+        /// </summary>        
+        [EasyTextbox]
+        public string rl12403 { get; set; }
+        /// <summary>
+        /// rl12404
+        /// </summary>        
+        [EasyTextbox]
+        public decimal rl12404 { get; set; }
+        /// <summary>
+        /// rl12405
+        /// </summary>        
+        [EasyTextbox]
+        public decimal rl12405 { get; set; }
+        /// <summary>
+        /// rl12406
+        /// </summary>        
+        [EasyTextbox]
+        public string rl12406 { get; set; }
+        /// <summary>
+        /// rl12407
+        /// </summary>        
+        [EasyTextbox]
+        public decimal rl12407 { get; set; }
+        /// <summary>
+        /// rl12408
+        /// </summary>        
+        [EasyTextbox]
+        public decimal rl12408 { get; set; }
+        /// <summary>
+        /// rl12409
+        /// </summary>        
+        [EasyTextbox]
+        public string rl12409 { get; set; }
+        /// <summary>
+        /// rl12410
+        /// </summary>        
+        [EasyTextbox]
+        public string rl12410 { get; set; }
+        /// <summary>
+        /// rl12411
+        /// </summary>        
+        [EasyTextbox]
+        public byte rl12411 { get; set; }
+        /// <summary>
+        /// rl12424
+        /// </summary>        
+        [EasyTextbox]
+        public string rl12424 { get; set; }
+        /// <summary>
+        /// rl12422
+        /// </summary>        
+        [EasyTextbox]
+        public int rl12422 { get; set; }
+        /// <summary>
+        /// rl12423
+        /// </summary>        
+        [EasyTextbox]
+        public byte rl12423 { get; set; }
+    }
+}

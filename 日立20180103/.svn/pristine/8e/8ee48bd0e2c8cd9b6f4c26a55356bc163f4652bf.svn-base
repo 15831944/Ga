@@ -1,0 +1,192 @@
+﻿
+var zuofanid = null;
+
+var comdata = null;
+
+var zip_1 = new Array;
+var zip_2 = new Array;
+
+
+$(function () {
+
+    GetForSome();
+
+    $.ajax({
+        type: "POST",
+        url: "/AreasCode030/sdbo001/List_sdpj004",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            comdata = data;
+
+            var $ipt = $("#sdbo001_input input").not("#bo00102").not("#bo00103");
+            $ipt.each(function (i) {
+                var ipt_id = $(this).attr("id");
+                try {
+                    if (ipt_id.length == 7) {
+                        $("#" + ipt_id + "").combobox({
+                            valueField: 'pj00402',
+                            textField: 'pj00402',
+                            data: comdata
+                            //,
+                            //groupFormatter: function (group) {
+                            //    return '<span style="color:red">' + group + '</span>';
+                            //}
+                        });
+                    }
+                } catch (e) {
+
+                }
+               
+                ////$(this).click(function () {
+                //$ipt.eq(i).combobox({
+                //    valueField: 'pj00402',
+                //    textField: 'pj00402',
+                //    data: comdata
+                //});
+                //// })
+            });
+        }
+    });
+
+
+});
+
+
+
+function combo_readonly(a) {
+    var $ipt = $("#sdbo001_input input").not("#bo00102").not("#bo00103");
+    console.log($ipt.length);
+    $ipt.each(function (i) {
+        var ipt_id = $(this).attr("id");
+        try {
+            if (ipt_id.length == 7) {
+                console.log(ipt_id);
+                $("#" + ipt_id + "").combo('readonly', a);
+            }
+        } catch (e) {
+        }
+    });
+    $("#bo00102").combo('readonly', true);
+    $("#bo00102").combo('readonly', true);
+}
+
+
+
+
+
+$("input[name='forsome']").click(function () {
+    GetForSome();
+});
+
+
+function GetForSome() {
+
+    var forsome = $('input[name="forsome"]:checked ').val()
+    $('#szrl001Tree').tree({
+        url: '/AreasCode030/szrl001/TreeLoad',
+        animate: true,
+        onBeforeLoad: function (node, param) {
+            $("#btn_save").linkbutton('disable');
+            if (node == null)
+                param.forsome = forsome;
+        },
+        onClick: function (node) {
+            $(this).tree('expand', node.target);
+            if (node.attributes) {
+                var nodemessage = node.attributes.nodeType;//获取作番号
+                if (nodemessage != "szrl001" && nodemessage != "szrl004") {
+                    nodemessageid = nodemessage;
+                    zuofanid = nodemessageid;
+                    SetInfo();
+                    //$("#sdbo001_input input").attr("disabled", true);//enable
+                    combo_readonly(true);
+                    $("#btn_edit").linkbutton('enable');
+                    $("#btn_save").linkbutton('disable');
+                }
+            }
+        },
+        onCollapse: function (node) {
+            $(this).tree('collapseAll', node.target);
+        }
+    });
+}
+
+function SetInfo() {
+    if (zuofanid) {
+        $("#sdbo004From").form({
+            onLoadSuccess: function (_record) {//_record获取的数据
+                GetInfoData(_record);
+            },
+            onLoadError: function () {
+
+            }
+        });
+        var _url = "/AreasCode030/sdbo001/GetIndexInfo?zuofanid=" + zuofanid;
+        $('#sdbo001From').form('load', _url);
+    }
+}
+function GetInfoData(_record) {
+}
+
+
+
+
+$('#btn_save').linkbutton({
+    onClick: function () {
+        $('#sdbo001From').form('submit', {
+            url: "/AreasCode030/sdbo001/Add",
+            onSubmit: function (_param) {
+                $(".zip_1").each(function () {
+                    zip_1.push(this.value)
+                });
+                $(".zip_2").each(function () {
+                    zip_2.push(this.value)
+                });
+                console.log(zip_1, zip_2);
+                _param.bo00150 = zuofanid;
+                _param.p1 = JSON.stringify(zip_1)   ;
+                _param.p2 = JSON.stringify(zip_2);
+                var isValid = $(this).form('validate');
+                if (!isValid) {
+                    $.messager.alert('友情提示', '请填写必填选项!', 'info');
+                }
+                return isValid;
+            },
+            success: function (data) {
+                $.messager.progress('close');
+                var obj = $.parseJSON(data);
+                if (obj.success) {
+                    $("#btn_save").linkbutton('disable');
+                    $("#btn_edit").linkbutton('enable');
+                    combo_readonly(true);
+                    //$("#sdbo001_input input").attr("disabled", true);
+                    combo_readonly(true);
+                    $.messager.alert('友情提示', '保存成功!', 'info');
+                } else {
+                    $.messager.alert('友情提示', obj.Message, 'error');
+                }
+                zip_1 = new Array();
+                zip_2 = new Array();
+            }
+        });
+    }
+});
+
+$('#btn_edit').linkbutton({
+    onClick: function () {
+        console.log("111");
+        combo_readonly(false);
+        //$("#sdbo001_input input").attr("disabled", false);
+        combo_readonly(false);
+        $("#btn_edit").linkbutton('disable');
+        $("#btn_save").linkbutton('enable');
+    }
+});
+
+
+
+
+
+
+

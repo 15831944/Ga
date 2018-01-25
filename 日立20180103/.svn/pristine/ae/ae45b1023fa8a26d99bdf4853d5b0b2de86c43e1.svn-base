@@ -1,0 +1,157 @@
+using System;
+using System.Text;
+using System.Collections.Generic;
+using System.Data;
+using Gmail.DDD.DataContext;
+
+namespace PM2.Models.Code030.Szrl105Model
+{
+    //szrl005
+    public class Szrl005Map : EntityConfigurationBase<Szrl005>
+    {
+        public Szrl005Map()
+        {
+            //Primary Key
+            this.HasKey(t => t.rl00501);
+
+            //Properties
+            this.Property(t => t.rl00501)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            this.Property(t => t.rl00502)
+            .IsRequired()
+            .HasMaxLength(100);
+
+            this.Property(t => t.rl00503)
+            .IsRequired()
+            .HasMaxLength(10);
+
+            this.Property(t => t.rl00504)
+            .IsRequired()
+            .HasMaxLength(100);
+
+            this.Property(t => t.rl00505)
+            .IsRequired()
+            .HasMaxLength(10);
+
+            this.Property(t => t.rl00506);
+            this.Property(t => t.rl00507)
+            .IsRequired()
+            .HasMaxLength(100);
+
+            this.Property(t => t.rl00508)
+            .IsRequired()
+            .HasMaxLength(10);
+
+            this.Property(t => t.rl00509)
+            .IsRequired()
+            .HasMaxLength(20);
+
+            this.Property(t => t.rl00510)
+            .IsRequired()
+            .HasMaxLength(10);
+
+            this.Property(t => t.rl00511)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            this.Property(t => t.rl00512)
+            .IsRequired()
+            .HasMaxLength(20);
+
+            this.Property(t => t.rl00513)
+            .IsRequired()
+            .HasMaxLength(20);
+
+            this.Property(t => t.rl00514)
+            .IsRequired()
+            .HasMaxLength(20);
+
+            this.Property(t => t.rl00515)
+            .IsRequired()
+            .HasMaxLength(500);
+
+            this.Property(t => t.rl00516)
+            .IsRequired()
+            .HasMaxLength(500);
+
+            this.Property(t => t.rl00517)
+            .IsRequired()
+            .HasMaxLength(20);
+
+            this.Property(t => t.rl00518)
+            .IsRequired()
+            .HasMaxLength(20);
+
+            this.Property(t => t.rl00519)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            this.Property(t => t.rl00520)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            this.Property(t => t.rl00521)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            this.Property(t => t.rl00522)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            this.Property(t => t.rl00523);
+            this.Property(t => t.rl00524)
+            .IsRequired()
+            .HasMaxLength(20);
+
+            this.Property(t => t.rl00525)
+            .IsRequired()
+            .HasPrecision(9, 18);
+
+            this.Property(t => t.rl00526)
+            .IsRequired()
+            .HasPrecision(9, 18);
+
+            this.Property(t => t.rl00527)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            this.Property(t => t.rl00528)
+            .IsRequired()
+            .HasMaxLength(40);
+
+            // Table & Column Mappings
+            this.ToTable("szrl005");
+            this.Property(t => t.rl00501).HasColumnName("rl00501");
+            this.Property(t => t.rl00502).HasColumnName("rl00502");
+            this.Property(t => t.rl00503).HasColumnName("rl00503");
+            this.Property(t => t.rl00504).HasColumnName("rl00504");
+            this.Property(t => t.rl00505).HasColumnName("rl00505");
+            this.Property(t => t.rl00506).HasColumnName("rl00506");
+            this.Property(t => t.rl00507).HasColumnName("rl00507");
+            this.Property(t => t.rl00508).HasColumnName("rl00508");
+            this.Property(t => t.rl00509).HasColumnName("rl00509");
+            this.Property(t => t.rl00510).HasColumnName("rl00510");
+            this.Property(t => t.rl00511).HasColumnName("rl00511");
+            this.Property(t => t.rl00512).HasColumnName("rl00512");
+            this.Property(t => t.rl00513).HasColumnName("rl00513");
+            this.Property(t => t.rl00514).HasColumnName("rl00514");
+            this.Property(t => t.rl00515).HasColumnName("rl00515");
+            this.Property(t => t.rl00516).HasColumnName("rl00516");
+            this.Property(t => t.rl00517).HasColumnName("rl00517");
+            this.Property(t => t.rl00518).HasColumnName("rl00518");
+            this.Property(t => t.rl00519).HasColumnName("rl00519");
+            this.Property(t => t.rl00520).HasColumnName("rl00520");
+            this.Property(t => t.rl00521).HasColumnName("rl00521");
+            this.Property(t => t.rl00522).HasColumnName("rl00522");
+            this.Property(t => t.rl00523).HasColumnName("rl00523");
+            this.Property(t => t.rl00524).HasColumnName("rl00524");
+            this.Property(t => t.rl00525).HasColumnName("rl00525");
+            this.Property(t => t.rl00526).HasColumnName("rl00526");
+            this.Property(t => t.rl00527).HasColumnName("rl00527");
+            this.Property(t => t.rl00528).HasColumnName("rl00528");
+
+        }
+    }
+}

@@ -1,0 +1,155 @@
+﻿@using PM2.Models.Code030
+@model szrl082
+@{
+    ViewBag.Title = "实行预算";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderStyles{
+    <style>
+        #_schedulePlanning_select_Grid tr td {
+            white-space: nowrap;
+        }
+    </style>
+}
+@section Body {
+    <div data-options="region:'north'">
+        <div class="header">
+            <div class="left-layout">
+                <a href="javascript:;" class="btn-back">返回</a>
+                <h1>作番实行预算＜编辑＞</h1>
+            </div>
+            <div class="center-layout"></div>
+            <div id="BtnGroup" class="right-layout">
+                <a id="btnEditionContrast" href="javascript:;">版本对比表</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <select id="versioNnumber" class="easyui-combobox" style="width:80px">
+                    <option></option>
+                </select>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a id="btnUpdate" href="javascript:;">实行预算变更</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="javascript:;" id="btnRecognize" class="easyui-linkbutton">承认</a>
+
+                <a href="javascript:;" id="btnCorrection" class="easyui-linkbutton" style="display:none;">订正</a>
+                <a href="javascript:;" id="btnFinalize" class="easyui-linkbutton" style="display:none;">改定</a>
+                <a href="javascript:;" id="btnInternalCorrection" class="easyui-linkbutton" style="display:none;">内部修正</a>
+
+                <a href="javascript:;" id="btnInsert" class="easyui-linkbutton">新增</a>
+                <a href="javascript:;" id="btnModify" class="easyui-linkbutton">编辑</a>
+                <a href="javascript:;" id="btnRemove" class="easyui-linkbutton">删除</a>
+                <a href="javascript:;" id="btnSave" class="easyui-linkbutton">保存</a>
+                <a href="javascript:;" id="btnCancel" class="easyui-linkbutton">取消</a>
+                <a href="javascript:;" id="brnExcelExport" class="easyui-linkbutton">导出</a>
+                <a href="javascript:;" id="btnPrint" class="easyui-linkbutton">打印</a>
+
+
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center'">
+        <div class="easyui-layout">
+            <div data-options="region:'west',split:true,width:230">
+                <div class="easyui-layout">
+                    <div data-options="region:'north'">
+                        <div class="tree-search">
+                            <div id="forsomesearch" class="search-layout"><input id="forsometext" class="easyui-searchbox" style="width:100%" /></div>
+                            <div class="other-layout">
+                                <input name="forsome" value="0" type="radio" checked="checked" /> <label>执行中</label>
+                                <input name="forsome" value="1" type="radio" /> <label>已外部精算</label>
+                                <input name="forsome" value="2" type="radio" /> <label>全部</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-options="region:'center'">
+                        <div class="nano">
+                            <div class="nano-content">
+                                <ul id="szrl001Tree" style="margin:10px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-options="region:'center'">
+                <div class="easyui-layout">
+                    <div data-options="region:'center'">
+                        <div class="easyui-tabs">
+                            <div title="表纸">
+                                <form id="szrl082From" method="post" action="###" style="height: 100%; width: 100%">
+                                    <div class="nano">
+                                        <div class="nano-content">
+                                            <div class="control-group">
+                                                <div class="control-group-content">
+                                                    <div class="control-text"><label>初回発行日：</label><p style="min-width:10em;" name="rl08202">2017-05-01</p></div>
+                                                    <div class="control-text"><label>ISO编号：</label><p style="min-width:10em;" id="_002">SHPCS-R-P10-018-1</p></div>
+                                                    <div class="control-text"><label>版本：</label><p style="min-width:10em;" id="_003">2016年5月15改定版</p></div>
+                                                    <div class="control-text"><label>訂正日：</label><p style="min-width:10em;" id="_004"></p></div>
+                                                    <div class="control-text"><label>訂正No：</label><p style="min-width:10em;" id="_005"></p></div><br />
+                                                    <div class="control-text"><label>发行传票版本号：</label><p style="min-width:2em;" name="rl02503" id="_006">初回</p></div>
+                                                    <a href="javascript:;" class="easyui-linkbutton" style="height:24px; margin:5px;" id="_007">查看受注传票</a>
+                                                    <div for="conceal" class="control-text"><label>变更属性：</label><p style="min-width:2em;"  name="rl08234"  id="changePropert"></p></div>
+                                                    <input type="hidden" value="" name="rl08225" id="rl08225" />
+                                                    <input type="hidden" value="" name="rl08201" id="rl08201" />
+                                                    <input type="hidden" value="" name="rl08301" id="rl08301" />
+                                                    <input type="hidden" value="" name="rl08401" id="rl08401" />
+                                                    <input type="hidden" value="" name="rl08501" id="rl08501" />
+                                                </div>
+                                            </div>
+                                            @Html.Partial("_Partial1")
+                                            @Html.Partial("_Partial2")
+                                            @Html.Partial("_Partial3")
+                                            @Html.Partial("_Partial4")
+                                            @Html.Partial("_Partial5", this.Model)
+                                            @Html.Partial("_Partial6")
+                                            @Html.Partial("_Partial7")
+                                            @Html.Partial("_Partial8")
+                                            @Html.Partial("_Partial9")
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div title="KLBDE明细导入">
+                                @Html.Partial("_KLBDE")
+                            </div>
+                            <div title="A~J明细导入">
+                                @Html.Partial("_AJ")
+                            </div>
+                            <div title="进度计划">
+                                @Html.Partial("_schedulePlanning")
+                            </div>
+                            <div title="协同办公">
+
+                            </div>
+                            <div title="附件">
+                                @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+                            </div>
+                            <div title="与前一版本对比">
+                                @Html.Partial("_previousVersion")
+                            </div>
+                        </div>
+                    </div>
+                    <div data-options="region:'south'">
+                        <div style="position:relative; height:34px; border-top:#e0e0e0 1px solid;">
+                            <div style="position:absolute; left:0; top:0;">
+                                <div class="control-text"><label>审核人：</label><p id="rl08239" name="rl08239" style="min-width:10em;"></p></div>
+                                <div class="control-text"><label>审核时间：</label><p id="rl08240" name="rl08240" style="min-width:10em;"></p></div>
+                            </div>
+                            <div style="position:absolute; right:0; top:0;">
+                                <div class="control-text"><label>制单人：</label><p id="rl08237" name="rl08237" style="min-width:10em;"></p></div>
+                                <div class="control-text"><label>制单时间：</label><p id="rl08238" name="rl08238" style="min-width:10em;"></p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div id="_tx_Win" title=" " class="easyui-window" closed="true" data-options="region:'center'" style="width:820px;height:520px;">
+    <table id="szrl019_ux_Grid" ></table>
+</div>
+}
+
+
+
+@section FooterScript {
+    <script src="@this.Url.Content("~/Content/Areas/AreasCode030/sdbo003/javaScript/_sdbo003Index.js")"></script>
+    <script src="@this.Url.Content("~/Content/Areas/AreasCode030/sdbo003/javaScript/jquery.edatagrid.js")"></script>
+    <script src="@this.Url.Content("~/Content/TComponent/jquery-easyui-1.5.1/Extend/extend_combobox.js")"></script>
+}

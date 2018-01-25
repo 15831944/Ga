@@ -1,0 +1,131 @@
+﻿@using PM2.Models.Code030
+@model sdbo001
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section Body {
+    <form action="/AreasCode030/sdbo001/Add" method="post">
+        <div class="wrapper">
+            <div class="header">
+                <div class="left-layout">
+                    <a href="javascript:;" class="btn-back">返回</a>
+                    <h1>作番人员设置</h1>
+                </div>
+                <div class="center-layout"></div>
+                <div class="right-layout">
+                    <a href="javascript:;" class="easyui-linkbutton">保存</a>
+                </div>
+            </div>
+            <div class="content">
+                <div class="nano">
+                    <div class="nano-content">
+                        <div class="form-layout">
+                            <div class="control-wrapper">
+                                <div class="control-content">
+                                    <div class="control">@Html.EditorFor(x => x.bo00102, new { dataoptions = "label:'作番号'" })</div>
+                                    <div class="control">@Html.EditorFor(x => x.bo00103, new { dataoptions = "label:'作番名称'" })</div>
+                                </div>
+                            </div>
+                            <div class="control-wrapper hastit">
+                                <div class="control-header">作番现场审批者</div>
+                                <div class="control-content">
+                                    <div class="control">@Html.EditorFor(x => x.bo00104, new { dataoptions="label:'本部长'" })</div>
+                                    <div class="control">@Html.EditorFor(x => x.bo00105, new { dataoptions = "label:'所长'" })</div>
+                                    <div class="control-wrapper hastit">
+                                        <div class="control-header">工事长</div>
+                                        <div class="control-content">
+                                            <div class="control">@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'建筑'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'机械'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'电气'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'成套'" })</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-wrapper hastit">
+                                        <div class="control-header">科长</div>
+                                        <div class="control-content">
+                                            <div class="control">@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'建筑'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'机械'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'电气'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'成套'" })</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="control-wrapper hastit">
+                                <div class="control-header">非作番部门审批者</div>
+                                <div class="control-content">
+                                    <div class="control-wrapper hastit">
+                                        <div class="control-header">采购部</div>
+                                        <div class="control-content">
+                                            <div class="control">@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当'" })</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-wrapper hastit">
+                                        <div class="control-header">工程管理室</div>
+                                        <div class="control-content">
+                                            <div class="control">@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'部长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'科长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'担当'" })</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-wrapper hastit">
+                                        <div class="control-header">财务部</div>
+                                        <div class="control-content">
+                                            <div class="control">@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当'" })</div>
+                                        </div>
+                                    </div>
+                                    <div class="control-wrapper hastit">
+                                        <div class="control-header">营业部</div>
+                                        <div class="control-content">
+                                            <div class="control">@Html.EditorFor(x => x.bo00134, new { dataoptions = "label:'本部长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00138, new { dataoptions = "label:'部长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00142, new { dataoptions = "label:'科长'" })</div>
+                                            <div class="control">@Html.EditorFor(x => x.bo00146, new { dataoptions = "label:'担当'" })</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+@section FooterScript {
+     <script>
+    
+         function openTopWindow() {
+             var url = "";
+               
+             //title = title == undefined ? ' ' : title;
+             //width = width == undefined ? 800 : width;
+             //height = height == undefined ? 300 : height;
+             var title = "详情表";
+             var width = 1200;
+             var height = 600;
+             if (url != undefined) {
+                 var content = '<iframe name="eui-open-page" scrolling="auto" frameborder="0" src="' + url + '" style="width:100%;height:100%;"></iframe>';
+                 parent.$('#openWindow').window({
+                     title: title,
+                     width: width,
+                     height: height,
+                     content: content,
+                     modal: true,
+                     animate: true,
+                     minimizable: false
+                 });
+             }
+         }
+       
+</script>
+}
+

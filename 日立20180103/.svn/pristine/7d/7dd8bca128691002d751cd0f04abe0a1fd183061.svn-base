@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Models.Code031
+{
+    /// <summary>
+    /// 支付济
+    /// </summary>
+    public enum szrl126_Rl12605
+    {
+        /// <summary>
+        /// 金回支付
+        /// </summary>
+        Apay,
+
+        /// <summary>
+        /// 今后支付预定
+        /// </summary>
+        Bpay,
+
+        /// <summary>
+        /// [调整支付计划]今后支付预定
+        /// </summary>
+        Cpay
+    }
+}

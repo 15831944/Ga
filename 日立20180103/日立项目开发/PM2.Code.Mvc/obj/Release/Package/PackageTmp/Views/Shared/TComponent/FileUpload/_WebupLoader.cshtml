@@ -1,0 +1,62 @@
+﻿@using PM2.Service.Code019
+@model string
+@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section HeaderStyles {
+    <link href="@this.Url.Content("~/Content/TComponent/jquery-easyui-1.5.1/themes/marketProbe/easyui.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/TComponent/webuploader/webuploader.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/Areas/AreasCode019/FileUpload/css/style.css")" rel="stylesheet" />
+}
+
+@section HeaderScript {
+    <script src="@this.Url.Content("~/Content/TComponent/jquery-1.12.4.min.js")"></script>
+    <script src="@this.Url.Content("~/Content/TComponent/jquery-easyui-1.5.1/jquery.easyui.min.js")"></script>
+    <script src="@this.Url.Content("~/Content/TComponent/jquery-easyui-1.5.1/locale/easyui-lang-zh_CN.js")"></script>
+    <script src="@Url.Content("~/Content/TComponent/webuploader/webuploader.min.js")" type="text/javascript"></script>
+}
+
+@section Body {
+    <div id="wrapper">  @*data-options="region:'center',border: false" style="padding:10px;"*@
+        <div id="container">
+            <!--头部，相册选择和格式选择-->
+            <div id="uploader">
+                <div class="queueList">
+                    <div id="dndArea" class="placeholder">
+                        <div id="filePicker"></div>
+                        <p>或将文件拖到这里,单次最多可选100个(支持断点续传)</p>
+                    </div>
+                </div>
+                <div class="statusBar" style="display:none;">
+                    <div class="progress">
+                        <span class="text">0%</span>
+                        <span class="percentage"></span>
+                    </div>
+                    <div class="info"></div>
+                    <div class="btns">
+                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*<div id="uploader_ux_Win" class="easyui-window">
+        <div class="easyui-layout" data-options="fit: true, border:false">
+            <div data-options="region:'center',border: false">
+                
+            </div>   
+        </div>
+    </div>*@
+}
+
+@section FooterScript {
+    <script src="@Url.Content("~/Content/Areas/AreasCode019/FileUpload/javaScript/WebUpLoader.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            window.WebUpLoader.SetPk("@this.Model");
+        });
+</script>
+
+}
+
+

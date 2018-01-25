@@ -1,0 +1,278 @@
+﻿#region using
+using FluentValidation;
+using Gmail.DDD.Config;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Helper;
+using Gmail.DDD.Repositorys;
+using Gmail.DDD.Service;
+using Gmail.DDD.SSO;
+using PM2.Code;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using Gmail.DDD.Extensions;
+using PM2.Models.Code031;
+using System.Data.Entity;
+using PM2.Repository.Code031;
+using PM2.Service.Code001;
+#endregion
+namespace PM2.Service.Code031
+{
+    public class szrl125ServeAsync : Iszrl125ServerAsync
+    {
+        private IDbContextScopeFactory _scopeFactory;
+        private Iszrl125Repository_Facade _szrl125Repository;
+        private Autofac.Features.Indexed.IIndex<Auto_Iszrl126LoadAsync, Iszrl126LoadAsync> _payLoads;
+        private Autofac.Features.Indexed.IIndex<Auto_IPaymentCommandAsync, IPaymentCommandAsync> _payCommands;
+
+        #region ctor
+        public szrl125ServeAsync(
+            IDbContextScopeFactory scopeFactory,
+            Iszrl125Repository_Facade szrl125Repository,
+            Autofac.Features.Indexed.IIndex<Auto_Iszrl126LoadAsync, Iszrl126LoadAsync> payLoads,
+            Autofac.Features.Indexed.IIndex<Auto_IPaymentCommandAsync, IPaymentCommandAsync> payCommands)
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl125Repository = szrl125Repository;
+            this._payLoads = payLoads;
+            this._payCommands = payCommands;
+        }
+        #endregion
+
+        #region 预付款|验收款
+        /// <summary>
+        /// 预付款|验收款
+        /// </summary>
+        /// <param name="szrl125">模型</param>
+        /// <returns></returns>
+        public async Task<IOperateResult> AdvancePaymentAsync(szrl125 szrl125)
+        {
+            TaskAsync.StartAsync();
+            IPaymentCommandAsync payCommand = this._payCommands[Auto_IPaymentCommandAsync.AdvancePaymentAsync];
+            IOperateResult result = await payCommand.CommandAsync(szrl125);
+            return result;
+        }
+        #endregion
+        #region 带入验收计划
+        /// <summary>
+        /// 带入验收计划
+        /// </summary>
+        /// <param name="szrl125">模型</param>
+        /// <returns></returns>
+        public async Task<IOperateResult> IntoPaymentAsync(szrl125 szrl125)
+        {
+            TaskAsync.StartAsync();
+            IPaymentCommandAsync payCommand = this._payCommands[Auto_IPaymentCommandAsync.IntoPaymentAsync];
+            IOperateResult result = await payCommand.CommandAsync(szrl125);
+            return result;
+        }
+        #endregion
+        #region 恢复原支付计划
+        /// <summary>
+        /// 恢复原支付计划
+        /// </summary>
+        /// <param name="szrl125">模型</param>
+        /// <returns></returns>
+        public async Task<IOperateResult> RestorePaymentAsync(szrl125 szrl125)
+        {
+            TaskAsync.StartAsync();
+            IPaymentCommandAsync payCommand = this._payCommands[Auto_IPaymentCommandAsync.RestorePaymentAsync];
+            IOperateResult result = await payCommand.CommandAsync(szrl125);
+            return result;
+        }
+        #endregion
+
+        #region 数据保存
+        /// <summary>
+        /// 数据保存
+        /// </summary>
+        /// <param name="szrl125">模型</param>
+        /// <returns></returns>
+        [BeforeSaveAttribute]
+        public async Task<IOperateResult> SaveAsync(szrl125 szrl125)
+        {
+            TaskAsync.StartAsync();
+            using (IDbContextScope scope = this._scopeFactory.CreateScope())
+            {
+                szrl125 _szrl125 = await this._szrl125Repository.GetSzrl126s(szrl125.rl12502);
+                _szrl125.rl12507 = szrl125.rl12507;
+                _szrl125.rl12503 = szrl125.rl12503;
+                _szrl125.rl12505 = szrl125.rl12505;
+
+                #region 更新-金回支付
+                szrl126 szrl126 = _szrl125.szrl126s.SingleOrDefault(x => x.rl12605 == 0);
+                if (szrl126 != null)
+                {
+                    this.Copy(szrl126, szrl125, false);
+                }
+                #endregion
+                #region  更新 - 1: 今后支付预定, 2:[调整支付计划]今后支付预定
+                IEnumerable<szrl126> szrl126s = _szrl125.szrl126s.Where(x => (new int[] { 1, 2 }).Contains(x.rl12605));
+                if (szrl126s.IsAny())
+                {
+                    szrl126s.ForEach((x, y, isTrue) => {
+                        this.Copy(x, szrl125, true);
+                    });
+                }
+                #endregion
+            }
+            return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "数据已保存!");
+        }
+        #region 复制更新属性
+        private void Copy(szrl126 szrl126, szrl125 szrl125, bool isUpdate)
+        {
+            //获取[填报数据]
+            szrl126 szrl126Copy = szrl125.szrl126s.SingleOrDefault(x => x.rl12601.Equals(szrl126.rl12601));
+            //更新数据信息
+            szrl126.CopyPropertyValues(szrl126Copy, new CopySettings
+            {
+                NullValueHandling = NullValueHandling.Include,
+                DefaultValueHandling = DefaultValueHandling.Include
+            });
+            if (isUpdate)
+            {
+                szrl126.rl12607 = szrl126.rl12611;
+                szrl126.rl12608 = szrl126.rl12612;
+            }
+            szrl126.rl12620 = UserContext.Pj00401;
+            szrl126.rl12621 = 1;
+        }
+        #endregion
+        #endregion
+        #region 数据加载
+        /// <summary>
+        /// 数据加载
+        /// </summary>
+        /// <param name="rl12502">合同ID</param>
+        /// <param name="rl12507">状态: -1 初始化</param>
+        /// <returns></returns>
+        public async Task<IOperateResult> LoadAsync(string rl12502, int rl12507)
+        {
+            TaskAsync.StartAsync();
+            //[已支付确认]合同支付情况
+            List<szrl126SVEntity> szrl127s = null; 
+            #region 构建 - [已支付确认]合同支付情况
+            using (IDbContextReadOnlyScope scope = this._scopeFactory.CreateReadOnlyScope())
+            {
+                var szrl125 = await this._szrl125Repository.GetSzrl127s(rl12502);
+                    szrl125.szrl127s.OrderBy(x => x.Asc(y => y.rl12705)).Select(x => new szrl126SVEntity {
+
+                        rl12601 = x.rl12701, //ID
+                        rl12605 = -1,        //支付济 -1: 支付济, -2: 累計検収済, -3: 合计, 0: 金回支付, 1: 今后支付预定, 2:[调整支付计划]今后支付预定
+                        rl12603 = x.rl12703, //初始来源 0:合同支付计划, 1:合同验收计划
+	                    rl12604 = x.rl12704, //来源ID  
+
+                        #region 元支付预定
+                        rl12606 = x.rl12705, //支付日期
+                        rl12607 = x.rl12706, //-%
+                        rl12608 = x.rl12707, //金额
+                        #endregion
+                        #region 金回支付
+                        rl12609 = x.rl12708, //处理日期
+                        rl12610 = x.rl12709, //支付日期
+                        rl12611 = x.rl12710, //-%
+                        rl12612 = x.rl12711, //金额
+                        #endregion
+
+                        rl12613 = x.rl12712, //附件ID
+                        rl12614 = x.rl12713, //付款性质 0: 预付款, 1:质保款, 2:验收款
+                        rl12615 = x.rl12714, //预付款扣款金额
+                        rl12616 = x.rl12715, //预付款扣款占合同%
+                        rl12617 = x.rl12716, //本次实际支付金额(含税)
+                        rl12618 = x.rl12717, //本次实际支付金额(不含税)
+
+                        rl12619 = x.rl12718,         //备注
+                        rl12719 = x.rl12719,         //状态 0: 承认济, 1: AP已发行
+                        rl12720 = x.rl12720,         //AP编号
+                        rl12620 = x.sdpj004.pj00402, //担当者
+
+                    }).ToList();
+
+                //构建-累計検収済
+                this.PaymentSummary(szrl127s);     
+            }
+            #endregion
+            #region 构建 - [待支付确认]合同支付情况
+            Auto_Iszrl126LoadAsync _loadType = rl12507 == -1 
+                ? Auto_Iszrl126LoadAsync.szrl126PlanLoadAsync
+                : Auto_Iszrl126LoadAsync.szrl126ConfirmLoadAsync;
+
+            Iszrl126LoadAsync loadMe = this._payLoads[_loadType];
+            IEnumerable<szrl126SVEntity> szrl126s = await loadMe.LoadAsync(rl12502);
+            szrl127s.AddRange(szrl126s);
+            #endregion
+
+            //构建合计
+            List<szrl126SVEntity> szrl127Totals = null;
+            this.PayTotal(out szrl127Totals, szrl127s);
+            return OperateResultFactory.GridOperateResult(szrl127s, szrl127Totals);
+        }
+
+        #region 构建 - 累計検収済
+        private void PaymentSummary(List<szrl126SVEntity> szrl127s)
+        {
+            if (szrl127s.IsAny())
+            {
+                szrl127s.Add(new szrl126SVEntity
+                {
+                    rl12601 = "-1", //ID
+                    rl12605 = -2,   //支付济 -1: 支付济, -2: 累計検収済, -3: 合计, 0: 金回支付, 1: 今后支付预定, 2:[调整支付计划]今后支付预定
+
+                    #region 元支付预定
+                    rl12607 = szrl127s.Sum(x => x.rl12607), //-%
+                    rl12608 = szrl127s.Sum(x => x.rl12608), //金额
+                    #endregion
+                    #region 金回支付
+                    rl12611 = szrl127s.Sum(x => x.rl12611), //-%
+                    rl12612 = szrl127s.Sum(x => x.rl12612), //金额
+                    #endregion
+                    rl12615 = szrl127s.Sum(x => x.rl12615), //预付款扣款金额
+                    rl12616 = szrl127s.Sum(x => x.rl12616), //预付款扣款占合同%
+                    rl12617 = szrl127s.Sum(x => x.rl12617), //本次实际支付金额(含税)
+                    rl12618 = szrl127s.Sum(x => x.rl12618)  //本次实际支付金额(不含税)
+
+                });
+            }
+        }
+        #endregion
+        #region 构建 - 合计
+        private void PayTotal(out List<szrl126SVEntity> szrl127Totals, IEnumerable<szrl126SVEntity> szrl127s)
+        {
+            szrl127Totals = new List<szrl126SVEntity>();
+            if (!szrl127s.IsAny())
+                szrl127s = Enumerable.Empty<szrl126SVEntity>();
+
+            int[] sType = { -2, 0, 1, 2 };
+            szrl127s = szrl127s.Where(x => sType.Contains(x.rl12605));
+            {
+                
+                szrl127Totals.Add(new szrl126SVEntity
+                {
+                    rl12601 = "-2", //ID
+                    rl12605 = -3,   //支付济 -1: 支付济, -2: 累計検収済, -3: 合计, 0: 金回支付, 1: 今后支付预定, 2:[调整支付计划]今后支付预定
+
+                    #region 元支付预定
+                    rl12607 = szrl127s.Sum(x => x.rl12607), //-%
+                    rl12608 = szrl127s.Sum(x => x.rl12608), //金额
+                    #endregion
+                    #region 金回支付
+                    rl12611 = szrl127s.Sum(x => x.rl12611), //-%
+                    rl12612 = szrl127s.Sum(x => x.rl12612), //金额
+                    #endregion
+                    rl12615 = szrl127s.Sum(x => x.rl12615), //预付款扣款金额
+                    rl12616 = szrl127s.Sum(x => x.rl12616), //预付款扣款占合同%
+                    rl12617 = szrl127s.Sum(x => x.rl12617), //本次实际支付金额(含税)
+                    rl12618 = szrl127s.Sum(x => x.rl12618)  //本次实际支付金额(不含税)
+
+                });
+            }
+        }
+        #endregion
+
+        #endregion
+
+    }
+}

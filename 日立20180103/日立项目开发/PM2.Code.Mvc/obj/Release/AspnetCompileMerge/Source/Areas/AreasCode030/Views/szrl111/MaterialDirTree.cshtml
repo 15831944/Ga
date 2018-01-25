@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewBag.Title = "材料库";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderScript{
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+}
+@section Body{
+
+
+    <div data-options="region:'north'">
+        <div class="tree-search">
+            @*<div id="toolbarMaterialDir" class="search-layout">
+                    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editMaterialDir()">材料目录维护</a>
+                </div>*@
+            <div class="search-layout"><input id="input_searchbox_index_szrl111" class="easyui-searchbox" style="width:100%" data-options="searcher: searchMaterialDir_szrl111" /></div>
+        </div>
+    </div>
+    <div data-options="region:'center'">
+        <div class="nano">
+            <div class="nano-content">
+
+                <div id="materialDirTreeContainer">
+                    <ul id="materialDirTree"></ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div style="display:none">
+        <input type="hidden" id="input_hd_newestid" />
+        <input type="hidden" id="input_hd_treedata" />
+    </div>
+    <script type="text/javascript">
+
+        /// 搜索目录树
+        function searchMaterialDir_szrl111(value) {
+            reloadMaterialDir(value);
+        }
+
+        // 刷新目录
+        function reloadMaterialDir_index_szrl111() {
+            var value = $('#input_searchbox_index_szrl111').searchbox('getValue');
+            searchMaterialDir_szrl111(value);
+        }
+
+        // 初始化
+        function initMaterialDir() {
+            var from = $.getUrlParam('f');
+
+            $('#materialDirTree').tree({
+                //url: '/AreasCode030/szrl111/GetMaterialDirs',
+                onLoadSuccess: handleReload,
+            });
+            if (from === '1') {
+                $('#materialDirTree').tree({
+                    onSelect: handleOnSelected
+                });
+            }
+            
+            reloadMaterialDir('');
+        }
+
+        function reloadMaterialDir(key) {
+            var all = $.getUrlParam('all');
+            $.post('/AreasCode030/szrl111/GetMaterialDirs', { key: key, all: all }, function (result) {
+                data = result;
+                $('#materialDirTree').tree({ data: data });
+            });
+
+            //var data = $('#input_hd_treedata').val();
+            //if (rlform1101.isNullOrWhitespace(data)) {
+            //    $.post('/AreasCode030/szrl111/GetMaterialDirs', null, function (result) {
+            //        data = result;
+            //        $('#materialDirTree').tree({ data: data });
+            //    });
+            //}
+            //else {
+            //    $('#materialDirTree').tree({ data: data });
+            //}
+        }
+
+        function handleOnSelected() {
+            var node = getSelectedNode();
+            window.parent.refreshDatagrid_index(node.id);
+        }
+
+
+        // 获取已选择节点
+        function getSelectedNode() {
+            var selectedNode = $('#materialDirTree').tree('getSelected');
+            return selectedNode;
+        }
+
+        // 处理重新加载
+        function handleReload() {
+            selectMaterialDir();
+
+            // 当前材料ID，修改材料目录使用
+            var cDirId = $.getUrlParam('cDirId');
+            if (!rlform1101.isNullOrWhitespace(cDirId)) {
+                selectMaterialDir(cDirId);
+            }
+        }
+
+        // 选中节点
+        function selectMaterialDir(dirId) {
+            if (rlform1101.isNullOrWhitespace(dirId)) {
+                dirId = $('#input_hd_newestid').val();
+            }
+            var nodeId = dirId;
+            if (!rlform1101.isNullOrWhitespace(nodeId)) {
+                var node = $('#materialDirTree').tree('find', nodeId);
+                $('#materialDirTree').tree('expandTo', node.target).tree('select', node.target);
+            }
+        }
+
+
+        function refreshMaterialDirs() {
+            //$('#materialDirTree').tree('reload');
+            reloadMaterialDir();
+        }
+
+        // 修改最新节点值
+        function setNewestMaterialDir(nodeId) {
+            $('#input_hd_newestid').val(nodeId);
+        }
+
+        $(function () {
+            initMaterialDir();
+        });
+    </script>
+}

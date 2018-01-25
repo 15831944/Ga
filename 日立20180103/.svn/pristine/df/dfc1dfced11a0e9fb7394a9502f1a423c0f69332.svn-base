@@ -1,0 +1,109 @@
+﻿@using PM2.Models.Code030
+@model szrl025
+@{
+    ViewBag.Title = "受注传票";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderStyles {
+    <style media="print">
+        /*.noprint{visibility:hidden}*/
+        @@page {
+            size: auto; /* auto is the initial value */
+            margin: 0mm; /* this affects the margin in the printer settings */
+        }
+    </style>
+    <style>
+        @@media print {
+            body {
+                font-size: 8px
+            }
+
+            #szrl026_ux_Grid {
+                width: 500px;
+            }
+            /*其它的样式*/
+        }
+    </style>
+}
+@section Body {
+    <div data-options="region:'north'">
+        <div class="header">
+            <div class="left-layout">
+                <a hrer="javascript:;" class="btn-back">返回</a>
+                <h1>受注传票</h1>
+            </div>
+            <div class="center-layout"></div>
+            <div id="BtnGroup" class="right-layout">
+                <a href="javascript:;" id="btnUpdate" class="easyui-linkbutton">更新</a>
+                <a href="javascript:;" id="btnRecognize" class="easyui-linkbutton">承认</a>
+                <a href="javascript:;" id="btnInsert" class="easyui-linkbutton">新增</a>
+                <a href="javascript:;" id="btnModify" class="easyui-linkbutton">修改</a>
+                <a href="javascript:;" id="btnRemove" class="easyui-linkbutton">删除</a>
+                <a href="javascript:;" id="btnSave" class="easyui-linkbutton">保存</a>
+                <a href="javascript:;" id="btnExcel" class="easyui-linkbutton">导出</a>
+                <a href="javascript:;" id="btnPrint" class="easyui-linkbutton">打印</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center'">
+        <div class="easyui-layout">
+            <div data-options="region:'west',split:true,width:230">
+                <div class="easyui-layout">
+                    <div data-options="region:'north'">
+                        <div class="tree-search">
+                            <div id="forsomesearch" class="search-layout"><input id="forsometext" class="easyui-searchbox" style="width:100%" /></div>
+                            <div class="other-layout">
+                                <input name="forsome" value="0" type="radio" checked="checked" /> <label>执行中</label>
+                                <input name="forsome" value="1" type="radio" /> <label>已外部精算</label>
+                                <input name="forsome" value="2" type="radio" /> <label>全部</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-options="region:'center'">
+                        <div class="nano">
+                            <div class="nano-content">
+                                <ul id="szrl001Tree" style="margin:10px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div data-options="region:'center'">
+                <div class="easyui-layout">
+                    <div data-options="region:'center'">
+                        <div id="tt" class="easyui-tabs">
+                            <div id="tb1" title="受注传票">
+                                <div class="nano">
+                                    <div class="nano-content">
+                                        @Html.Partial("_LInjectionVouche", null, this.ViewData)
+                                    </div>
+                                </div>
+                            </div>
+                            <div title="受注传票明细">
+                                @Html.Partial("_DInjectionVouche", null, this.ViewData)
+
+
+                            </div>
+                            <div title="附件">
+                                @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+                            </div>
+                            <!--<div title="协同办公"></div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+@section FooterScript {
+    <script src="@this.Url.Content("~/Content/Areas/AreasCode030/szrl025/javaScript/_szrl025Index.js")"></script>
+    <script type="text/javascript">
+        //$(function () {
+        //    window.sdpk007uxWinClass.Init('F1E993F8-7137-4177-ACA7-9F1A584BD148', true);
+        //    window.sdpk007uxWinClass.Load();
+        //});
+    </script>
+
+}

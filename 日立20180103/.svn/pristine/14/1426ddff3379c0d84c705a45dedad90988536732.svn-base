@@ -1,0 +1,15 @@
+﻿@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section Body {
+    <div class="easyui-layout" data-options="fit: true, border:false">
+        <div data-options="region:'north', border: true, split:true, height: 280, hideCollapsedContent: false">
+            @Html.Partial("Tabs_A/_EditFrom")
+        </div>
+        <div data-options="region:'center', border: true, hideCollapsedContent: false">
+            <table id="Tabs_A_Index_center_Grid" data-options="fit: true"></table>
+        </div>
+    </div>
+}
+@section FooterScript {
+}

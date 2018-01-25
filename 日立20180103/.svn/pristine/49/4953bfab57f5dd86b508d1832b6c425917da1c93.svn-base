@@ -1,0 +1,598 @@
+﻿
+@{
+    ViewBag.Title = "开票通知汇总表";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@using Gmail.DDD.Config;
+@section HeaderStyles {
+    <style>
+        .table-layout th:last-child {
+            border-right-width: 1px;
+        }
+
+        .table-layout th, .table-layout td {
+            padding: 3px 5px;
+        }
+
+        .table-layout tr:last-child td {
+            border-bottom-width: 1px;
+        }
+
+        tr.focus {
+            background-color: #eee;
+        }
+
+        #Pagination {
+            bottom: 0px;
+            border-bottom: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .aaa table {
+            width: auto;
+        }
+    </style>
+
+}
+@section Body {
+    <div class="table-layout hasborder" id="parentDiv" style="margin:20px;">
+        <table id="offer" cellpadding="0" cellspacing="0" border="0">
+            <thead>
+                <tr>
+                    <th colspan="21" style="text-align:left;">开票通知汇总表</th>
+                </tr>
+                <tr>
+                    <th colspan="5">营业部</th>
+                    <th colspan="9">工程部</th>
+                    <th colspan="2">采购部</th>
+                    <th colspan="5">财务部</th>
+                </tr>
+                <tr>
+                    <th rowspan="2">作番号</th>
+                    <th rowspan="2">合同号</th>
+                    <th rowspan="2">合同名称</th>
+                    <th rowspan="2">合同金额</th>
+                    <th rowspan="2">本次开票金额</th>
+                    <th rowspan="2">B类发包有无</th>
+                    <th rowspan="2">处理</th>
+                    <th colspan="5">B类发包计划</th>
+                    <th rowspan="2">财务通知</th>
+                    <th rowspan="2">发注状态</th>
+                    <th rowspan="2">接受/退回</th>
+                    <th rowspan="2">退回理由</th>
+                    <th rowspan="2">通知发包</th>
+                    <th rowspan="2">发包缺少金额</th>
+                    <th rowspan="2">处理</th>
+                    <th rowspan="2">开票登记</th>
+                    <th rowspan="2">计划开票日期</th>
+                </tr>
+                <tr>
+                    <th>计划年月</th>
+                    <th>工时名称</th>
+                    <th>计划金额</th>
+                    <th>预定分包单位</th>
+                    <th>担当者</th>
+                </tr>
+            </thead>
+            <tbody>
+                @*<tr style='text-align:center;'>
+                        <td>62B910P</td>
+                        <td>SP-17-001</td>
+                        <td>机电安装合同</td>
+                        <td>100000</td>
+                        <td>20000</td>
+                        <td><label><input type='radio' name='IsFB_" + i + "' value='有' />有</label><label><input type='radio' name='IsFB_" + i + "' value='无' />无</label></td>
+                        <td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small' /></td>
+                        <td>2017年9月</td>
+                        <td>机电分包</td>
+                        <td>20000</td>
+                        <td>邦永科技</td>
+                        <td>张三</td>
+                        <td><label><input type='radio' name='IsOffer_" + i + "' value='1' />已</label><label><input type='radio' name='IsOffer_" + i + "' value='0' />未</label></td>
+                        <td><label><input type='radio' name='FZ_" + i + "' value='1' />已</label><label><input type='radio' name='FZ_" + i + "' value='0' />未</label></td>
+                        <td>
+                            <input type='button' value='接受' class='easyui-linkbutton l-btn l-btn-small' />
+                            <input type='button' value='退回' class='easyui-linkbutton l-btn l-btn-small' />
+                        </td>
+                        <td>未发包完成</td>
+                        <td><input type='button' value='通知发包' class='easyui-linkbutton l-btn l-btn-small' /></td>
+                        <td>80000</td>
+                        <td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small' /></td>
+                        <td><input type='button' value='开票登记' class='easyui-linkbutton l-btn l-btn-small' /></td>
+                    </tr>*@
+            </tbody>
+        </table>
+        <div class="easyui-panel" id="Pagination">
+            <div id="pp" class="easyui-pagination aaa" data-options="pageSize: 5,pageList: [5, 10, 15, 20]"></div>
+        </div>
+    </div>
+
+    <div id="szrl116Win" closed="true" title="强制提醒" class="easyui-window" style="width:656px;top:150px;" data-options="modal:true" collapsible="false" minimizable="false" maximizable="false" resizable="false">
+        <!--<div style="margin:40px 23px 0 40px;width:;">-->
+        <table id="WarmLists" class="easyui-datagrid"></table>
+    </div>
+    <div id="BLJHXQ" class="easyui-window" title="B类发包计划" data-options="modal:true,closed:true,resizable:false" style="width:900px;height:560px;">
+        <iframe id="BLJHXQ_iframe" height="100%" width="100%" scrolling="no" frameborder="0"></iframe>
+    </div>
+    <div id="KPTZMX" class="easyui-window" title="开票通知明细" data-options="modal:true,closed:true,resizable:false" style="width:1200px;height:560px;">
+        <iframe id="KPTZMX_iframe" height="100%" width="100%" scrolling="no" frameborder="0"></iframe>
+    </div>
+    <div id="KPDJ" class="easyui-window" title="开票登记" data-options="modal:true,closed:true,resizable:false" style="width:1200px;height:560px;">
+        <iframe id="KPDJ_iframe" height="100%" width="100%" scrolling="no" frameborder="0"></iframe>
+    </div>
+    <div id="123444" closed="true" title="提示" class="easyui-window" style="width: 302px; min-height: 33px;" data-options="modal:true,closed:true" collapsible="false" minimizable="false" maximizable="false" resizable="false">
+        <div class="messager-body panel-body panel-body-noborder window-body" title="" id="" style="width: 266px; min-height: 36px;">
+            <div class="messager-icon messager-question"></div><div>请输入计划开票日期</div><br>
+            <div style="clear:both;"></div><div><input id="cwbcl_dt" class="easyui-datebox" type="text"></div>
+        </div>
+        <div class="dialog-button messager-button" style="width: 276px;">
+            <a href="javascript:;" class="l-btn l-btn-small" group="" id="" onclick="CWBCLQD()"><span class="l-btn-left"><span class="l-btn-text">确定</span></span></a>
+            <a href="javascript:;" class="l-btn l-btn-small" group="" id="" onclick="CWBCLQX()"><span class="l-btn-left"><span class="l-btn-text">取消</span></span></a>
+        </div>
+    </div>
+    <div id="tuihuiliyou" closed="true" title="提示" class="easyui-window" style="width: 302px; min-height: 33px;" data-options="modal:true,closed:true" collapsible="false" minimizable="false" maximizable="false" resizable="false">
+        <div class="messager-body panel-body panel-body-noborder window-body" title="" id="" style="width: 266px; min-height: 36px;">
+            <div class="messager-icon messager-question"></div><div>请输入退回理由</div><br>
+            <div style="clear:both;"></div><div><input id="cgb_thly" class="easyui-textbox" type="text"></div>
+        </div>
+        <div class="dialog-button messager-button" style="width: 276px;">
+            <a href="javascript:;" class="l-btn l-btn-small" group="" id="" onclick="CGBQD_R()"><span class="l-btn-left"><span class="l-btn-text">确定</span></span></a>
+            <a href="javascript:;" class="l-btn l-btn-small" group="" id="" onclick="CGBQX_R()"><span class="l-btn-left"><span class="l-btn-text">取消</span></span></a>
+        </div>
+    </div>
+
+    <div id="srqsfbje" closed="true" title="提示" class="easyui-window" style="width: 302px; min-height: 33px;" data-options="modal:true,closed:true" collapsible="false" minimizable="false" maximizable="false" resizable="false">
+        <div class="messager-body panel-body panel-body-noborder window-body" title="" id="" style="width: 266px; min-height: 36px;">
+            <div class="messager-icon messager-question"></div><div>请输入发包缺少金额</div><br>
+            <div style="clear:both;"></div><div><input id="srqsfbje_input" class="easyui-textbox" type="text"></div>
+        </div>
+        <div class="dialog-button messager-button" style="width: 276px;">
+            <a href="javascript:;" class="l-btn l-btn-small" group="" id="" onclick="FBJEQD()"><span class="l-btn-left"><span class="l-btn-text">确定</span></span></a>
+            <a href="javascript:;" class="l-btn l-btn-small" group="" id="" onclick="FBJEQX()"><span class="l-btn-left"><span class="l-btn-text">取消</span></span></a>
+        </div>
+    </div>
+}
+
+
+
+
+
+
+
+
+@section FooterScript{
+    <script>
+
+        $(function () {
+            var IdArray = []; //存放强制提醒所有的Id，通过判断这个数组是否为空判定用户每一行都点击过
+            var pageNumber = 0;
+            var pageSize = 0;
+            var IsClickNum = 0;   //存放强制提醒已经给单击的条数
+            var rowCount = 0;     //存放强制提醒列表有多少条记录
+
+            var result_id = undefined;  //该记录id
+
+            var chuantouIP = '@PM2Config.Instance.GetSetting("ChuanTouIP_116")';
+
+            //点击通知发包（通知发包不可用、财务通知变成已、处理，开票登记不可用，B类发包有无可用、工程部处理可用、发注状态···）
+            var OfferSendBag_id = "";
+            OfferSendBag = function (Id) {
+                $("#srqsfbje").window('open');
+                OfferSendBag_id = Id;
+            };
+            FBJEQD = function () { 
+                $.ajax({
+                    url: "/AreasCode030/szrl116/ClickOfferSendBag",
+                    data: {
+                        rl11601: OfferSendBag_id,  //主键
+                        qsfbje: $("#srqsfbje_input").val()
+                    },
+                    type: "post",
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                            $('#szrl166Win').window('close');
+                            $("#srqsfbje").window('close');
+                        }
+                        else {
+                            alert("系统出错，请联系管理员！");
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                            $("#srqsfbje").window('close');
+                        }
+                    },
+                    error: function (obj) { alert("系统出错，请联系管理员！"); }
+                });
+            }
+            FBJEQX = function () {
+                $("#srqsfbje").window('close');
+            } 
+            // ------------- end  ------------------
+
+            //B类发包有无单选按钮
+            BLFB = function (Id, Val,zuofanid,hetongid) {
+                //“有”时，“处理”按钮可点击
+                //“无”时，“处理”按钮，不可用；财务部的“处理”和“开票登记”按钮变亮
+                $.ajax({
+                    url: "/AreasCode030/szrl116/ClickPlanB",
+                    data: {
+                        rl11601: Id,  //主键
+                        selval: Val,   //单选按钮选中的值  1-无；2-有
+                        zuofanid: zuofanid,  //作番ID
+                        hetongid: hetongid  //合同ID
+                    },
+                    type: "post",
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                        }
+                        else {
+                            alert("系统出错，请联系管理员！");
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                        }
+                    },
+                    error: function (obj) { alert("系统出错，请联系管理员！"); }
+                });
+            };
+            //强制提醒，点击已完按钮（点击已完，发注状态变成已，接受退回变成可用）
+            YW = function (index) {
+                var id = $("#WarmLists").datagrid('getData').rows[index]["ZhuJian"];
+                $.ajax({
+                    url: "/AreasCode030/szrl116/HaveDone",
+                    data: {
+                        rl11601: id,  //主键
+                    },
+                    type: "post",
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            //var arryCount = IdArray.length;  //数组大小
+                            for (var i = 0; i < IdArray.length; i++) {
+                                if (IdArray[i] == id) {
+                                    IdArray.splice(i, 1);   //将Id从数组里面移除
+                                    IsClickNum++;           //成功点了一条
+                                    break;
+                                }
+                            }
+                            if (IdArray.length == 0 && IsClickNum == rowCount) {
+                                $("#szrl116Win").window('close');
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                IsClickNum = 0;
+                                ReLoadData(pageNumber, pageSize);
+                            }
+                        }
+                        else {
+                            alert("系统出错，请联系管理员！");
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                        }
+                    },
+                    error: function (obj) { alert("系统出错，请联系管理员！"); }
+                });
+            };
+            //强制提醒，点击下次按钮（点击下次，发注状态变成未，接受退回变成不可用）
+            XC = function (index) {
+                var id = $("#WarmLists").datagrid('getData').rows[index]["ZhuJian"];
+                $.ajax({
+                    url: "/AreasCode030/szrl116/NextTime",
+                    data: {
+                        rl11601: id,  //主键
+                    },
+                    type: "post",
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            for (var i = 0; i < IdArray.length; i++) {
+                                if (IdArray[i] == id) {
+                                    IdArray.splice(i, 1);   //将Id从数组里面移除
+                                    IsClickNum++;           //成功点了一条
+                                    break;
+                                }
+                            }
+                            if (IdArray.length == 0 && IsClickNum == rowCount) {
+                                $("#szrl116Win").window('close');
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                IsClickNum = 0;
+                                ReLoadData(pageNumber, pageSize);
+                            }
+                        }
+                        else {
+                            alert("系统出错，请联系管理员！");
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                        }
+                    },
+                    error: function (obj) { alert("系统出错，请联系管理员！"); }
+                });
+            };
+            //工程部的处理按钮（弹出B类计划详情界面）
+            GCBCL = function (id, zfid, ConID) {
+                result_id = id;
+                $.ajax({
+                    url: "/AreasCode030/szrl116/GCBCL",
+                    data: {
+                        rl11601: id,  //主键
+                    },
+                    type: "post",
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                            $("#BLJHXQ").window("open");
+                            $("#BLJHXQ_iframe").attr("src", chuantouIP + "/CustomForm/RLProject/szrl043/szrl043Edit.aspx?ZFID=" + zfid + "&&ConID=" + ConID + "&&sd_billState=1");
+                        }
+                        else {
+                            alert("系统出错，请联系管理员！");
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                        }
+                    },
+                    error: function (obj) { alert("系统出错，请联系管理员！"); }
+                });
+            };
+            //工程部弹出B类计划详情界面关闭时触发方法
+            $('#BLJHXQ').window({
+                onBeforeClose: function () {
+                    $.ajax({
+                        url: "/AreasCode030/szrl116/GCBCLGB",
+                        data: {
+                            rl11601: result_id,  //主键
+                        },
+                        type: "post",
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.success) {
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                ReLoadData(pageNumber, pageSize);
+                            }
+                            else {
+                                alert("系统出错，请联系管理员！");
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                ReLoadData(pageNumber, pageSize);
+                            }
+                        }
+                    });
+                }
+            });
+            //采购部的接受按钮（接受退回按钮变成不可用，财务是否接受变成接受，财务部的“处理”和“开票登记”按钮才变亮）
+            //【PS:强制提醒查的时候有判断是否接受，所以不用处理】
+            CGBJS = function (id) {
+                var r = confirm("是否确定接受");
+                if (r) {
+                    $.ajax({
+                        url: "/AreasCode030/szrl116/AcceptBtn",
+                        data: {
+                            rl11601: id,  //主键
+                        },
+                        type: "post",
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.success) {
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                ReLoadData(pageNumber, pageSize);
+                            }
+                            else {
+                                alert("系统出错，请联系管理员！");
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                ReLoadData(pageNumber, pageSize);
+                            }
+                        },
+                        error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                }
+            };
+            //采购部的退回按钮（接受退回按钮变成不可用，发注状态变成未，填写退回理由）
+            var cgbthlyid = "";
+            CGBTH = function (id) {
+                $("#tuihuiliyou").window('open');
+                cgbthlyid = id;
+            };
+            CGBQD_R = function () {
+                var a = $("#cgb_thly").val();
+                if (a == "") {
+                    alert("请输入退回理由！");
+                }
+                else {
+                    $.ajax({
+                        url: "/AreasCode030/szrl116/ReturnBtn",
+                        data: {
+                            rl11601: cgbthlyid,  //主键
+                            reason: a  //退回理由
+                        },
+                        type: "post",
+                        success: function (data) {
+                            var obj = $.parseJSON(data);
+                            if (obj.success) {
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                ReLoadData(pageNumber, pageSize);
+                                $("#tuihuiliyou").window('close');
+                            }
+                            else {
+                                alert("系统出错，请联系管理员！");
+                                pageNumber = $('#pp').pagination('options').pageNumber;
+                                pageSize = $('#pp').pagination('options').pageSize;
+                                ReLoadData(pageNumber, pageSize);
+                                $("#tuihuiliyou").window('close');
+                            }
+                        },
+                        error: function (obj) { alert("系统出错，请联系管理员！"); }
+                    });
+                }
+            };
+            CGBQX_R = function () {
+                $("#tuihuiliyou").window('close');
+            };
+            //------ 财务部的处理按钮 ------
+            var cwbclid = "";
+            CWBCL = function (id) {
+                $("#123444").window('open');
+                cwbclid = id;
+            };
+            CWBCLQD = function () {
+                var dt = $("#cwbcl_dt").val();
+                $.ajax({
+                    url: "/AreasCode030/szrl116/KPRQ",
+                    data: {
+                        rl11601: cwbclid,  //主键
+                        datatime: dt     //日期
+                    },
+                    type: "post",
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            $("#123444").window('close');
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                        }
+                        else {
+                            alert("系统出错，请联系管理员！");
+                            $("#123444").window('close');
+                            pageNumber = $('#pp').pagination('options').pageNumber;
+                            pageSize = $('#pp').pagination('options').pageSize;
+                            ReLoadData(pageNumber, pageSize);
+                        }
+                    },
+                    error: function (obj) { alert("系统出错，请联系管理员！"); }
+                });
+            };
+            CWBCLQX = function () {
+                $("#123444").window('close');
+            };
+            //------------- end -------------
+
+            //财务部的开票登记按钮
+            CWBKPTZ = function () {
+                $("#KPDJ").window("open");
+                $("#KPDJ_iframe").attr("src", chuantouIP + "/CustomForm/RLProject/szrl044/szrl044.aspx");
+            };
+            //分页按钮触发方法
+            $('#pp').pagination({
+                onSelectPage: function (pageNumber, pageSize) {
+                    $(this).pagination('loading');
+                    ReLoadData(pageNumber, pageSize);
+                    $(this).pagination('loaded');
+                }
+            });
+            //汇总表数据
+            ReLoadData = function (pageNumber, pageSize) {
+                $.ajax({
+                    url: "/AreasCode030/szrl116/GetTableData",
+                    data: {
+                        pageSize: pageSize,
+                        pageIndex: pageNumber
+                    },
+                    type: "post",
+                    success: function (obj) {
+                        if (obj.success) {
+                            $("#offer").find("tbody").empty();
+                            $("#offer").find("tbody").append(obj.GridCode);
+                            //$("#offer").find("tbody").append("<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><input type='button' value='批量处理' class='easyui-linkbutton l-btn l-btn-small' /></td><td></td><td></td></tr>");
+                            //分頁
+                            $('#pp').pagination({
+                                total: obj.RowCount
+                            });
+                        }
+                        else {
+                            alert("系统出错，请联系管理员！");
+                        }
+                    },
+                    error: function (obj) { alert("系统出错，请联系管理员！"); }
+                });
+            };
+            //强制提醒列表数据
+            WarmLists = function () {
+                $("#WarmLists").datagrid({
+                    url: "/AreasCode030/szrl116/QueryWarmLists",
+                    method: 'POST',
+                    title: '<strong style="color:red;padding-left:170px;">请尽快对以下所提示的营业合同的B类分包进行处理</strong>',
+                    loadMsg: "正在加载，请稍等...",
+                    singleSelect: true,
+                    pagePosition: 'bottom',
+                    pagination: "true",
+                    idField: "ZhuJian",
+                    columns: [[
+                        { field: 'ZuoFanHao', title: '作番号', width: 80 },
+                        { field: 'HeTongHao', title: '合同号', width: 80 },
+                        { field: 'HeTongMingCheng', title: '合同名称', width: 200 },
+                        {
+                            field: 'HeTongJinE', title: '合同全额', width: 80,
+                            formatter: function (value, row, index) {
+                                return value.toFixed(2);
+                            }
+                        },
+                        {
+                            field: 'BenCiKaiPiaoJinE', title: '本次开票金额', width: 100,
+                            formatter: function (value, row, index) {
+                                return value.toFixed(2);
+                            }
+                        },
+                        {
+                            field: '-1', title: '处理', width: 100, align: 'center',
+                            formatter: function (value, row, index) {
+                                var e = '<a href="#" onclick="XC(' + index + ')">下次</a> ';
+                                var s = '<a href="#" onclick="YW(' + index + ')">已完</a> ';
+                                return e + s;
+                            }
+                        }
+                    ]],
+                    onLoadSuccess: function (obj) {
+                        rowCount = $("#WarmLists").datagrid('getData').total; //一共有多少条数据
+                        //这里第一页有多少行只能加多少行了，假如有11条数据，这里没法获取第十一条数据的主键，因为一页只有10条
+                        for (var i = 0; i < obj.rows.length; i++) {
+                            IdArray.push(obj.rows[i]["ZhuJian"]);
+                        }
+                        if (obj.total != 0) {
+                            $("#szrl116Win").window('open');
+                        }
+                    }
+                });
+            };
+            //单击
+            ClickTr = function (id) {
+                $("#" + id).toggleClass("focus");
+                //-------- start --------
+                //$(".focus").each(function () {   //这个方法不应该放在这里，在点批量处理的时候用这个方法
+                //    var Tr_IdArray = [];  //存放用户选中的id
+                //    Tr_IdArray.push(this.id);
+                //});
+                //--------- end ---------
+            };
+            //双击
+            DBClickTr = function (id) {
+                $("#KPTZMX").window("open");
+                $("#KPTZMX_iframe").attr("src", chuantouIP + "/CustomForm/RLProject/szrl039/szrl039Edit.aspx?sd_billId=" + id);
+            };
+
+            window.onload = function () {
+                //显示列表
+                ReLoadData(1, 5);
+                //显示强制提醒列表（判断哪条数据已经通知发包并且该数据没有处理完成，拿到该数据的ID并且绑定到弹出框）
+                WarmLists();
+                $("#srqsfbje_input").val("");
+            };
+        });
+    </script>
+}

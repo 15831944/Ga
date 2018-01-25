@@ -1,0 +1,53 @@
+﻿using FluentValidation;
+using Gmail.DDD.Config;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Helper;
+using Gmail.DDD.Repositorys;
+using Gmail.DDD.Service;
+using Gmail.DDD.SSO;
+using PM2.Code;
+using PM2.Repository.Code001;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using Gmail.DDD.Extensions;
+using PM2.Models.Code030;
+
+namespace PM2.Service.Code030
+{
+    public class szrl105ServerAsync : Iszrl105ServerAsync
+    {
+        private IDbContextScopeFactory _scopeFactory;
+        private IEFRepository<sdvw_szrl105View> _sdvw_szrl105ViewRepository;
+
+        public szrl105ServerAsync(
+            IDbContextScopeFactory scopeFactory,
+            IEFRepository<sdvw_szrl105View> sdvw_szrl105ViewRepository
+        )
+        {
+            this._scopeFactory = scopeFactory;
+            this._sdvw_szrl105ViewRepository = sdvw_szrl105ViewRepository;
+        }
+
+        #region 加载合同信息
+        /// <summary>
+        /// 加载合同信息
+        /// </summary>
+        /// <param name="pk"></param>
+        /// <returns></returns>
+        public async Task<IOperateResult> LoadFromAsync(string pk)
+        {
+            TaskAsync.StartAsync();
+            using (IDbContextReadOnlyScope scope = this._scopeFactory.CreateReadOnlyScope())
+            {
+                sdvw_szrl105View sdvw_szrl105View = await this._sdvw_szrl105ViewRepository.FindAsync(pk);
+                return OperateResultFactory.FromLoadOperateResult(sdvw_szrl105View);
+            }
+        }
+        #endregion
+        
+    }
+}

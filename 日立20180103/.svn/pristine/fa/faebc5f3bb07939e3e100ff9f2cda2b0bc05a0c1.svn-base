@@ -1,0 +1,110 @@
+using Gmail.DDD.DataContext;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration;
+
+namespace PM2.Models.Code030.Mapping
+{
+    public class sdvw_szrl105ViewMap : EntityConfigurationBase<sdvw_szrl105View>
+    {
+        public sdvw_szrl105ViewMap()
+        {
+            // Primary Key
+            this.HasKey(t => new { t.rl10503 });
+
+            this.Property(t => t.rl10519)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl10531)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcA)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcB)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcC)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcD)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcE)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcF)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcG)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcH)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcI)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcJ)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcK)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcL)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcM)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.ProcN)
+                .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12104)
+               .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12105)
+               .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12107)
+               .HasPrecision(18, 6);
+
+            this.Property(t => t.rl12108)
+               .HasPrecision(18, 6);
+
+            // Table & Column Mappings
+            this.ToTable("sdvw_szrl105View");
+            this.Property(t => t.rl10503).HasColumnName("rl10503");
+            this.Property(t => t.rl01807).HasColumnName("rl01807");
+            this.Property(t => t.rl10505).HasColumnName("rl10505");
+            this.Property(t => t.rl10515).HasColumnName("rl10515");
+            this.Property(t => t.rl01806).HasColumnName("rl01806");
+            this.Property(t => t.rl10606).HasColumnName("rl10606");
+            this.Property(t => t.rl10512).HasColumnName("rl10512");
+            this.Property(t => t.rl10519).HasColumnName("rl10519");
+            this.Property(t => t.rl10003).HasColumnName("rl10003");
+            this.Property(t => t.rl10531).HasColumnName("rl10531");
+            this.Property(t => t.ProcA).HasColumnName("ProcA");
+            this.Property(t => t.ProcB).HasColumnName("ProcB");
+            this.Property(t => t.ProcC).HasColumnName("ProcC");
+            this.Property(t => t.ProcD).HasColumnName("ProcD");
+            this.Property(t => t.ProcE).HasColumnName("ProcE");
+            this.Property(t => t.ProcF).HasColumnName("ProcF");
+            this.Property(t => t.ProcG).HasColumnName("ProcG");
+            this.Property(t => t.ProcH).HasColumnName("ProcH");
+            this.Property(t => t.ProcI).HasColumnName("ProcI");
+            this.Property(t => t.ProcJ).HasColumnName("ProcJ");
+            this.Property(t => t.ProcK).HasColumnName("ProcK");
+            this.Property(t => t.ProcL).HasColumnName("ProcL");
+            this.Property(t => t.pj00402).HasColumnName("pj00402");
+            this.Property(t => t.ProcM).HasColumnName("ProcM");
+            this.Property(t => t.ProcN).HasColumnName("ProcN");
+            this.Property(t => t.rl12104).HasColumnName("rl12104");
+            this.Property(t => t.rl12105).HasColumnName("rl12105");
+            this.Property(t => t.rl12107).HasColumnName("rl12107");
+            this.Property(t => t.rl12108).HasColumnName("rl12108");
+            this.Property(t => t.rl12110).HasColumnName("rl12110");
+
+        }
+    }
+}

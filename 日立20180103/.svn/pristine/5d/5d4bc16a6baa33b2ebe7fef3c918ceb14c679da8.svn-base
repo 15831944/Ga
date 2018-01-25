@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Service.Code030
+{
+    public class szrl121GridData
+    {
+        public string rl12101 { get; set; }
+        public byte rl12102 { get; set; }
+        public string rl12103 { get; set; }
+        public decimal rl12104 { get; set; }
+        public decimal rl12105 { get; set; }
+        public string rl12106 { get; set; }
+        public decimal rl12107 { get; set; }
+        public decimal rl12108 { get; set; }
+        public string rl12109 { get; set; }
+        public string rl12110 { get; set; }
+        public byte rl12111 { get; set; }
+        public string rl12113 { get; set; }
+        public string rl12114 { get; set; }
+        public int rl12117 { get; set; }
+        public string rl12118 { get; set; }
+        public string rl12119 { get; set; }
+        public string rl12120 { get; set; }
+        public string rl12121 { get; set; }
+        public byte rl12112 { get; set; }
+        public string rl12115 { get; set; }
+        public string rl12116 { get; set; }
+
+        public int rl12122 { get; set; }
+
+        public byte rl12123 { get; set; }
+
+        public string rl12124 { get; set; }
+    }
+}      

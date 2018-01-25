@@ -1,0 +1,684 @@
+﻿using Gmail.DDD.Entity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Models.Code030
+{
+    /// <summary>
+    /// 实行预算
+    /// </summary>
+    public class ImplementBudget : IEntity
+    {
+        #region Model_szrl018
+        public string rl01801 { get; set; }
+        public string rl01802 { get; set; }
+        public string rl01803 { get; set; }
+        public string rl01804 { get; set; }
+        public string rl01805 { get; set; }
+        public string rl01806 { get; set; }
+        public string rl01807 { get; set; }
+        public string rl01808 { get; set; }
+        public string rl01809 { get; set; }
+        public string rl01810 { get; set; }
+        public string rl01811 { get; set; }
+        public string rl01812 { get; set; }
+        public decimal rl01813 { get; set; }
+        public byte rl01814 { get; set; }
+        public decimal rl01815 { get; set; }
+        public byte rl01816 { get; set; }
+        public decimal rl01817 { get; set; }
+        public byte rl01818 { get; set; }
+        public decimal rl01819 { get; set; }
+        public string rl01820 { get; set; }
+        public byte rl01821 { get; set; }
+        public string rl01822 { get; set; }
+        public byte rl01823 { get; set; }
+        public byte rl01824 { get; set; }
+        public byte rl01825 { get; set; }
+        public byte rl01826 { get; set; }
+        public byte rl01827 { get; set; }
+        public string rl01828 { get; set; }
+        public string rl01829 { get; set; }
+        public string rl01830 { get; set; }
+        public string rl01831 { get; set; }
+        public int rl01832 { get; set; }
+        public string rl01833 { get; set; }
+        public string rl01834 { get; set; }
+        public decimal rl01835 { get; set; }
+        #endregion
+        #region Model_szrl025
+        /// <summary>
+        /// 主键
+        /// </summary>
+
+
+        public string rl02535 { get; set; }
+        /// <summary>
+        /// 关联作番ID
+        /// </summary>
+        public string rl02501 { get; set; }
+        /// <summary>
+        /// 期间作番
+        /// </summary>		
+
+        public byte rl02502 { get; set; }
+        /// <summary>
+        /// 更新回数
+        /// </summary>		
+
+        public string rl02503 { get; set; }
+        /// <summary>
+        /// 更新版发行日期
+        /// </summary>		
+
+        public string rl02504 { get; set; }
+        /// <summary>
+        /// 新建/更新
+        /// </summary>		
+
+        public byte rl02505 { get; set; }
+        /// <summary>
+        /// 确定通告/指定通告
+        /// </summary>		
+
+        public byte rl02506 { get; set; }
+        /// <summary>
+        /// 中转公司名称
+        /// </summary>		
+
+        public string rl02507 { get; set; }
+        /// <summary>
+        /// 初次发行日
+        /// </summary>		
+
+        public string rl02508 { get; set; }
+        /// <summary>
+        /// 需求者名
+        /// </summary>		
+
+        public string rl02509 { get; set; }
+        /// <summary>
+        /// 交货地
+        /// </summary>		
+
+        public string rl02510 { get; set; }
+        /// <summary>
+        /// 作番精算月
+        /// </summary>		
+
+        public string rl02511 { get; set; }
+        /// <summary>
+        /// 合同名称(已通告累计额)
+        /// </summary>		
+
+        public string rl02512 { get; set; }
+        /// <summary>
+        /// 合同名称(本次通告金额)
+        /// </summary>		
+
+        public string rl02513 { get; set; }
+        /// <summary>
+        /// 合同名称(本次为止通告累计额)
+        /// </summary>		
+
+        public string rl02514 { get; set; }
+        /// <summary>
+        /// 合同件数(已通告累计额)
+        /// </summary>		
+
+        public int rl02515 { get; set; }
+        /// <summary>
+        /// 合同件数(本次通告金额)
+        /// </summary>		
+
+        public int rl02516 { get; set; }
+        /// <summary>
+        /// 合同件数(本次为止通告累计额)
+        /// </summary>		
+
+        public int rl02517 { get; set; }
+        /// <summary>
+        /// 受注金额(已通告累计额)
+        /// </summary>		
+
+        public decimal rl02518 { get; set; }
+        /// <summary>
+        /// 受注金额(本次通告金额)
+        /// </summary>		
+
+        public decimal rl02519 { get; set; }
+        /// <summary>
+        /// 受注金额(本次为止通告累计额)
+        /// </summary>		
+
+        public decimal rl02520 { get; set; }
+        /// <summary>
+        /// 不含税金额(已通告累计额)
+        /// </summary>		
+
+        public decimal rl02521 { get; set; }
+        /// <summary>
+        /// 不含税金额(本次通告金额)
+        /// </summary>		
+
+        public decimal rl02522 { get; set; }
+        /// <summary>
+        /// 不含税金额(本次为止通告累计额)
+        /// </summary>		
+
+        public decimal rl02523 { get; set; }
+        /// <summary>
+        /// 日元金额(已通告累计额)
+        /// </summary>		
+
+        public decimal rl02524 { get; set; }
+        /// <summary>
+        /// 日元金额(本次通告金额)
+        /// </summary>		
+
+        public decimal rl02525 { get; set; }
+        /// <summary>
+        /// 日元金额(本次为止通告累计额)
+        /// </summary>		
+
+        public decimal rl02526 { get; set; }
+        /// <summary>
+        /// 更新说明(备注)
+        /// </summary>		
+
+        public string rl02527 { get; set; }
+        /// <summary>
+        /// 制单人
+        /// </summary>		
+        public string rl02528 { get; set; }
+        /// <summary>
+        /// 制单日期
+        /// </summary>		
+
+        public string rl02529 { get; set; }
+        /// <summary>
+        /// 审核人
+        /// </summary>		
+
+        public string rl02530 { get; set; }
+        /// <summary>
+        /// 审核日期
+        /// </summary>		
+
+        public string rl02531 { get; set; }
+        /// <summary>
+        /// 审核状态
+        /// </summary>		
+
+        public int rl02532 { get; set; }
+        /// <summary>
+        /// 最后修改人
+        /// </summary>		
+
+        public string rl02533 { get; set; }
+        /// <summary>
+        /// 最后修改时间
+        /// </summary>		
+
+        public string rl02534 { get; set; }
+        #endregion
+        #region Model_szrl082
+        /// <summary>
+        /// 主键
+        /// </summary>        
+
+        public string rl08201 { get; set; }
+        /// <summary>
+        /// 初回発行日
+        /// </summary>        
+
+        public string rl08202 { get; set; }
+        /// <summary>
+        /// 版本号
+        /// </summary>        
+
+        public string rl08203 { get; set; }
+        /// <summary>
+        /// 作番ID
+        /// </summary>        
+
+        public string rl08204 { get; set; }
+        /// <summary>
+        /// 予算作成日
+        /// </summary>        
+
+        public string rl08205 { get; set; }
+        /// <summary>
+        /// 予算審議会開催日
+        /// </summary>        
+
+        public string rl08206 { get; set; }
+        /// <summary>
+        /// 機材手配日
+        /// </summary>        
+
+        public string rl08207 { get; set; }
+        /// <summary>
+        /// 着工予定日
+        /// </summary>        
+
+        public string rl08208 { get; set; }
+        /// <summary>
+        /// 工事完成予定日
+        /// </summary>        
+
+        public string rl08209 { get; set; }
+        /// <summary>
+        /// 受注日
+        /// </summary>        
+
+        public string rl08210 { get; set; }
+        /// <summary>
+        /// 契約納期
+        /// </summary>        
+
+        public string rl08211 { get; set; }
+        /// <summary>
+        /// 訂正日
+        /// </summary>        
+
+        public string rl08212 { get; set; }
+        /// <summary>
+        /// 訂正No
+        /// </summary>        
+
+        public int rl08213 { get; set; }
+        /// <summary>
+        /// 見積金額（提出金額）
+        /// </summary>        
+
+        public decimal rl08214 { get; set; }
+        /// <summary>
+        /// 外貨換算(RATE)
+        /// </summary>        
+
+        public decimal rl08215 { get; set; }
+        /// <summary>
+        /// 総受注予定金額
+        /// </summary>        
+
+        public decimal rl08216 { get; set; }
+        /// <summary>
+        /// 現状受注金額
+        /// </summary>        
+
+        public decimal rl08217 { get; set; }
+        /// <summary>
+        /// VAT(増値税)
+        /// </summary>        
+
+        public decimal rl08218 { get; set; }
+        /// <summary>
+        /// 手配受注金額
+        /// </summary>        
+
+        public decimal rl08219 { get; set; }
+        /// <summary>
+        /// 実行予算金額(ＢＰ)
+        /// </summary>        
+
+        public decimal rl08220 { get; set; }
+        /// <summary>
+        /// 損益金額
+        /// </summary>        
+
+        public decimal rl08221 { get; set; }
+        /// <summary>
+        /// 損益率(％)
+        /// </summary>        
+
+        public decimal rl08222 { get; set; }
+        /// <summary>
+        /// 目標粗利率(％)
+        /// </summary>        
+
+        public decimal rl08223 { get; set; }
+        /// <summary>
+        /// 粗利率(%)
+        /// </summary>        
+
+        public decimal rl08224 { get; set; }
+        /// <summary>
+        /// 受注传票版本号
+        /// </summary>        
+
+        public string rl08225 { get; set; }
+        /// <summary>
+        /// 訂正前予算
+        /// </summary>        
+
+        public string rl08226 { get; set; }
+        /// <summary>
+        /// 比例
+        /// </summary>        
+
+        public decimal rl08227 { get; set; }
+        /// <summary>
+        /// NO11的J3【城建税及び附加等】
+        /// </summary>        
+
+        public decimal rl08228 { get; set; }
+        /// <summary>
+        /// NO17的【小計(直接費)】
+        /// </summary>        
+
+        public decimal rl08229 { get; set; }
+        /// <summary>
+        /// NO18【割掛率(会社経費)】
+        /// </summary>        
+
+        public decimal rl08230 { get; set; }
+        /// <summary>
+        /// NO19【技術提携料(受注金額比率)】
+        /// </summary>        
+
+        public decimal rl08231 { get; set; }
+        /// <summary>
+        /// NO20【小計(経費)】
+        /// </summary>        
+
+        public decimal rl08232 { get; set; }
+        /// <summary>
+        /// NO21【実行予算総合計】
+        /// </summary>        
+
+        public decimal rl08233 { get; set; }
+        /// <summary>
+        /// 变更类型
+        /// </summary>        
+
+        public string rl08234 { get; set; }
+        /// <summary>
+        /// 预留字段
+        /// </summary>        
+
+        public string rl08235 { get; set; }
+        /// <summary>
+        /// 是否正式版
+        /// </summary>        
+
+        public byte rl08236 { get; set; }
+        /// <summary>
+        /// 制单人
+        /// </summary>        
+
+        public string rl08237 { get; set; }
+        /// <summary>
+        /// 制单日期
+        /// </summary>        
+
+        public string rl08238 { get; set; }
+        /// <summary>
+        /// 审核人
+        /// </summary>        
+
+        public string rl08239 { get; set; }
+        /// <summary>
+        /// 审核日期
+        /// </summary>        
+
+        public string rl08240 { get; set; }
+        /// <summary>
+        /// 审核状态
+        /// </summary>        
+
+        public int rl08241 { get; set; }
+        /// <summary>
+        /// 最后修改人
+        /// </summary>        
+
+        public string rl08242 { get; set; }
+        /// <summary>
+        /// 最后修改时间
+        /// </summary>        
+
+        public string rl08243 { get; set; }
+        public decimal rl08244 { get; set; }
+        public decimal rl08245 { get; set; }
+        public decimal rl08246 { get; set; }
+        #endregion
+        #region Model_szrl085
+        public string rl08501 { get; set; }
+        /// <summary>
+        /// 年/月
+        /// </summary>        
+
+        public string rl08502 { get; set; }
+        /// <summary>
+        /// 請求出来高
+        /// </summary>        
+
+        public string rl08503 { get; set; }
+        /// <summary>
+        /// 実行出来高
+        /// </summary>        
+
+        public string rl08504 { get; set; }
+        /// <summary>
+        /// 进度合计
+        /// </summary>        
+
+        public string rl08505 { get; set; }
+        /// <summary>
+        /// 作番id
+        /// </summary>        
+
+        public string rl08506 { get; set; }
+        /// <summary>
+        /// 版本号
+        /// </summary>        
+
+        public string rl08507 { get; set; }
+        /// <summary>
+        /// 变更类型
+        /// </summary>        
+
+        public string rl08508 { get; set; }
+        #endregion
+        #region 扩展属性
+#region 表纸
+        public string _extend_1 { get; set; }
+        public string _extend_2 { get; set; }
+        public string _extend_3 { get; set; }
+        public string _extend_4 { get; set; }
+        public string _extend_5 { get; set; }
+        public string _extend_6 { get; set; }
+        public string _extend_7 { get; set; }
+        public string _extend_8 { get; set; }
+        public string _extend_9 { get; set; }
+        public string _extend_10 { get; set; }
+        public string _extend_11 { get; set; }
+        public string _extend_12 { get; set; }
+        public string _extend_13 { get; set; }
+        public string _extend_14 { get; set; }
+        public string _extend_15 { get; set; }
+        public string _extend_16 { get; set; }
+        public string _extend_17 { get; set; }
+        public string _extend_18 { get; set; }
+        public string _extend_19 { get; set; }
+        public string _extend_20 { get; set; }
+        public string _extend_21 { get; set; }
+        public string _extend_22 { get; set; }
+        public string _extend_23 { get; set; }
+        public string _extend_24 { get; set; }
+        public string _extend_25 { get; set; }
+        public string _extend_26 { get; set; }
+        public string _extend_27 { get; set; }
+        public string _extend_28 { get; set; }
+        public string _extend_29 { get; set; }
+        public string _extend_30 { get; set; }
+        public string _extend_31 { get; set; }
+        public string _extend_32 { get; set; }
+        public string _extend_33 { get; set; }
+        public string _extend_34 { get; set; }
+        public string _extend_35 { get; set; }
+        public string _extend_36 { get; set; }
+        public string _extend_37 { get; set; }
+        public string _extend_38 { get; set; }
+        public string _extend_39 { get; set; }
+        public string _extend_40 { get; set; }
+        public string _extend_41 { get; set; }
+        public string _extend_42 { get; set; }
+        public string _extend_43 { get; set; }
+
+    
+        public string _extend_44 { get; set; }
+        public string _extend_45 { get; set; }
+        public string _extend_46 { get; set; }
+        public string _extend_47 { get; set; }
+        public string _extend_48 { get; set; }
+        public string _extend_49 { get; set; }
+#endregion
+        #region KLB
+        public string _extend_50 { get; set; }
+        public string _extend_51 { get; set; }
+        public string _extend_52 { get; set; }
+        public string _extend_53 { get; set; }
+        public string _extend_54 { get; set; }
+        public string _extend_55 { get; set; }
+        public string _extend_56 { get; set; }
+        public string _extend_57 { get; set; }
+        public string _extend_58 { get; set; }
+        public string _extend_59 { get; set; }
+        public string _extend_60 { get; set; }
+
+
+
+        public string _extend_61 { get; set; }
+        public string _extend_62 { get; set; }
+        public string _extend_63 { get; set; }
+        public string _extend_64 { get; set; }
+        public string _extend_65 { get; set; }
+        public string _extend_66 { get; set; }
+        public string _extend_67 { get; set; }
+        public string _extend_68 { get; set; }
+        public string _extend_69 { get; set; }
+        public string _extend_70 { get; set; }
+
+        public string _extend_71 { get; set; }
+        public string _extend_72 { get; set; }
+        public string _extend_73 { get; set; }
+        public string _extend_74 { get; set; }
+        public string _extend_75 { get; set; }
+        public string _extend_76 { get; set; }
+        public string _extend_77 { get; set; }
+        public string _extend_78 { get; set; }
+        public string _extend_79 { get; set; }
+        public string _extend_80 { get; set; }
+        public string _extend_81 { get; set; }
+        public string _extend_82 { get; set; }
+        public string _extend_83 { get; set; }
+        public string _extend_84 { get; set; }
+        public string _extend_85 { get; set; }
+        public string _extend_86 { get; set; }
+        public string _extend_87 { get; set; }
+        public string _extend_88 { get; set; }
+        public string _extend_89 { get; set; }
+        public string _extend_90 { get; set; }
+
+        public string _extend_91 { get; set; }
+        public string _extend_92 { get; set; }
+        public string _extend_93 { get; set; }
+        public string _extend_94 { get; set; }
+        public string _extend_95 { get; set; }
+        public string _extend_96 { get; set; }
+        public string _extend_97 { get; set; }
+        public string _extend_98 { get; set; }
+        public string _extend_99 { get; set; }
+        public string _extend_100 { get; set; }
+
+
+        public string _extend_101 { get; set; }
+        public string _extend_102 { get; set; }
+        public string _extend_103 { get; set; }
+        public string _extend_104 { get; set; }
+        public string _extend_105 { get; set; }
+        public string _extend_106 { get; set; }
+        public string _extend_107 { get; set; }
+        public string _extend_108 { get; set; }
+        public string _extend_109 { get; set; }
+        public string _extend_110 { get; set; }
+
+        public string _extend_111 { get; set; }
+        public string _extend_112 { get; set; }
+        public string _extend_113 { get; set; }
+        public string _extend_114 { get; set; }
+        public string _extend_115 { get; set; }
+        public string _extend_116 { get; set; }
+        public string _extend_117 { get; set; }
+        public string _extend_118 { get; set; }
+        public string _extend_119 { get; set; }
+        public string _extend_120 { get; set; }
+
+        public string _extend_121 { get; set; }
+        public string _extend_122 { get; set; }
+        public string _extend_123 { get; set; }
+        public string _extend_124 { get; set; }
+        public string _extend_125 { get; set; }
+        public string _extend_126 { get; set; }
+        public string _extend_127 { get; set; }
+        public string _extend_128 { get; set; }
+        public string _extend_129 { get; set; }
+        public string _extend_130 { get; set; }
+        public string _extend_131 { get; set; }
+        public string _extend_132 { get; set; }
+        public string _extend_133 { get; set; }
+        public string _extend_134 { get; set; }
+        public string _extend_135 { get; set; }
+        public string _extend_136 { get; set; }
+        public string _extend_137 { get; set; }
+        public string _extend_138 { get; set; }
+        public string _extend_139 { get; set; }
+        public string _extend_140 { get; set; }
+        public string _extend_141 { get; set; }
+        public string _extend_142 { get; set; }
+        public string _extend_143 { get; set; }
+        public string _extend_144 { get; set; }
+        public string _extend_145 { get; set; }
+        public string _extend_146 { get; set; }
+        public string _extend_147 { get; set; }
+        public string _extend_148 { get; set; }
+        public string _extend_149 { get; set; }
+        public string _extend_150 { get; set; }
+        public string _extend_151 { get; set; }
+        public string _extend_152 { get; set; }
+        public string _extend_153 { get; set; }
+        public string _extend_154 { get; set; }
+        public string _extend_155 { get; set; }
+        public string _extend_156 { get; set; }
+        public string _extend_157 { get; set; }
+        public string _extend_158 { get; set; }
+        public string _extend_159 { get; set; }
+        public string _extend_160 { get; set; }
+        public string _extend_161 { get; set; }
+        public string _extend_162 { get; set; }
+        public string _extend_170 { get; set; }
+        public string _extend_171 { get; set; }
+        public string _extend_172 { get; set; }
+        public string _extend_173 { get; set; }
+        public string _extend_174 { get; set; }
+
+        public string _extend_175 { get; set; }
+        public string _extend_176 { get; set; }
+        public string _extend_177 { get; set; }
+        public string _extend_178 { get; set; }
+        public string _extend_179 { get; set; }
+        public string _extend_180 { get; set; }
+        public string _extend_181 { get; set; }
+        public string _extend_182 { get; set; }
+        public string _extend_183 { get; set; }
+        public string _extend_184 { get; set; }
+        public string _extend_185 { get; set; }
+        #endregion
+
+        #endregion
+    }
+}

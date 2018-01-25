@@ -1,0 +1,98 @@
+﻿@using PM2.Models.Code030
+@model szrl025
+@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+    var m_szrl018 = ViewBag.szrl018 as szrl018 ?? new szrl018();
+    var m_szrl019 = ViewBag.szrl019 as List<szrl019> ?? new List<szrl019>();
+}
+@section Body {
+    <div class="control-group">
+        <form id="szrl025From" method="post" action="/AreasCode030/szrl025/Add" style="height: 100%; width: 100%">
+            @Html.HiddenFor(x => x.rl02501)
+            @Html.HiddenFor(x => x.rl02535)
+            @*@Html.HiddenFor(x => x.rl02508)*@
+            <div id="tb1" class="control-group">
+                <div class="control-group-content">
+                    <div class="control-text"><label>作番编号</label><p id="rl01806" style="min-width:20em">@m_szrl018.rl01806</p></div>
+                    <div class="control-text"><label>作番税率</label><p style="min-width:10em"><span id="rl01835"></span></p></div>
+                    <div class="control-text"><label>初次发行日</label><p style="min-width:10em"><span id="rl02508"></span></p></div>
+                    <div class="control-text"><label>换算日元汇率</label><p style="min-width:10em"><span id="rl01813"></span></p></div>
+                    <div class="control-text"><label>作番管理者</label><p style="min-width:10em"><span id="rl01811"></span></p></div>
+                    <div class="control-text"><label style="width:7em;">发包公司名称</label><p style="min-width:20em;"><span id="rl01802"></span></p></div>
+                    <div class="control-text"><label style="width:7em;">项目名称</label><p style="min-width:20em;"><span id="rl01807"></span></p></div>
+                </div>
+                <div class="control-group-content">
+                    <div class="control-text">@Html.EditorFor(x => x.rl02504, new { dataoptions = "labelWidth:120" })</div>
+                    <div class="control-text">@Html.EditorFor(x => x.rl02503)</div>
+                    <div class="control-text">@Html.EditorFor(x => x.rl02509, new { dataoptions = "required: true,label:'需要者名'" })</div><br />
+                    <div class="control-text">@Html.EditorFor(x => x.rl02507, new { dataoptions = "required: false,label:'中转公司名'" })</div>
+                    <div class="control-text">@Html.EditorFor(x => x.rl02510, new { dataoptions = "required: true,label:'交货地'" })</div>
+                    <div class="control-text"><input id="rl02511" name="rl02511" type="text" class="easyui-datebox" value="@Model.rl02511" data-options="label:'作番精算月'" /></div>
+                </div>
+                <div class="control-group-content">
+                    <div id="rl02505" style="display:inline-block; *display:inline; *zoom:1; padding:10px 20px; border:#e0e0e0 1px solid;">
+                        <div class="text-layout"><label>新建</label> <input type="radio" name="rl02505" value="0" checked="checked" style="position:relative; top:2px;" /></div>
+                        <div class="text-layout"><label>更新</label> <input type="radio" name="rl02505" value="1" style="position:relative; top:2px;" /></div>
+                    </div>
+                    <div style="display:inline-block; *display:inline; *zoom:1; padding:10px 20px; border:#e0e0e0 1px solid; margin-left:20px;">
+                        <div class="text-layout"><label>确定通告</label> <input type="radio" name="rl02506" value="0" checked="checked" style="position:relative; top:2px;" /></div>
+                        <div class="text-layout"><label>指定通告</label> <input type="radio" name="rl02506" value="1" style="position:relative; top:2px;" /></div>
+                    </div>
+                    <div class="control-text"><label>期间作番</label> @Html.EditorFor(x => x.rl02502)</div>
+                </div>
+            </div>
+            <div class="table-layout hasborder">
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" colspan="2">合同名称</th>
+                            <th rowspan="2">合同件数</th>
+                            <th colspan="3">人民币金额</th>
+                            <th>日元金额</th>
+                        </tr>
+                        <tr>
+                            <th>受注金额</th>
+                            <th>不含税金额</th>
+                            <th>税额</th>
+                            <th>受注金额（含税）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>已通告累计额</td>
+                            <td>@Html.EditorFor(x => x.rl02512, new { dataoptions = "readonly: true", style = "width:220px" })</td>
+                            <td>@Html.EditorFor(x => x.rl02515, new { dataoptions = "readonly: true", style = "width:120px" })</td>
+                            <td>@Html.EditorFor(x => x.rl02518, new { dataoptions = "readonly: true", style = "width:120px" })</td>
+                            <td><span id="rl02521">&nbsp;</span></td>
+                            <td><span id="z1821">&nbsp;</span></td>
+                            <td><span id="rl02524">&nbsp;</span></td>
+                        </tr>
+                        <tr>
+                            <td>本次通告金额</td>
+                            <td>@Html.EditorFor(x => x.rl02513, new { dataoptions = "readonly: true", style = "width:220px" })</td>
+                            <td>@Html.EditorFor(x => x.rl02516, new { dataoptions = "readonly: true", style = "width:120px" })</td>
+                            <td>@Html.EditorFor(x => x.rl02519, new { dataoptions = "readonly: true", style = "width:120px" })</td>
+                            <td><span id="rl02522">&nbsp;</span></td>
+                            <td><span id="z1922">&nbsp;</span></td>
+                            <td><span id="rl02525">&nbsp;</span></td>
+                        </tr>
+                        <tr>
+                            <td>本次为止通告累计额</td>
+                            <td>@Html.EditorFor(x => x.rl02514, new { dataoptions = "readonly: true", style = "width:220px" })</td>
+                            <td>@Html.EditorFor(x => x.rl02517, new { dataoptions = "readonly: true", style = "width:120px" })</td>
+                            <td>@Html.EditorFor(x => x.rl02520, new { dataoptions = "readonly: true", style = "width:120px" })</td>
+                            <td><span id="rl02523">&nbsp;</span></td>
+                            <td><span id="z2023">&nbsp;</span></td>
+                            <td><span id="rl02526">&nbsp;</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="control-group">
+                <div class="control-group-content">
+                    @Html.EditorFor(x => x.rl02527, new { style = "width:100%;height:50px;", dataoptions = "multiline:true,prompt:'更新内容/备注:请现场部门在本受注传票发行后两周内提交实行预算书。'" })
+                </div>
+            </div>
+        </form>
+    </div>
+}

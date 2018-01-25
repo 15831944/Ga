@@ -1,0 +1,68 @@
+﻿
+(function ($) {
+
+    window.Easy_GridPanel = function () {
+
+        var me = this;
+        var args = {
+            id: undefined,
+            url: undefined,
+            isLoad: false,
+            columns: [],
+
+            isPagination: true
+        };
+        $.extend(args, arguments[0]);
+
+        var _ux_Grid = null;
+        //#region me.GridPanel
+        var Init = (function () {
+            _ux_Grid = $('#' + args.id);
+            _ux_Grid.datagrid({
+                idField: 'pk',
+                fit: true,
+                border: false,
+
+                url: args.url,
+                loadMsg: '数据加载中,请稍后...',
+                method: 'post',
+                rownumbers: true,
+                singleSelect: true,
+                checkOnSelect: false,
+                selectOnCheck: false,
+
+                pagination: args.isPagination,
+                pageSize: 100,
+                pageList: [100],
+
+                columns: args.columns,
+                onBeforeLoad: function (param) {
+                    return args.isLoad;
+                }
+            });
+            if (args.isPagination) {
+                _ux_Grid.datagrid('getPager').pagination({
+                    showPageList: false,
+                    layout: ['list', 'sep', 'first', 'prev', 'links', 'next', 'last', 'sep', 'refresh'],
+                    displayMsg: "当前页从 {from} 到 {to} 条记录.共 {total} 条记录."
+                });
+            }
+            me.GridPanel = _ux_Grid;
+
+        })();
+        //#endregion
+
+        //#region 数据加载
+        me.Load = function (_params) {
+            args.isLoad = true;
+            _ux_Grid.datagrid('load', {
+                params: _params
+            });
+            return me;
+        };
+        //#endregion
+        
+    }
+    
+}(jQuery));
+

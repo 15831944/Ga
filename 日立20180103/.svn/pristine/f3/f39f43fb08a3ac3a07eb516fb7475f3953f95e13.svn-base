@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Service;
+using PM2.Models.Code030.szrl100Model;
+using PM2.Models.Code030;
+using PM2.Models.Code030.Szrl105Model;
+using PM2.Service.Code030.CM;
+using Gmail.DDD.Mvc;
+
+namespace PM2.Service.Code030.Szrl105Service
+{
+    public interface ISzrl105Server : IService, ICmDataService<Szrl105>
+    {
+        void ExportExcelForDtByNPOI(HttpCollection vParams);
+    }
+}

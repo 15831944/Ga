@@ -1,0 +1,59 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section HeaderStyles{
+}
+@section Body {
+    <div id="_klb_second_sum" class="table-layout hasborder">
+        <table>
+            <tbody>
+                <tr>
+                    <th class="tdcolor3">工事别</th>
+                    <th class="tdcolor3">K</th>
+                    <th class="tdcolor3">L</th>
+                    <th class="tdcolor3">B</th>
+                    <th class="tdcolor3">合計</th>
+                </tr>
+            </tbody>
+            <tr>
+                <td>建築工事</td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_170" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_171" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_172" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_173" value="" readonly="readonly" data-options="precision:2" /></td>
+            </tr>
+            <tr>
+                <td>機械工事</td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_174" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_175" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_176" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_177" value="" readonly="readonly" data-options="precision:2" /></td>
+            </tr>
+            <tr>
+                <td>電氨工事</td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_178" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_179" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_180" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_181" value="" readonly="readonly" data-options="precision:2" /></td>
+            </tr>
+            <tr>
+                <td>用役設備工事</td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_182" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_183" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_184" value="" readonly="readonly" data-options="precision:2" /></td>
+                <td><input class="easyui-numberbox" type="text" id=" " name="_extend_185" value="" readonly="readonly" data-options="precision:2" /></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <div for="conceal">
+        变更理由:<textarea rows="10" cols="80" id="rl08235" name="rl08235" > </textarea>
+    </div>
+}

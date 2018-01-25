@@ -1,0 +1,121 @@
+﻿@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section Body {
+    <form id="Tabs_A_EditFrom">
+        <table border="1">
+            <tr>
+                <td>项目名称:</td>
+                <td><p id="Tabs_A_EditFrom_a1" class="easyui-textbox" /></td>
+                <td>合同编号:</td>
+                <td><p id="Tabs_A_EditFrom_a2" /></td>
+                <td>开工日期:</td>
+                <td><p id="Tabs_A_EditFrom_a3" /></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>作番号:</td>
+                <td><p id="Tabs_A_EditFrom_b1" /></td>
+                <td>合同名称:</td>
+                <td><p id="Tabs_A_EditFrom_b2" /></td>
+                <td>完工日期:</td>
+                <td><p id="Tabs_A_EditFrom_b3" /></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>合同金额(含税):</td>
+                <td><p id="Tabs_A_EditFrom_c1" /></td>
+                <td>供应商:</td>
+                <td><p id="Tabs_A_EditFrom_c2" /></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>预付款总金额:</td>
+                <td><p id="Tabs_A_EditFrom_d1" /></td>
+                <td>预付款未支付金额:</td>
+                <td><p id="Tabs_A_EditFrom_d2" /></td>
+                <td>已扣预付款占合同%:</td>
+                <td><p id="Tabs_A_EditFrom_d3" />%</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>预付款占合同%:</td>
+                <td><p id="Tabs_A_EditFrom_e1" /></td>
+                <td>预付款累计扣款金额:</td>
+                <td><p id="Tabs_A_EditFrom_e2" /></td>
+                <td>已验收金额%:</td>
+                <td><p id="Tabs_A_EditFrom_e3" /></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>预付款累计支付金额:</td>
+                <td><p id="Tabs_A_EditFrom_f1" /></td>
+                <td>预付款未扣款金额:</td>
+                <td><p id="Tabs_A_EditFrom_f2" /></td>
+                <td>已验收金额占合同%:</td>
+                <td><p id="Tabs_A_EditFrom_f3" /></td>
+                <td>累计含税发票金额:</td>
+                <td><p id="Tabs_A_EditFrom_f4" /></td>
+                <td>累计不含税发票金额:</td>
+                <td><p id="Tabs_A_EditFrom_f5" /></td>
+            </tr>
+            <tr>
+                <td>预付款累计支付占合同%:</td>
+                <td><p id="Tabs_A_EditFrom_g1" /></td>
+                <td>税率:</td>
+                <td><p id="Tabs_A_EditFrom_g2" /></td>
+                <td>合同登记人员:</td>
+                <td><p id="Tabs_A_EditFrom_g3" /></td>
+                <td>本次含税发票金额:</td>
+                <td><p id="Tabs_A_EditFrom_g4" /></td>
+                <td>本次不含税发票金额:</td>
+                <td><p id="Tabs_A_EditFrom_g5" /></td>
+            </tr>
+        </table>
+    </form>
+    <table border="1">
+        <tr>
+            <td colspan="4">元検収予定</td>
+            <td colspan="3">今回検収実績/今後検収予定修正</td>
+            <td rowspan="2">備考</td>
+        </tr>
+        <tr>
+            <td>検収済</td>
+            <td>日期</td>
+            <td>%</td>
+            <td>金额</td>
+            <td>検収日期</td>
+            <td>%</td>
+            <td>金额</td>
+        </tr>
+        <tr>
+            <td><p id="Tabs_A_EditFrom_y1" /></td>
+            <td><p id="Tabs_A_EditFrom_y2" /></td>
+            <td><p id="Tabs_A_EditFrom_y3" /></td>
+            <td><p id="Tabs_A_EditFrom_y4" /></td>
+            <td><p id="Tabs_A_EditFrom_y5" /></td>
+            <td><p id="Tabs_A_EditFrom_y6" /></td>
+            <td><p id="Tabs_A_EditFrom_y7" /></td>
+            <td><p id="Tabs_A_EditFrom_y8" /></td>
+        </tr>
+    </table>
+}
+@section FooterScript {
+}

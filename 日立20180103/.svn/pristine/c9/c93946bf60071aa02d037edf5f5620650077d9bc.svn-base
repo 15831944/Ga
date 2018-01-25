@@ -1,0 +1,70 @@
+using Gmail.DDD.Entity;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+
+namespace PM2.Models.Code031
+{
+    /// <summary>
+    /// 合同支付情况
+    /// </summary>
+    [Table(Name = "szrl125")]
+    public partial class szrl125 : Enttity
+    {
+        /// <summary>
+        /// ID
+        /// </summary>
+        [Column(ColumnType = ColumnType.PrimaryKey)]
+        public string rl12501 { get; set; }
+
+        /// <summary>
+        /// 合同ID
+        /// </summary>
+        public string rl12502 { get; set; }
+
+        /// <summary>
+        /// [临时]本次含税发票金额
+        /// </summary>
+        public decimal rl12503 { get; set; }
+
+        /// <summary>
+        /// 累计含税发票金额
+        /// </summary>
+        public decimal rl12504 { get; set; }
+
+        /// <summary>
+        /// [临时]本次不含税发票金额
+        /// </summary>
+        public decimal rl12505 { get; set; }
+
+        /// <summary>
+        /// 累计不含税发票金额
+        /// </summary>
+        public decimal rl12506 { get; set; }
+
+        /// <summary>
+        /// 状态
+        /// </summary>
+        public szrl125_R12507 rl12507 { get; set; }
+
+        /// <summary>
+        /// [待支付确认]合同支付情况
+        /// </summary>
+        [JsonIgnore]
+        public virtual ICollection<szrl126> szrl126s { get; set; }
+
+        /// <summary>
+        /// [已支付确认]合同支付情况
+        /// </summary>
+        [JsonIgnore]
+        public virtual ICollection<szrl127> szrl127s { get; set; }
+
+        public szrl125()
+        {
+            this.szrl126s = new List<szrl126>();
+            this.szrl127s = new List<szrl127>();
+        }
+
+    }
+}

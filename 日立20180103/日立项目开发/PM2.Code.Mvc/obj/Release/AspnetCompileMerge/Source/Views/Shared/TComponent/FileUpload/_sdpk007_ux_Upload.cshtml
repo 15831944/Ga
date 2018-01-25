@@ -1,0 +1,23 @@
+﻿@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section Body {
+    <p class="pm2ui-font-size-tile"></p>
+    <div class="easyui-layout">
+        <div data-options="region:'north'">
+            <div style="position:relative; border-bottom:#e0e0e0 1px solid; height:27px; text-align:right; padding:3px 10px 0 0;">
+                <div style="position:absolute; height:30px; top:0; left:10px; line-height:30px;"><b>附件列表</b></div>
+                <div id="some_file_queue"></div>
+                <a id="sdpk007_ux_AddBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="group: 'file_ux_Up'" style=" height:24px;">附件添加</a>
+                <a id="sdpk007_ux_ReadBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="group: 'file_ux_Up'" style=" height:24px;">查看附件</a>
+                <a id="sdpk007_ux_DelBt" href="javascript:void(0)" class="easyui-linkbutton" data-options="group: 'file_ux_Up'" style=" height:24px;">删除附件</a>
+            </div>
+        </div>
+        <div data-options="region:'center'">
+            <table id="sdpk007_ux_Grid" data-options="border:false"></table>
+        </div>
+    </div>
+}
+@section FooterScript {
+    <script src="@Url.Content("~/Content/Areas/AreasCode019/FileUpload/javaScript/sdpk007_ux_Upload.js")" type="text/javascript"></script>
+}

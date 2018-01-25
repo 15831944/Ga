@@ -1,0 +1,160 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderStyles{
+    <style type="text/css">
+    </style>
+}
+
+@section body{
+    <div data-options="region:'west',split:true,width:250,collapsible: false">
+        <div class="easyui-layout">
+            <div data-options="region:'north',collapsible: false">
+                <div class="tree-search">
+                    <div class="search-layout"><input id="input_searchbox_index_szrl033" class="easyui-searchbox" style="width:100%" /></div>
+                    <div class="other-layout">
+                        <input name="forsome" value="0" type="radio" checked="checked" /> <label>执行中</label>
+                        <input name="forsome" value="1" type="radio" /> <label>已外部精算</label>
+                        <input name="forsome" value="2" type="radio" /> <label>全部</label>
+                    </div>
+                </div>
+            </div>
+            <div data-options="region:'center'">
+                <div class="nano">
+                    <div class="nano-content">
+                        <ul id="szrl001Tree" style="margin:10px;"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'north',collapsible: false">
+        <div class="header">
+            <div class="left-layout">
+                <a hrer="javascript:;" class="btn-back">返回</a>
+                <h1>批量验收登记</h1>
+            </div>
+            <div class="right-layout">
+                @*<a href="javascript:void(0)" class="easyui-linkbutton" onclick="" id="">承认</a>*@
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="" id="035btnAdd" disabled="true">新增</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="" id="035btnEdit" disabled="true">修改</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="" id="035btnDel" disabled="true">删除</a>
+                <a href="javascript:void(0)" class="easyui-linkbutton" onclick="" id="035btnprint">打印</a>
+            </div>
+        </div>
+    </div>
+    <div data-options="region:'center', collapsible: false">
+        <div class="easyui-layout">
+            <div data-options="region:'center', collapsible: false">
+                <table id="dg_szrl035">
+                    <thead>
+                        <tr>
+                            <th data-options="field:'rl03503',align:'center',width:150">批次</th>
+                            <th data-options="field:'rl01806',align:'center',width:250">作番号</th>
+                            <th data-options="field:'rl01802',align:'center',width:300">顾客名称</th>
+                            <th data-options="field:'rl01807',align:'center',width:300">作番名称</th>
+                        </tr>
+                    </thead>
+                </table>
+                @*<div id="editContainer"></div>*@
+            </div>
+        </div>
+    </div>
+
+    <div id="plysdj" class="easyui-window" title="批量验收登记" data-options="modal:true" closed="true" collapsible="false" minimizable="false" maximizable="false" resizable="false" style="width:100%;height:100%;">
+        <iframe id="plysdj_iframe" height="99%" width="100%" scrolling="auto" frameborder="0"></iframe>
+    </div>
+}
+@section FooterScript{
+    <script>
+        (function () {
+            $(function () {
+                //作番id
+                var zuofanid = undefined;
+                //批量验收id
+                var rl03501 = undefined;
+                $('#szrl001Tree').tree({
+                    url: '/AreasCode030/szrl001/TreeLoad',
+                    animate: true,
+                    onClick: function (node) {
+                        $(this).tree('expand', node.target);
+                        $("#035btnAdd").linkbutton("disable");
+                        $("#035btnEdit").linkbutton("disable");
+                        $("#035btnDel").linkbutton("disable");
+                        if (node.attributes) {
+                            var nodemessage = node.attributes.nodeType;//获取作番号
+                            if (nodemessage != "szrl001" && nodemessage != "szrl004") {
+                                $("#035btnAdd").linkbutton("enable");
+                                var selectedNode = $('#szrl001Tree').tree('getSelected');
+                                zuofanid = selectedNode.id;
+                                $("#dg_szrl035").datagrid('reload', { zuofanid: zuofanid });
+                            }
+                        }
+                    },
+                    onCollapse: function (node) {
+                        $(this).tree('collapseAll', node.target);
+                    }
+                });
+                $("#035btnAdd").click(function () {
+                    $("#plysdj").window('open');
+                    $("#plysdj_iframe").attr("src", "/AreasCode030/szrl035/EditLst?zuofanid=" + zuofanid + "&plysid=add");
+                });
+                $("#035btnEdit").click(function () {
+                    $("#plysdj").window('open');
+                    $("#plysdj_iframe").attr("src", "/AreasCode030/szrl035/EditLst?zuofanid=" + zuofanid + "&plysid=" + rl03501);
+                });
+                $("#035btnDel").click(function () {
+                    var r = confirm("确定删除？");
+                    if (r) {
+                        $.ajax({
+                            url: "/AreasCode030/szrl035/DelGridData",
+                            data: {
+                                plysid: rl03501
+                            },
+                            type: "post",
+                            success: function (data) {
+                                debugger;
+                                var obj = $.parseJSON(data);
+                                if (obj.success) {
+                                    alert("删除成功！");
+                                    $("#dg_szrl035").datagrid('reload', { zuofanid: zuofanid });
+                                }
+                                else {
+                                    alert(obj.Message);
+                                }
+                            },
+                            error: function (obj) { alert("系统出错，请联系管理员！"); }
+                        });
+                    }
+                });
+                $("#035btnprint").click(function () {
+                    window.print();
+                });
+                function onClick_dg_szrl035_Row() {
+                    $("#035btnEdit").linkbutton("enable");
+                    $("#035btnDel").linkbutton("enable");
+                    var selected = $('#dg_szrl035').datagrid('getSelected');
+                    if (selected) {
+                        rl03501 = selected["rl03501"];
+                    }
+                };
+                window.onload = function () {
+                    $('#dg_szrl035').datagrid({
+                        pagination: true,
+                        fit: true,
+                        rownumbers: true,
+                        fitColumns: false,
+                        singleSelect: true,
+                        idField: 'rl03501',
+                        url: '/AreasCode030/szrl035/QueryGridData',
+                        onClickRow: onClick_dg_szrl035_Row
+                    });
+                }
+            });
+        }());
+    </script>
+
+}
+

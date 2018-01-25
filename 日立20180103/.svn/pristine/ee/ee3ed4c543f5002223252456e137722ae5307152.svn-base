@@ -1,0 +1,9 @@
+﻿@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section Body {
+
+    <div style="margin:40px 23px 0 40px;">
+        <div id="_pv_klbde_ux_Grid">暂未实现</div>
+    </div>
+}

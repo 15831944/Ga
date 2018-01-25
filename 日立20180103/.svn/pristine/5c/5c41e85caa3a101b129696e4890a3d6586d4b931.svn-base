@@ -1,0 +1,313 @@
+﻿using Gmail.DDD.Extensions;
+using Gmail.DDD.Mvc;
+using Gmail.DDD.PagedList;
+using Gmail.DDD.Service;
+using PM2.Models.Code030;
+using PM2.Models.Code030.szrl111Model;
+using PM2.Service.Code030;
+using PM2.Service.Code030.szrl111Service;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+
+namespace PM2.WebApp.Areas.Code030.Controllers
+{
+    public class sdbo003Controller : Controller
+    {
+        private Isdbo003Server _sdbo003Server;
+        private Autofac.Features.Indexed.IIndex<Auto_ExcelType, IExcelExportServer> _exports;
+        // GET: AreasCode030/sdbo003
+        public sdbo003Controller(Isdbo003Server _sdbo003Server, Isdbo003Server sdbo003Server, Autofac.Features.Indexed.IIndex<Auto_ExcelType, IExcelExportServer> exports)
+        {
+            this._sdbo003Server = _sdbo003Server;
+            this._exports = exports;
+        }
+        public ActionResult Index()
+        {
+            return View();
+        }
+        #region Index的嵌套页面
+        public ActionResult Partial1()
+        {
+            return View();
+        }
+        public ActionResult Partial2()
+        {
+            return View();
+        }
+        public ActionResult Partial3()
+        {
+            return View();
+        }
+        public ActionResult Partial4()
+        {
+            return View();
+        }
+        public ActionResult Partial5()
+        {
+            return View();
+        }
+        public ActionResult Partial6()
+        {
+            return View();
+        }
+        public ActionResult Partial7()
+        {
+            return View();
+        }
+        public ActionResult Partial8()
+        {
+            return View();
+        }
+        public ActionResult Partial9()
+        {
+            return View();
+        }
+        #endregion
+        public ActionResult ExcelExport(HttpCollection vParams)
+        {
+            return this._exports[Auto_ExcelType.Sdbo003ExcelExport].Export(vParams)
+                 .ToActionResult(this.ControllerContext);
+        }
+        public ActionResult GetIndexInfo(HttpCollection vParams)
+        {
+            return this._sdbo003Server.GetImplementBudgetInfo(vParams)
+                .ToActionResult(this.ControllerContext);
+        }
+        /// <summary>
+        /// 显示材料科明细--用于勾选
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        //public ActionResult GetSzrl11Info(PageCollection context)
+        //{
+        //    return this._sdbo003Server.GetSzrl11Info(context)
+        //       .ToActionResult(this.ControllerContext);
+        //}
+        public ActionResult GetSzrl11Info(PageCollection context)
+        {
+            return this._sdbo003Server.GetSzrl11Info(context)
+               .ToActionResult(this.ControllerContext);
+        }
+        /// <summary>
+        /// KLBDE明细显示
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public ActionResult GetKLBDEInfo(HttpCollection context)
+        {
+            return this._sdbo003Server.GetKLBDEInfo(context)
+                .ToActionResult(this.ControllerContext);
+        }
+        public ActionResult GetajInfo(HttpCollection context)
+        {
+            return this._sdbo003Server.GetajInfo(context)
+                 .ToActionResult(this.ControllerContext);
+        }
+        //public ActionResult SaveVoucher_083([JsonModelBinder]List<szrl083> vParams)
+        //{
+        //    return this._sdbo003Server.SaveVoucher_083(vParams)
+        //       .ToActionResult(this.ControllerContext);
+        //}
+        //public ActionResult SaveVoucher_084([JsonModelBinder]List<szrl084> vParams)
+        //{
+        //    return this._sdbo003Server.SaveVoucher_084(vParams)
+        //       .ToActionResult(this.ControllerContext);
+        //}
+        /// <summary>
+        /// 获取一级菜单下拉列表
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult LevelMenu()
+        {
+            IEnumerable<szrl112> list = this._sdbo003Server.LevelMenu();
+            return Json(list);
+        }
+        /// <summary>
+        /// 根据一级菜单获取二级菜单
+        /// </summary>
+        /// <param name="_levelmenu"></param>
+        /// <returns></returns>
+        public ActionResult LevelMenu2(string _levelmenu)
+        {
+            IEnumerable<szrl112> list = this._sdbo003Server.LevelMenu2(_levelmenu);
+            return Json(list);
+        }
+        /// <summary>
+        /// 获取版本号
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult VersioNnumber(HttpCollection context)
+        {
+            IEnumerable<szrl082> list = this._sdbo003Server.VersioNnumber(context);
+            return Json(list);
+
+        }
+        public ActionResult Add(HttpCollection context, szrl082 _szrl082)
+        {
+            return this._sdbo003Server.Add(context, _szrl082)
+                 .ToActionResult(this.ControllerContext);
+        }
+        public ActionResult DeleteVoucher_083([JsonModelBinder("data")]KLBDE _szrl083s)
+        {
+            return this._sdbo003Server.DeleteVoucher_083(_szrl083s)
+                .ToActionResult(this.ControllerContext);
+        }
+        public ActionResult DeleteVoucher_084([JsonModelBinder("_szrl084s")]AJ _szrl084s)
+        {
+            return this._sdbo003Server.DeleteVoucher_084(_szrl084s)
+                .ToActionResult(this.ControllerContext);
+        }
+        /// <summary>
+        /// klbde导入
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult KlbdeImport()
+        {
+            return View();
+        }
+        public ActionResult AJImport()
+        {
+            return View();
+        }
+        /// <summary>
+        /// 导入EXCEL数据
+        /// </summary>
+        /// <param name="excel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ImportDataByExcel(MaterialExcel_klbde excel)
+        {
+            if (excel != null && !string.IsNullOrWhiteSpace(excel.ExcelFilePath))
+            {
+                var name = excel.ExcelWookSheet.Substring(excel.ExcelWookSheet.IndexOf('_') + 1);
+                excel.ExcelWookSheet = name;
+                string filePath = Server.MapPath(excel.ExcelFilePath);
+                excel.ExcelFilePath = filePath;
+                //return _sdbo003Server.ImportDataByExcel(excel).ConvertJsonResult();
+                return this._sdbo003Server.ImportDataByExcel(excel).ToActionResult(this.ControllerContext);
+            }
+            return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "未找到EXCEL文件信息").ToActionResult(this.ControllerContext);
+        }
+        /// <summary>
+        /// 导入EXCEL数据
+        /// </summary>
+        /// <param name="excel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult ImportDataByExcel2(MaterialExcel_aj excel)
+        {
+            if (excel != null && !string.IsNullOrWhiteSpace(excel.ExcelFilePath))
+            {
+                var name = excel.ExcelWookSheet.Substring(excel.ExcelWookSheet.IndexOf('_') + 1);
+                excel.ExcelWookSheet = name;
+                string filePath = Server.MapPath(excel.ExcelFilePath);
+                excel.ExcelFilePath = filePath;
+                //return _sdbo003Server.ImportDataByExcel(excel).ConvertJsonResult();
+                return this._sdbo003Server.ImportDataByExcel2(excel).ToActionResult(this.ControllerContext);
+            }
+            return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "未找到EXCEL文件信息").ToActionResult(this.ControllerContext);
+        }
+        public ActionResult ux_del(HttpCollection context)
+        {
+            return this._sdbo003Server.ux_del(context)
+              .ToActionResult(this.ControllerContext);
+        }
+        #region 计划进度
+        /// <summary>
+        /// 用于审核时保存计划进度
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public ActionResult btn_saveSzrl085(HttpCollection context)
+        {
+            return this._sdbo003Server.btn_saveSzrl085(context)
+             .ToActionResult(this.ControllerContext);
+        }
+
+
+        #endregion
+
+        #region 特记事项
+        public ActionResult SpecialNotes(HttpCollection context)
+        {
+            return this._sdbo003Server.SpecialNotes(context)
+                .ToActionResult(this.ControllerContext);
+        }
+        public ActionResult SpecialNotes_Add(HttpCollection context)
+        {
+            return this._sdbo003Server.SpecialNotes_Add(context)
+                .ToActionResult(this.ControllerContext);
+        }
+        /// <summary>
+        /// 停用
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public ActionResult SpecialNotes_Del(HttpCollection context)
+        {
+            return this._sdbo003Server.SpecialNotes_Del(context)
+                .ToActionResult(this.ControllerContext);
+        }
+        /// <summary>
+        /// 实行预算承认
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public ActionResult Recognize(HttpCollection context)
+        {
+            return this._sdbo003Server.Recognize(context)
+              .ToActionResult(this.ControllerContext);
+        }
+
+        /// <summary>
+        /// 实行预算删除
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public ActionResult Remove(HttpCollection context)
+        {
+            return this._sdbo003Server.Remove(context)
+              .ToActionResult(this.ControllerContext);
+        }
+        #endregion
+
+        #region 与上一版本对比
+        public ActionResult GetpvcnbInfo(HttpCollection context)
+        {
+            return this._sdbo003Server.GetpvcnbInfo(context)
+                        .ToActionResult(this.ControllerContext);
+        }
+        #endregion
+        /// <summary>
+        /// 查询营业合同
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public ActionResult GetSzrl019Info(PageCollection context)
+        {
+            return this._sdbo003Server.GetSzrl019Info(context)
+                       .ToActionResult(this.ControllerContext);
+        }
+
+        public ActionResult Get_partial(HttpCollection context)
+        {
+            Dictionary<string,string> dic = this._sdbo003Server.Get_partial(context);
+            return Json(dic);
+        }
+
+
+        /// <summary>
+        /// AJ目录菜单,用于实行预算明细勾选
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult AjMenu()
+        {
+            IEnumerable<szrl112> list = this._sdbo003Server.AjMenu();
+            return Json(list);
+        }
+    }
+}

@@ -1,0 +1,109 @@
+﻿<script type="text/javascript">
+    window.myFormatter = {
+        state: function (value) {
+            return value === '1' ? '已验收' : '未验收';
+        }
+    }
+
+    var selectUrl = '/AreasCode030/szrl041/szrl041Select';
+    $(function () {
+        var zid = $.getUrlParam('zid'),
+            id = $.getUrlParam('id');
+        $('#btnNewItem').bind('click', function () {
+            
+        });
+
+        $.post('/AreasCode030/szrl041/Get_szrl041', { id: id, zid: zid }, function (data) {
+            $('#form041').form('load', data);
+        });
+    });
+</script>
+
+<div class="easyui-layout">
+    <div data-options="region:'north',height: 100, collapsible: false">
+        <div class="header">
+            <div class="right-layout" id="northContainer">
+                <a href="javascript:void(0)" id="btnNewItem" class="easyui-linkbutton">新增</a>
+                <a href="javascript:void(0)" id="btnSave_edit_szrl033" class="easyui-linkbutton">保存</a>
+            </div>
+        </div>
+        <div style="display:none;">
+
+        </div>
+        <form id="form041" method="post">
+            <table class="form100-table table-panel">
+                <thead>
+                    <tr style="height: 10px;">
+                        <th style="width: 80px;"></th>
+                        <th style="width: 200px;"></th>
+                        <th style="width: 80px;"></th>
+                        <th style="width: 200px;"></th>
+                        <th style="width: 80px;"></th>
+                        <th style="width: 200px;"></th>
+                        <th style="width: 80px;"></th>
+                        <th style="width: 200px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="form100-table-tr">
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>批次：</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input type="hidden" name="rl04101" />
+                            <input type="text" class="easyui-textbox" name="rl04102" style="width: 200px;" readonly="readonly" />
+                        </td>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>作番号：</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input type="text" class="easyui-textbox" name="rl04103" style="width: 200px;" readonly="readonly" />
+                        </td>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>客户名称：</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input type="text" class="easyui-textbox" name="rl04106" style="width: 200px;" readonly="readonly" />
+                        </td>
+                        <td class="form100-table-td1 form100-table-text">
+                            <label>作番名称：</label>
+                        </td>
+                        <td class="form100-table-td2">
+                            <input type="text" class="easyui-textbox" name="rl04104" style="width: 200px;" readonly="readonly" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div data-options="region:'center', collapsible: false">
+        <table id="dg_edit_szrl041" class="easyui-datagrid" data-type="1"
+               pagination="false" fit="true" style="width:1100px;"
+               rownumbers="true" fitColumns="false" singleSelect="true" showFooter="true">
+            <thead>
+                <tr>
+                    @*<th field="rl04201" width="50">ID</th>
+                        <th field="rl04202" width="50">批量验收登记ID</th>
+                        <th field="rl04203" width="50">验收计划明细ID</th>*@
+
+                    <th data-options="field: 'rl04214',align:'center', width: 100">合同名称</th>
+                    <th data-options="field: 'rl04215',align:'center', width: 100">合同序列号</th>
+                    <th data-options="field: 'rl04216',align:'center', width: 100">合同金额</th>
+
+                    <th data-options="field: 'rl04210',align:'center', width: 100">款项性质</th>
+                    <th data-options="field: 'rl04211',align:'center', width: 100">计划验收比例</th>
+                    <th data-options="field: 'rl04212',align:'center', width: 100">计划验收金额</th>
+                    <th data-options="field: 'rl04213',align:'center', width: 100">计划验收日期</th>
+
+                    <th data-options="field: 'rl04204',align:'center', width: 100,editor:{type:'datebox',options:{editable:false}}">验收日期</th>
+                    <th data-options="field: 'rl04205',align:'center', width: 100">验收金额</th>
+                    <th data-options="field: 'rl04206',align:'center', width: 100,editor:{type:'datebox',options:{editable:false}}">验收证明取得日</th>
+                    <th data-options="field: 'rl04207',align:'center', width: 100">外部/内部验收</th>
+                    <th data-options="field: 'rl04208',align:'center', width: 100">完工证明</th>
+                    <th data-options="field: 'rl04209',align:'center', width: 100, formatter:myFormatter.state">状态</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+

@@ -1,0 +1,77 @@
+﻿{
+  AppSettings: [
+    {
+      "Key": "Cookie_DoMain",
+      "Value": "Host"
+    }, //当前主站域名Cookie - Host: 默认获取(注意: Url.Host = localhost 针对IE不起作用) Host: Net 默认自动设置
+
+    {
+      "Key": "IoCType",
+      "Value": "0"
+    }, //IOC容器: 0: Autofac, 1: Ninject, 2: Unity
+    {
+      "Key": "UserPersistence",
+      "Value": "0"
+    }, //用户对象持久化方式: 0: Session, 1: Cookie
+    {
+      "Key": "ChuanTouIP_116",
+      "Value": "http://192.168.1.14:8001"
+    } //穿透到表单系统
+  ],
+  SSOConfig: {
+    //客户端-SSO服务器
+    SSOServer: "http://localhost:24664/",
+
+    //服务器-用户SSO凭证存储
+    Provider: "0" //sso提供者：0: Cache, 1: Redis
+
+  },
+  EmailConfig: {
+    EmailName: "xxxx@qq.com",
+    EmailPass: "******",
+    EmailServer: "SMTP.163.com"
+  },
+  ViewEngineConfig: {
+    /*
+         * [Action]     -> Action名称
+         * [Controller] -> 控制器名称
+         * [Area]       -> 区域名称
+         * 
+         */
+    LocationFormats: [
+      "~/Gmail/Views/[Area]/[Controller]/[Action].cshtml"
+    ]
+  },
+  FileConfig: {
+    FilePath: "E:/FtpUpload/1001", //服务器盘符路径[注意路径: / 分割]
+    FtpRemoteHost: "192.168.1.4", //ftp服务器地址
+    FtpRemoteUser: "pm2", //用户名
+    FtpRemotePass: "pm2", //密码
+    FtpRemotePort: 21 //远程客户端端口号
+  },
+  DataConfig: {
+    EFConfig: {
+      DefaultAccid: "1001",
+      DbContextConfig: [
+        {
+          "Index": 1,
+          "TypeName": "Gmail.DDD.DataContext.StudioDbContext",
+          "InitializerTypeName": "Gmail.DDD.DataContext.StudioDbContextInitializer",
+          "Enabled": true,
+          "DataLoggingEnabled": false, 
+          "ConnectionString": "Data Source=192.168.1.14;Initial Catalog=BS_Studio_苏州日立;Persist Security Info=True;User ID=sa;Password=888888;MultipleActiveResultSets = True"
+        },
+        {
+          "Index": 2,
+          "TypeName": "Gmail.DDD.DataContext.DefaultDbContext",
+          "InitializerTypeName": "Gmail.DDD.DataContext.DefaultDbContextInitializer",
+          "Enabled": true,
+          "DataLoggingEnabled": true
+        }
+      ]
+    },
+    MemoryConfig: {},
+    MongoConfig: {},
+    RedisConfig: {}
+  }
+}

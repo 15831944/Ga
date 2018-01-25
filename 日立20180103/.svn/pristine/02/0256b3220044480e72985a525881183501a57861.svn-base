@@ -1,0 +1,376 @@
+﻿using Gmail.DDD.Extensions;
+using PM2.Code;
+using PM2.Models.Code100;
+using PM2.Service.Code030;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PM2.Models.Code030;
+using Gmail.DDD.Service;
+using Gmail.DDD.Mvc;
+
+
+namespace PM2.WebApp.Areas.Code030.Controllers
+{// PM2.WebApp.Areas.Code030.Controllers
+    public class szrl116Controller : Controller
+    {
+        private Iszrl116Server _szrl116Server;
+        public szrl116Controller(Iszrl116Server szrl116Server)
+        {
+            this._szrl116Server = szrl116Server;
+        }
+
+
+        // GET: AreasCode030/szrl116
+        public ActionResult Index()
+        { 
+            return View();
+        }
+
+        //bind列表数据
+        [HttpPost]
+        public ActionResult GetTableData(HttpCollection vParams)
+        {
+            int RowCount = 0;
+            try
+            {
+                var pageIndex = vParams.GetValue<int>("pageIndex");
+                var pageSize = vParams.GetValue<int>("pageSize");
+                List<szrl116TableEntity> list = this._szrl116Server.QueryOfferTable(pageIndex, pageSize, out RowCount).ToList();
+                GridJson a = new GridJson();
+                a.success = true;
+                a.RowCount = RowCount;
+                string b_plan = "";
+                string gcb_cl_btn = "";
+                string cwb_cl_btn = "";
+                string cwtz = "";
+                string tzfb_btn = "";
+                string fzzt = "";
+                foreach (var item in list)
+                {
+                    a.GridCode += "<tr style='text-align:center;' onclick='ClickTr(\"" + item.rl11601 + "\")' ondblclick='DBClickTr(\"" + item.rl11638 + "\")' id='" + item.rl11601 + "' >" +
+                        "<td>" + item.rl01806 + "</td>" +   //作番hao
+                        "<td>" + item.rl01904 + "</td>" +
+                        "<td title='" + item.rl01903 + "' >" + item.rl01903 + "</td>";
+                    if (item.rl01909 != 0)
+                    {
+                        a.GridCode += "<td>" + item.rl01909.ToString("f2") + "</td>";   //合同金额(保留两位小数)
+                    }
+                    else
+                    {
+                        a.GridCode += "<td></td>";
+                    }
+                    a.GridCode += "<td>" + item.rl11606.ToString("f2") + "</td>";   //本次开票金额(保留两位小数)
+                    #region bind有无B类发包计划  bind有无B类发包计划
+                    if (string.IsNullOrEmpty(item.rl11607.ToString()))
+                    {
+                        b_plan = "<td><label><input type='radio' name='IsFB_" + item.rl11601 + "' disabled='disabled' value='有' />有</label><label><input type='radio' name='IsFB_" + item.rl11601 + "' value='无' disabled='disabled' />无</label></td>";
+                    }
+                    else
+                    {
+                        switch (item.rl11607)
+                        {
+                            case 0:
+                                b_plan = "<td><label><input type='radio' name='IsFB_" + item.rl11601 + "' value='2' onclick='BLFB(\"" + item.rl11601 + "\",this.value,\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")' />有</label><label><input type='radio' name='IsFB_" + item.rl11601 + "' value='1'  onclick='BLFB(\"" + item.rl11601 + "\",this.value,\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")'  />无</label></td>";
+                                break;
+                            case 1:
+                                b_plan = "<td><label><input type='radio' name='IsFB_" + item.rl11601 + "' value='2' onclick='BLFB(\"" + item.rl11601 + "\",this.value,\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")'  />有</label><label><input type='radio' name='IsFB_" + item.rl11601 + "' value='1'  onclick='BLFB(\"" + item.rl11601 + "\",this.value,\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")'  checked='checked'  />无</label></td>";
+                                break;
+                            case 2:
+                            case 3:
+                                b_plan = "<td><label><input type='radio' name='IsFB_" + item.rl11601 + "' value='2'  onclick='BLFB(\"" + item.rl11601 + "\",this.value,\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")'  checked='checked'  />有</label><label><input type='radio' name='IsFB_" + item.rl11601 + "' value='1'  onclick='BLFB(\"" + item.rl11601 + "\",this.value,\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")'  />无</label></td>";
+                                break;
+                        }
+                    }
+                    a.GridCode += b_plan;
+                    #endregion
+                    #region bind 工程部处理按钮是否可用 
+                    switch (item.rl11615)
+                    {
+                        case 0:
+                            gcb_cl_btn = "<td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small l-btn-disabled'  disabled='disabled' id='gzb_cl_" + item.rl11601 + "' onclick='GCBCL(\"" + item.rl11601 + "\",\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")' /></td> ";  //不可用
+                            break;
+                        case 1:
+                            gcb_cl_btn = "<td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small' id='gzb_cl_" + item.rl11601 + "' onclick='GCBCL(\"" + item.rl11601 + "\",\"" + item.rl11602 + "\",\"" + item.rl11603 + "\")' /></td> ";
+                            break;
+                    }
+                    a.GridCode += gcb_cl_btn;
+                    #endregion
+
+                    //B类发包计划详情 
+                    a.GridCode +=
+                        "<td>" + item.rl11631 + "</td>" +
+                        "<td>" + item.rl11632 + "</td>";
+                    if (item.rl11633 != 0)
+                    {
+                        a.GridCode += "<td>" + item.rl11633.ToString("f2") + "</td>";    //計劃金額（保留兩位小數）
+                    }
+                    else
+                    {
+                        a.GridCode += "<td></td>";
+                    }
+                    a.GridCode +=
+                        "<td>" + item.rl11634 + "</td>" +
+                        "<td>" + item.rl11635 + "</td>";
+
+                    #region bind 财务通知选项（如果未通知，通知发包按钮可用，如果已经通知，按钮不可用）
+                    switch (item.rl11613)
+                    {
+                        case 0:
+                            cwtz = "<td><label><input type='radio' name='IsOffer_" + item.rl11601 + "' value='已'  disabled='disabled' />已</label><label><input type='radio' name='IsOffer_" + item.rl11601 + "' value='未'  checked='checked'  disabled='disabled'  />未</label></td>";
+                            tzfb_btn = "<td><input type='button' value='通知发包' class='easyui-linkbutton l-btn l-btn-small'  id='tzfb_" + item.rl11601 + "' onclick='OfferSendBag(\"" + item.rl11601 + "\")' /></td>";
+                            break;
+                        case 1:
+                            cwtz = "<td><label><input type='radio' name='IsOffer_" + item.rl11601 + "' value='已'  checked='checked'  disabled='disabled' />已</label><label><input type='radio' name='IsOffer_" + item.rl11601 + "' value='未'  disabled='disabled'  />未</label></td>";
+                            tzfb_btn = "<td><input type='button' value='通知发包' class='easyui-linkbutton l-btn l-btn-small l-btn-disabled' disabled='disabled' id='tzfb_" + item.rl11601 + "'  onclick='OfferSendBag(\"" + item.rl11601 + "\")' /></td>";
+                            break;
+                    }
+                    a.GridCode += cwtz;
+                    #endregion
+                    #region bind 发注状态
+                    if (string.IsNullOrEmpty(item.rl11610.ToString()) || item.rl11610 == 0)
+                    {
+                        fzzt = "<td><label><input type='radio' name='FZ_" + item.rl11601 + "' value='已' disabled='disabled' />已</label><label><input type='radio' name='FZ_" + item.rl11601 + "' value='未' disabled='disabled' />未</label></td>";
+                    }
+                    else
+                    {
+                        switch (item.rl11610)
+                        {
+                            case 1:
+                                fzzt = "<td><label><input type='radio' name='FZ_" + item.rl11601 + "' value='已' disabled='disabled' />已</label><label><input type='radio' name='FZ_" + item.rl11601 + "' value='未'  checked='checked' disabled='disabled' />未</label></td>";
+                                break;
+                            case 2:
+                                fzzt = "<td><label><input type='radio' name='FZ_" + item.rl11601 + "' value='已' disabled='disabled' checked='checked' />已</label><label><input type='radio' name='FZ_" + item.rl11601 + "' value='未' disabled='disabled' />未</label></td>";
+                                break;
+                        }
+                    }
+                    a.GridCode += fzzt;
+                    #endregion
+                    a.GridCode += "<td>";
+                    #region bind  接受退回按钮是否可用
+                    switch (item.rl11636)
+                    {
+                        case 0:
+                            a.GridCode +=
+                       "   <input type='button' value='接受' class='easyui-linkbutton l-btn l-btn-small l-btn-disabled'  disabled='disabled' id='JS_" + item.rl11601 + "' onclick='CGBJS(\"" + item.rl11601 + "\")' />" +
+                       "   <input type='button' value='退回' class='easyui-linkbutton l-btn l-btn-small l-btn-disabled'  disabled='disabled' id='TH_" + item.rl11601 + "' onclick='CGBTH(\"" + item.rl11601 + "\")' />";
+                            break;
+                        case 1:
+                            a.GridCode +=
+                       "   <input type='button' value='接受' class='easyui-linkbutton l-btn l-btn-small'  id='JS_" + item.rl11601 + "' onclick='CGBJS(\"" + item.rl11601 + "\")' />" +
+                       "   <input type='button' value='退回' class='easyui-linkbutton l-btn l-btn-small'  id='TH_" + item.rl11601 + "' onclick='CGBTH(\"" + item.rl11601 + "\")' />";
+                            break;
+                    }
+
+                    #endregion
+                    a.GridCode += "</td>" +
+                               "<td>" + item.rl11612 + "</td>" +
+                               tzfb_btn +  //发包通知按钮
+                               "<td>" + Convert.ToDecimal(item.rl11614).ToString("f2") + "</td>";
+                    #region bind 财务部处理按钮是否可用
+                    switch (item.rl11616)
+                    {
+                        case 0:
+                            cwb_cl_btn = "<td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small l-btn-disabled'  disabled='disabled' id='cwb_cl_" + item.rl11601 + "' onclick='CWBCL(\"" + item.rl11601 + "\")'  /></td>";
+                            break;
+                        case 1:
+                            cwb_cl_btn = "<td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small' id='cwb_cl_" + item.rl11601 + "' onclick='CWBCL(\"" + item.rl11601 + "\")'  /></td>";
+                            break;
+                    }
+                    a.GridCode += cwb_cl_btn;
+                    #endregion
+                    #region bind 财务部开票登记按钮是否可用
+                    string kpdj_btn = "";
+                    switch (item.rl11617)
+                    {
+                        case 0:
+                            kpdj_btn = "<td><input type='button' value='开票登记' class='easyui-linkbutton l-btn l-btn-small l-btn-disabled'  disabled='disabled' id='kpdj_" + item.rl11601 + "' onclick='CWBKPTZ(\"" + item.rl11601 + "\")' /></td>";
+                            break;
+                        case 1:
+                            kpdj_btn = "<td><input type='button' value='开票登记' class='easyui-linkbutton l-btn l-btn-small' id='kpdj_" + item.rl11601 + "' onclick='CWBKPTZ(\"" + item.rl11601 + "\")' /></td>";
+                            break;
+                    }
+                    a.GridCode += kpdj_btn;
+                    #endregion
+                    a.GridCode += "<td>" + item.rl11639 + "</td>";
+                    a.GridCode += "</tr>";
+                }
+                return Json(a);
+            }
+            catch (Exception e)
+            {
+                GridJson a = new GridJson();
+                a.success = false;
+                return Json(a);
+                throw;
+            }
+            //int i = 0;
+            //while (i < 1)
+            //{
+            //    a.GridCode += "<tr style='text-align:center;'>" +
+            //        "<td>62B910P</td>" +
+            //        "<td>SP-17-001</td>" +
+            //        "<td>机电安装合同</td>" +
+            //        "<td>100000</td>" +
+            //        "<td>20000</td>" +
+            //        "<td><label><input type='radio' name='IsFB_" + i + "' value='有' />有</label><label><input type='radio' name='IsFB_" + i + "' value='无' />无</label></td>" +
+            //        "<td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small' /></td> " +
+            //        "<td>2017年9月</td>" +
+            //        "<td>机电分包</td>" +
+            //        "<td>20000</td>" +
+            //        "<td>邦永科技</td>" +
+            //        "<td>张三</td>" +
+            //        "<td><label><input type='radio' name='IsOffer_" + i + "' value='1' />已</label><label><input type='radio' name='IsOffer_" + i + "' value='0' />未</label></td>" +
+            //        "<td><label><input type='radio' name='FZ_" + i + "' value='1' />已</label><label><input type='radio' name='FZ_" + i + "' value='0' />未</label></td>" +
+            //        "<td>" +
+            //        "    <input type='button' value='接受' class='easyui-linkbutton l-btn l-btn-small' />" +
+            //        "    <input type='button' value='退回' class='easyui-linkbutton l-btn l-btn-small' />" +
+            //        "</td>" +
+            //        "<td>未发包完成</td>" +
+            //        "<td><input type='button' value='通知发包' class='easyui-linkbutton l-btn l-btn-small' /></td>" +
+            //        "<td>80000</td>" +
+            //        "<td><input type='button' value='处理' class='easyui-linkbutton l-btn l-btn-small' /></td>" +
+            //        "<td><input type='button' value='开票登记' class='easyui-linkbutton l-btn l-btn-small' /></td>" +
+            //    "</tr>";
+            //    i++;
+            //}
+        }
+
+        //单击通知发包方法
+        [HttpPost]
+        public ActionResult ClickOfferSendBag(HttpCollection vParams)
+        {
+            //rl11607（有无B类发包计划变为可用）
+            //rl11613（通知发包按钮不可用）、【 该字段没用了 rl11609（财务通知变成已）】
+            //rl11616、rl11617（财务部处理跟开票登记不可用）            
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11607 = 0;
+            model.rl11613 = 1;
+            model.rl11609 = 1;
+            model.rl11616 = 0;
+            model.rl11617 = 0;
+            return this._szrl116Server.ClickOfferSendBag(model).ToActionResult(this.ControllerContext);
+        }
+
+        //单选按钮有无发包计划方法
+        [HttpPost]
+        public ActionResult ClickPlanB(HttpCollection vParams)
+        {
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            string zuofanid = vParams.GetValue<string>("zuofanid");
+            string hetongid = vParams.GetValue<string>("hetongid");
+            switch (Convert.ToByte(vParams.GetValue<string>("selval").ToString()))
+            {
+                case 1:
+                    model.rl11607 = 1;
+                    model.rl11615 = 0;    //若选择未，工程部按钮不可用
+                    model.rl11616 = 1;
+                    model.rl11617 = 1;
+                    break;
+                case 2:
+                    model.rl11607 = 2;
+                    model.rl11615 = 1;      //选择有，工程部按钮可用
+                    model.rl11616 = 0;
+                    model.rl11617 = 0;
+                    break;
+            }
+            return this._szrl116Server.ClickPlanB(model, zuofanid, hetongid).ToActionResult(this.ControllerContext);
+        }
+
+        //强制提醒【判斷依據是：11613已經通知發包，11618還在處理中，11611还没接受】
+        public ActionResult QueryWarmLists(PageCollection context)
+        {
+            return this._szrl116Server.QueryWarmLists(context)
+                .ToActionResult(this.ControllerContext);
+        }
+
+        //单击已完按钮方法（强制提醒界面）
+        [HttpPost]
+        public ActionResult HaveDone(HttpCollection vParams)
+        {
+            //发注状态变成已，接受退回变成可用
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11610 = 2;
+            model.rl11636 = 1;
+            return this._szrl116Server.HaveDone(model).ToActionResult(this.ControllerContext);
+        }
+
+        //单击下次按钮方法（强制提醒界面）
+        [HttpPost]
+        public ActionResult NextTime(HttpCollection vParams)
+        {
+            //发注状态变成未，接受退回变成不可用
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11610 = 1;
+            model.rl11636 = 0;
+            return this._szrl116Server.NextTime(model).ToActionResult(this.ControllerContext);
+        }
+
+        //单击退回按钮方法
+        [HttpPost]
+        public ActionResult ReturnBtn(HttpCollection vParams)
+        {
+            //接受退回按钮变成不可用，发注状态变成未，填写退回理由
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11610 = 1;  //发注状态变成未
+            model.rl11636 = 0;  //接受退回变成不可用
+            model.rl11612 = vParams.GetValue<string>("reason");   //退回理由
+            return this._szrl116Server.ReturnBtn(model).ToActionResult(this.ControllerContext);
+        }
+
+        //单击接受按钮方法
+        [HttpPost]
+        public ActionResult AcceptBtn(HttpCollection vParams)
+        {
+            //接受退回按钮变成不可用，发注状态变成未，填写退回理由
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11611 = 1;  //财务部是否接受变成接受
+            model.rl11636 = 0;  //接受退回变成不可用 
+            model.rl11616 = 1;
+            model.rl11617 = 1;
+            return this._szrl116Server.AcceptBtn(model).ToActionResult(this.ControllerContext);
+        }
+
+        [HttpPost]
+        public ActionResult KPRQ(HttpCollection vParams)
+        {
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11639 = Convert.ToDateTime(vParams.GetValue<string>("datatime")).ToString("yyyy-MM-dd");
+            return this._szrl116Server.KPRQ(model).ToActionResult(this.ControllerContext);
+        }
+
+        //单击工程部处理按钮方法
+        [HttpPost]
+        public ActionResult GCBCL(HttpCollection vParams)
+        {
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11607 = 3;
+            return this._szrl116Server.GCBCL(model).ToActionResult(this.ControllerContext);
+        }
+        //关闭工程部处理按钮方法
+        [HttpPost]
+        public ActionResult GCBCLGB(HttpCollection vParams)
+        {
+            szrl116 model = new szrl116();
+            model.rl11601 = vParams.GetValue<string>("rl11601");
+            model.rl11607 = 2;
+            return this._szrl116Server.GCBCLGB(model).ToActionResult(this.ControllerContext);
+        }
+    }
+    class GridJson
+    {
+        public bool success { get; set; }
+        public string GridCode { get; set; }
+        public int RowCount { get; set; }
+    }
+}

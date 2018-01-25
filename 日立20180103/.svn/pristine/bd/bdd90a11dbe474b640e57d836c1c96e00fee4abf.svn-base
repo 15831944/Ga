@@ -1,0 +1,306 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section HeaderStyles{
+
+}
+@section Body {
+    <div id="_klb_sum_ux_grid" class="table-layout hasborder">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <thead>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>项目</th>
+                    <th>摘要</th>
+                    <th>税含金額</th>
+                    <th>税抜き金額</th>
+                    <th>税率</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class=" " rowspan="13">K</td>
+                    <td class=" ">1</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_50" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_51" name="_extend_51" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_52" name="_extend_52" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">2</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_53" name="_extend_53" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_54" name="_extend_54" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_55" name="_extend_55" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">3</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_56" name="_extend_56" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_57" name="_extend_57" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_58" name="_extend_58" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="_extend_158" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">4</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_59" name="_extend_59" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_60" name="_extend_60" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_61" name="_extend_61" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">5</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_62" name="_extend_62" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_63" name="_extend_63" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_64" name="_extend_64" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">6</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_65" name="_extend_65" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_66" name="_extend_66" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_67" name="_extend_67" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">7</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_68" name="_extend_68" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_69" name="_extend_69" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_70" name="_extend_70" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">8</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_71" name="_extend_71" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_72" name="_extend_72" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_73" name="_extend_73" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">9</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_74" name="_extend_74" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_75" name="_extend_75" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_76" name="_extend_76" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">10</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_77" name="_extend_77" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_78" name="_extend_78" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_79" name="_extend_79" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">11</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_80" name="_extend_80" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_81" name="_extend_81" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_82" name="_extend_82" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">12</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_83" name="_extend_83" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_84" name="_extend_84" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_85" name="_extend_85" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2">TOTAL</td>
+                    <td class="   "><input class="easyui-numberbox" type="text"   name="_extend_1" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text"   name="_extend_2" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_158" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+
+                <tr>
+                    <td class=" " rowspan="13">L</td>
+                    <td class=" ">1</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_86" name="_extend_86" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_87" name="_extend_87" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_88" name="_extend_88" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">2</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_89" name="_extend_89" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_90" name="_extend_90" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_91" name="_extend_91" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">3</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_92" name="_extend_92" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_93" name="_extend_93" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_94" name="_extend_94" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">4</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_95" name="_extend_95" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_96" name="_extend_96" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_97" name="_extend_97" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">5</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_98" name="_extend_98" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_99" name="_extend_99" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_100" name="_extend_100" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">6</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_101" name="_extend_101" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_102" name="_extend_102" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_103" name="_extend_103" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">7</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_104" name="_extend_104" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_105" name="_extend_105" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_106" name="_extend_106" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">8</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_107" name="_extend_107" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_108" name="_extend_108" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_109" name="_extend_109" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">9</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_110" name="_extend_110" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_111" name="_extend_111" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_112" name="_extend_112" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">10</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_113" name="_extend_113" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_114" name="_extend_114" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_115" name="_extend_115" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">11</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_116" name="_extend_116" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_117" name="_extend_117" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_118" name="_extend_118" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">12</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_119" name="_extend_119" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_120" name="_extend_120" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_121" name="_extend_121" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2">TOTAL</td>
+                    <td class="   "><input class="easyui-numberbox" type="text"   name="_extend_3" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text"   name="_extend_4" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="" name="_extend_159" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" " rowspan="13">B</td>
+                    <td class=" ">1</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_122" name="_extend_122" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_123" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_124" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">2</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_125" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_126" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_127" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">3</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_128" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_129" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_130" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">4</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_131" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_132" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_133" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">5</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_134" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_135" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_136" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">6</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_137" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_138" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_139" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">7</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_140" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_141" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_142" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">8</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_143" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_144" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_145" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">9</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_146" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_147" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_148" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">10</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_149" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_150" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_151" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td class=" ">11</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_152" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_153" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_154" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    2
+                    <td class=" ">12</td>
+                    <td class=" "><input class="easyui-textbox" type="text" id="_extend_50" name="_extend_155" value="" readonly="readonly" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_156" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_157" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2">TOTAL</td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_5" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_6" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_160" value="" readonly="readonly" data-options="precision:2,suffix:'%'" /></td>
+                </tr>
+                <tr>
+                    <td colspan="3">KLB合计</td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_161" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "><input class="easyui-numberbox" type="text" id="_extend_1" name="_extend_162" value="" readonly="readonly" data-options="precision:2" /></td>
+                    <td class="   "></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}

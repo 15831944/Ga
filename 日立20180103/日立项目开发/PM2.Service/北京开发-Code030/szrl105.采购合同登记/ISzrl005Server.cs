@@ -1,0 +1,16 @@
+﻿using Gmail.DDD.Service;
+using PM2.Models.Code030;
+using PM2.Models.Code030.Szrl105Model;
+using PM2.Service.Code030.CM;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Service.Code030.Szrl105Service
+{
+    public interface ISzrl005Server : IService, ICmDataService<szrl005>
+    {
+    }
+}

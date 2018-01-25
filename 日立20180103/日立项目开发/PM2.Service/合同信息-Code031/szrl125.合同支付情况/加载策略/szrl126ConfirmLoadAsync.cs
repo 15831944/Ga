@@ -1,0 +1,85 @@
+﻿#region using
+using Gmail.DDD.AOP;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.IOC;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using PM2.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using PM2.Service.Code001;
+using Gmail.DDD.Repositorys;
+using PM2.Models.Code031;
+using System.Data.Entity;
+#endregion
+namespace PM2.Service.Code031
+{
+    /// <summary>
+    /// 加载 - [待支付确认]合同支付情况
+    /// </summary>
+    public class szrl126ConfirmLoadAsync : Iszrl126LoadAsync
+    {
+        private IDbContextScopeFactory _scopeFactory;
+        private IEFRepository<szrl126> _szrl126Repository;
+
+        public szrl126ConfirmLoadAsync(IDbContextScopeFactory scopeFactory, IEFRepository<szrl126> szrl126Repository)
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl126Repository = szrl126Repository;
+        }
+
+        #region Iszrl126LoadAsync
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rl12502">合同ID</param>
+        /// <returns></returns>
+        public async Task<IEnumerable<szrl126SVEntity>> LoadAsync(string rl12502)
+        {
+            using (IDbContextReadOnlyScope scope = this._scopeFactory.CreateReadOnlyScope())
+            {
+                return await this._szrl126Repository.GetModels(
+                        x => x.szrl125.rl12502.Equals(rl12502) && x.rl12621 == 1,
+                        x => x.Asc(y => y.rl12622)
+                    ).Select(x => new szrl126SVEntity {
+
+                        rl12601 = x.rl12601, //ID
+                        rl12602 = x.rl12602, //主表ID
+                        rl12605 = x.rl12605, //支付济   0: 金回支付, 1: 今后支付预定, 2:[调整支付计划]金回支付
+                        rl12603 = x.rl12603, //初始来源 0:合同支付计划, 1:合同验收计划, 2: 自定义新增
+                        rl12604 = x.rl12604, //来源ID  
+
+                        #region 元支付预定
+                        rl12606 = x.rl12606, //支付日期
+                        rl12607 = x.rl12607, //-%
+                        rl12608 = x.rl12608, //金额
+                        #endregion
+                        #region 金回支付
+                        rl12609 = x.rl12609, //处理日期
+                        rl12610 = x.rl12610, //支付日期
+                        rl12611 = x.rl12611, //-%
+                        rl12612 = x.rl12612, //金额
+                        #endregion
+
+                        rl12613 = x.rl12613, //附件ID
+                        rl12614 = x.rl12614, //付款性质 0: 预付款, 1:质保款, 2:验收款
+                        rl12615 = x.rl12615, //预付款扣款金额
+                        rl12616 = x.rl12616, //预付款扣款占合同%
+                        rl12617 = x.rl12617, //本次实际支付金额(含税)
+                        rl12618 = x.rl12618, //本次实际支付金额(不含税)
+
+                        rl12619 = x.rl12619,         //备注
+                        rl12719 = -1,                //状态 0: 承认济, 1: AP已发行
+                        rl12720 = string.Empty,      //AP编号
+                        rl12620 = x.sdpj004.pj00402, //担当者
+                        rl12622 = x.rl12622          //排序序号
+
+                    }).ToListAsync();
+            }
+        }
+        #endregion
+    }
+}

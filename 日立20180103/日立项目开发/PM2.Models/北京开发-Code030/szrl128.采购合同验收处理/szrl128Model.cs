@@ -1,0 +1,62 @@
+﻿using Gmail.DDD.Entity;
+using PM2.Code;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PM2.Models.Code030
+{
+    public class szrl128Model : Enttity
+    {
+        /// <summary>
+        /// 合同ID
+        /// </summary>
+        public string rl12802 { get; set; }
+
+        /// <summary>
+        /// 状态 1: 今回检收,2: 今月再度检收预定
+        /// </summary>
+        public byte rl12102 { get; set; }
+
+        /// <summary>
+        /// 计划ID
+        /// </summary>
+        public string rl12101 { get; set; }
+
+        /// <summary>
+        /// 验收日期
+        /// </summary>
+        public string rl12103 { get; set; }
+
+        /// <summary>
+        /// 验收比率
+        /// </summary>
+        public decimal rl12104 { get; set; }
+
+        /// <summary>
+        /// 计划ID
+        /// </summary>
+        public decimal rl12105 { get; set; }
+        /// <summary>
+        /// 验收日期
+        /// </summary>
+        public string rl12106 { get; set; }
+
+        /// <summary>
+        /// 验收比率
+        /// </summary>
+        public decimal rl12107 { get; set; }
+
+        /// <summary>
+        /// 计划ID
+        /// </summary>
+        public decimal rl12108 { get; set; }
+
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public string rl12110 { get; set; }
+    }
+}

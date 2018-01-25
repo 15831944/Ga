@@ -1,0 +1,55 @@
+﻿@model PM2.Models.Code030.szrl888
+@{
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section Body {
+    <form id="szrl888From" method="post" action="/AreasCode030/szrl888/fn_edit" style="height: 100%; width: 100%">
+        <div>
+            <p>@Model.rl88801</p>
+            @Html.HiddenFor(x=>x.rl88801)
+            @Html.EditorFor(x => x.rl88802)<br />
+            @Html.EditorFor(x => x.rl88803)<br />
+            @Html.EditorFor(x => x.rl88804)<br />
+            @Html.EditorFor(x => x.rl88805)<br />
+            @Html.EditorFor(x => x.rl88806)<br />
+            @Html.EditorFor(x => x.rl88807)<br />
+            @Html.EditorFor(x => x.rl88808)<br />
+            @Html.EditorFor(x => x.rl88809)<br />
+            @Html.EditorFor(x => x.rl88810)<br />
+        </div>
+        <a href="javascript:;" id="btnSave" class="easyui-linkbutton">保存</a>
+    </form>
+}
+@section FooterScript {
+    <script>
+        $('#btnSave').linkbutton({
+            onClick: function () {
+                $('#szrl888From').form('submit', {
+                    url: "/AreasCode030/szrl888/fn_edit",
+                    onSubmit: function (_param) {
+                        //var isValid = $(this).form('validate');
+                        //if (!isValid) {
+                        //    $.messager.alert('友情提示', '请填写必填选项!', 'info');
+                        //}
+                        //return isValid;
+                    },
+                    success: function (data) {
+                        var obj = $.parseJSON(data);
+                        if (obj.success) {
+                            window.location.href = "/AreasCode030/szrl888/index";
+                            //$.messager.alert('友情提示', '保存成功!', 'info');
+                            bottomRight();
+                        }
+                    }
+                });
+            }
+        });
+        function bottomRight() {
+            $.messager.show({
+                title: '提示',
+                msg: '修改成功',
+                showType: 'show'
+            });
+        }
+    </script>
+}

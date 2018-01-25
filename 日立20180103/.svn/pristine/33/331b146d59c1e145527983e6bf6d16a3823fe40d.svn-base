@@ -1,0 +1,104 @@
+﻿@using PM2.Code
+@{
+    Layout = "~/Views/Shared/_PartialLayout.cshtml";
+}
+@section HeaderStyles{
+    <style>
+        #_p4_ux_Grid tr td {
+            white-space: nowrap;
+        }
+            #_p4_ux_Grid tr td input {
+                border: 0;
+                /*readonly:'readonly'*/
+            }
+    </style>
+}
+@section Body {
+    <div class="table-layout hasborder">
+        <table id="_p4_ux_Grid" cellpadding="0" cellspacing="0" border="0" style="overflow:auto">
+            <thead>
+                <tr>
+                    <th colspan="2" rowspan="2">项目</th>
+                    <th colspan="2">金额(RMB)</th>
+                </tr>
+                <tr>
+                    <th>实行予算</th>
+                    <th>订正前予算</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td align="center">見積金額（提出金額）</td>
+                    <td align="center">E</td>
+                    <td align="right"><input class="easyui-numberbox" for-edit="textbox" type="text" name="rl08214" id="rl08214" value=""  /> </td>
+                    <td align="right"><span id="_pv_rl08214"></span></td>
+                </tr>
+                <tr>
+                    <td rowspan="2" align="center">外貨換算ﾚｰﾄ(RATE)</td>
+                    <td align="center">USD</td>
+                    <td align="right"><input class="easyui-numberbox" for-edit="textbox" type="text" name="rl08215" id="rl08215" value="" />    @*@Html.EditorFor(x => x.rl08215, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08215"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">J ￥</td>
+                    <td align="right"><input class="easyui-numberbox"   type="text" name="rl01813" id="rl01813"  readonly="readonly" /></td>
+                    <td align="right"><span id="_pv_rl08213"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">総受注予定金額</td>
+                    <td align="center"></td>
+                    <td align="right"><input class="easyui-numberbox" for-edit="textbox"  type="text" name="rl08216" id="rl08216" value="" />@*@Html.EditorFor(x => x.rl08216, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08216"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">現状受注金額</td>
+                    <td align="center">A</td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08217" id="rl08217" value="" readonly="readonly" />@*@Html.EditorFor(x => x.rl08217, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08217"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">VAT(増値税)</td>
+                    <td align="center">V</td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08218" id="rl08218" value="" readonly="readonly" />@*@Html.EditorFor(x => x.rl08218, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08218"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">手配受注金額</td>
+                    <td align="center">B=A-V</td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08219" id="rl08219" value="" readonly="readonly" />@*@Html.EditorFor(x => x.rl08219, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08219"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">実行予算金額(ＢＰ)</td>
+                    <td align="center">C</td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08220" id="rl08220" value="" readonly="readonly" />@*@Html.EditorFor(x => x.rl08220, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08220"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">損益金額</td>
+                    <td align="center">D=B-C</td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08221" id="rl08221" value="" readonly="readonly" />@*@Html.EditorFor(x => x.rl08221, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08221"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">損益率(％)</td>
+                    <td align="center">D/B</td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08222" id="rl08222" value="" readonly="readonly" data-options="suffix:'%'" />@*@Html.EditorFor(x => x.rl08222, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08222"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">目標粗利率(％)</td>
+                    <td align="center"></td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08223" id="rl08223" value=""  data-options="suffix:'%'" />@*@Html.EditorFor(x => x.rl08223, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08223"></span></td>
+                </tr>
+                <tr>
+                    <td align="center">粗利率(％)</td>
+                    <td align="center">E=(B-KP)/B</td>
+                    <td align="right"><input class="easyui-numberbox" type="text" name="rl08224" id="rl08224" value="" readonly="readonly" data-options="suffix:'%'"  />@*@Html.EditorFor(x => x.rl08224, new { dataoptions = "readonly: true", style = "border:0" })*@</td>
+                    <td align="right"><span id="_pv_rl08224"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}

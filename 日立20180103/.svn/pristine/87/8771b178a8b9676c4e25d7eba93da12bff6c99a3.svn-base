@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using PM2.Models.Code030;
+using PM2.Service.Code030;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using PM2.Service.Code001;
+using Gmail.DDD.Mvc;
+
+namespace PM2.WebApp.Areas.Code031.Controllers
+{
+    public class sdrl122Controller : Controller
+    {
+        public sdrl122Controller(Isdbo001Server sdbo001Server)
+        {
+        }
+        
+        public ActionResult Index()
+        {
+            return this.View();
+        }
+
+    }
+}

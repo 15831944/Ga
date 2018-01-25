@@ -1,0 +1,164 @@
+﻿
+<table id="dg_signedname" class="easyui-datagrid" style="width:950px;height: 280px; border:none;"
+       url="/AreasCode030/szrl100/GetSignedNameList?id=@ViewBag.SupplierId"
+       toolbar="#toolbar_signedname" pagination="false"
+       rownumbers="false" fitColumns="false" singleSelect="true">
+    <thead>
+        <tr>
+            <th field="RowNo" data-options="width:80, halign: 'center'">序号</th>
+            <th field="Name" data-options="width:800, halign: 'center'">合同签订授权代表姓名</th>
+        </tr>
+    </thead>
+</table>
+<div id="toolbar_signedname">
+    <a id="btnAdd_SignedName" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addItem_SignedName()">新增</a>
+    <a id="btnRemove_SignedName" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="deleteItem_SignedName()">删除</a>
+</div>
+<div id="signedNameWin" style="display:none;"></div>
+<div style="display:none;">
+</div>
+<div id="inputResultCache_SignedName">
+
+</div>
+
+<script>
+    window.localBuildingIncCertCount_SignedName = 0;
+    // 合同签订授权代表姓名，主表单保存前执行
+    function helpSubmitMainForm_SignedName() {
+        var isLocalFlag = isLocalSave_SignedName();
+        if (isLocalFlag) {
+            var jValue = $('#input_hd_localSignedNameInfo');
+            var jCacheItems = $('#inputResultCache_SignedName .CertInfo');
+            var rows = [];
+            for (var i = 0; i < jCacheItems.length; i++) {
+                var jItem = $(jCacheItems[i]);
+                rows.push(jItem.val());
+            }
+            if (rows.length == 0) {
+                return false;
+            }
+            var value = rows.join(';');
+            jValue.val(value);
+        }
+        return true;
+    }
+
+    // 执行本地保存
+    function localSave_SignedName() {
+        var id = $('#input_hd_SupplierId_SignedName').val(),
+            info = $('#rl10103').val();
+        createItemLocalSave_SignedName(info);
+        localReloadGrid_SignedName();
+    }
+
+    // 本地保存数据项
+    function createItemLocalSave_SignedName(info) {
+        localBuildingIncCertCount_SignedName += 1;
+        var id = 'input_hd_cache_' + localBuildingIncCertCount_SignedName.toString();
+        var newItem = $('<input class="CertInfo" type="hidden" />').attr('id', id).val(info);
+        $('#inputResultCache_SignedName').append(newItem);
+    }
+
+    // 本地删除数据项
+    function localDeleteItem_SignedName(row) {
+        var id = row.ID;
+        var jDataInput = $('#inputResultCache_SignedName').children('#' + id);
+        jDataInput.remove();
+        localReloadGrid_SignedName();
+    }
+
+    // 本地刷新数据表格
+    function localReloadGrid_SignedName() {
+        var jCacheItems = $('#inputResultCache_SignedName .CertInfo');
+        var rows = [];
+        for (var i = 0; i < jCacheItems.length; i++) {
+            var jItem = $(jCacheItems[i]);
+            rows.push({ ID: jItem.attr('id'), RowNo: i + 1, Name: jItem.val() });
+        }
+        $('#dg_signedname').datagrid('loadData', rows);
+    }
+    // 执行本地保存
+    function isLocalSave_SignedName() {
+        var id = $('#input_hd_SupplierId_SignedName').val();
+        var localSaveFlag = rlform1101.isNullOrWhitespace(id);
+        return localSaveFlag;
+    }
+
+    // 禁用按钮
+    function disableBtns_SignedName() {
+        var operateFlag = eval($('#input_hd_OperateFlag').val());
+        if (!operateFlag) {
+            $('#btnAdd_SignedName').linkbutton('disable');
+            $('#btnRemove_SignedName').linkbutton('disable');
+        }
+    }
+    $(function () {
+        disableBtns_SignedName();
+    });
+
+    // 新增
+    function addItem_SignedName() {
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新增姓名');
+        $('#rl10103').textbox('setValue', '');
+    }
+
+    // 保存
+    function saveNewSignedName_SignedName() {
+        var localSaveFlag = isLocalSave_SignedName();
+        if (localSaveFlag) {
+            localSave_SignedName();
+            $('#dlg').dialog('close');        // close the dialog
+        }
+        else {
+            var id = $('#input_hd_SupplierId_SignedName').val(),
+                name = $('#rl10103').textbox('getValue');
+            if (rlform1101.isNullOrWhitespace(name)) {
+                rlform1101.messenger.showMessage("合同签订授权代表姓名不能为空！");
+                return;
+            }
+            rlform1101.post(
+                '/AreasCode030/szrl100/NewSignedName',
+                { rl10102: id, rl10103: name },
+                function (result) {
+                    $('#dlg').dialog('close');        // close the dialog
+                    $('#dg_signedname').datagrid('reload');    // reload the user data
+                });
+        }
+    }
+
+    // 删除
+    function deleteItem_SignedName() {
+        var row = $('#dg_signedname').datagrid('getSelected');
+        var localSaveFlag = isLocalSave_SignedName();
+        if (localSaveFlag) {
+            localDeleteItem_SignedName(row);
+        }
+        else {
+            $.messager.confirm('确认消息', '是否删除？', function (r) {
+                if (r) {
+                    //var row = $('#dg_signedname').datagrid('getSelected');
+                    rlform1101.post('/AreasCode030/szrl100/RemoveSignedName', { id: row.ID }, function (result) {
+                        $('#dg_signedname').datagrid('reload');    // reload the user data
+                    });
+                }
+            });
+        }
+    }
+</script>
+
+
+<div id="dlg" class="easyui-dialog" style="width:400px;height:250px;"
+     closed="true" buttons="#dlg-buttons">
+    <form id="myform_SignedName" method="post" novalidate style="margin:0;padding:20px 50px">
+        <input id="input_hd_SupplierId_SignedName" type="hidden" value="@ViewBag.SupplierId" name="rl10102" />
+        <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">合同签订授权代表姓名</div>
+        <div style="margin-bottom:10px">
+            <input id="rl10103" name="rl10103" class="easyui-textbox" label="姓名：" style="width:100%">
+        </div>
+    </form>
+</div>
+<div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveNewSignedName_SignedName()" style="width:90px">保存</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+</div>
+

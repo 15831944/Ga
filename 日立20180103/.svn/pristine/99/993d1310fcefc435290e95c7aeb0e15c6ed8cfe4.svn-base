@@ -1,0 +1,88 @@
+﻿using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Repositorys;
+using PM2.Models.Code030.Szrl105Model;
+using PM2.Service.Code030.CM;
+using PM2.Service.Code030.Szrl105Service;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace PM2.WebApp.Areas.Code030.Controllers
+{
+    public class szrl105Controller : CmController<Szrl105>
+    {
+        //private ISzrl105Server _szrl105Server;
+        private ISzrl005Server _szrl005Server;
+        public szrl105Controller(IDbContextScopeFactory scopeFactory, 
+                                 IEFRepository<Szrl105> entityRepository,
+                                 ISzrl005Server szrl005Server
+                                )
+            : base(scopeFactory, entityRepository)
+        {
+            _szrl005Server = szrl005Server;
+        }
+
+        // GET: AreasCode030/szrl105
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+
+
+
+        #region ======================= 采购待处理 ======================= 
+
+        /// <summary>
+        /// 采购待处理
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult PurchaseDealingIndex()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 新规采购申请1
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult PurchaseAsk1()
+        {
+            var list = _szrl005Server.FindAll();
+            return Json(list);
+        }
+
+
+        #endregion
+
+
+        #region ======================= 采购合同 =======================
+
+        /// <summary>
+        /// 合同列表页面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ContractIndex()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// 合同信息编辑页面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ContractEdit()
+        {
+            ViewBag.LoadSupplierFlag = 0;
+            ViewBag.SupplierId = "-1";
+            return View();
+        }
+
+
+        #endregion
+
+    }
+}

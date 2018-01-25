@@ -1,0 +1,140 @@
+using Gmail.DDD.Entity;
+using Newtonsoft.Json;
+using PM2.Models.Code001;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+
+namespace PM2.Models.Code031
+{
+    /// <summary>
+    /// 合同支付情况[已支付确认]
+    /// </summary>
+    [Table(Name = "szrl127")]
+    public partial class szrl127 : Enttity
+    {
+        /// <summary>
+        /// ID
+        /// </summary>
+         [Column(ColumnType = ColumnType.PrimaryKey)]
+        public string rl12701 { get; set; }
+
+        /// <summary>
+        /// 主表ID szrl125.rl12501
+        /// </summary>
+        public string rl12702 { get; set; }
+
+        /// <summary>
+        /// 初始来源
+        /// </summary>
+        public int rl12703 { get; set; }
+
+        /// <summary>
+        /// 来源ID  
+        /// </summary>
+        public string rl12704 { get; set; }
+
+        /// <summary>
+        /// 支付日期
+        /// </summary>
+        public string rl12705 { get; set; }
+
+        /// <summary>
+        /// %
+        /// </summary>
+        public decimal rl12706 { get; set; }
+
+        /// <summary>
+        /// 金额
+        /// </summary>
+        public decimal rl12707 { get; set; }
+
+        /// <summary>
+        /// 处理日期
+        /// </summary>
+        public string rl12708 { get; set; }
+
+        /// <summary>
+        /// 支付日期
+        /// </summary>
+        public string rl12709 { get; set; }
+
+        /// <summary>
+        /// %
+        /// </summary>
+        public decimal rl12710 { get; set; }
+
+        /// <summary>
+        /// 金额
+        /// </summary>
+        public decimal rl12711 { get; set; }
+
+        /// <summary>
+        /// 附件ID
+        /// </summary>
+        public string rl12712 { get; set; }
+
+        /// <summary>
+        /// 付款性质
+        /// </summary>
+        public int rl12713 { get; set; }
+
+        /// <summary>
+        /// 预付款扣款金额
+        /// </summary>
+        public decimal rl12714 { get; set; }
+
+        /// <summary>
+        /// 预付款扣款占合同%
+        /// </summary>
+        public decimal rl12715 { get; set; }
+
+        /// <summary>
+        /// 本次实际支付金额(含税)
+        /// </summary>
+        public decimal rl12716 { get; set; }
+
+        /// <summary>
+        /// 本次实际支付金额(不含税)
+        /// </summary>
+        public decimal rl12717 { get; set; }
+
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public string rl12718 { get; set; }
+
+        /// <summary>
+        /// 状态 0: 承认济, 1: AP已发行
+        /// </summary>
+        public int rl12719 { get; set; }
+
+        /// <summary>
+        /// AP编号
+        /// </summary>
+        public string rl12720 { get; set; }
+
+        /// <summary>
+        /// 担当者 sdpj004.pj00401
+        /// </summary>
+        public string rl12721 { get; set; }
+
+        /// <summary>
+        /// 排序序号
+        /// </summary>
+        public int rl12722 { get; set; }
+
+        /// <summary>
+        /// 合同支付情况
+        /// </summary>
+        [JsonIgnore]
+        public virtual szrl125 szrl125 { get; set; }
+
+        /// <summary>
+        /// 担当者
+        /// </summary>
+        [JsonIgnore]
+        public virtual sdpj004 sdpj004 { get; set; }
+
+    }
+}

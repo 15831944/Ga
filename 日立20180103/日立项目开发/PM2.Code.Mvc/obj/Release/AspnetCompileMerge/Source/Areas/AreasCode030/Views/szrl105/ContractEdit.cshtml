@@ -1,0 +1,280 @@
+﻿@{
+    ViewBag.Title = "采购合同登记<编辑>";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section HeaderStyles {
+    <link href="~/Content/Areas/AreasCode030/szrl100/css/BusinessSupplier.css" rel="stylesheet" />
+    <style type="text/css">
+        .form100-table tr {
+            height: 25px;
+        }
+
+        .form100-table-text {
+            text-align: right;
+        }
+
+        .form100-table-tr input[name=rl10021] {
+            width: 950px;
+        }
+
+        .form100-container-signed-bottom {
+            border-bottom: solid 1px black;
+            width: 120px;
+            display: inline-block;
+        }
+
+        .form100-container-signed div {
+            height: 30px;
+            line-height: 30px;
+        }
+    </style>
+}
+
+@section HeaderScript {
+    <script src="~/Content/Areas/AreasCode019/FileUpload/javaScript/sdpk007_ux_Upload.js"></script>
+    <script src="~/Content/Areas/AreasCode030/szrl100/javaScript/businesscommand.js"></script>
+    <script type="text/javascript">
+        function checkForm() {
+            var checkRadioNames = ['rl10015', 'rl10016', 'rl10018', 'rl10019', 'rl10024' ];
+            var flag = true;
+            var message = '';
+            for (var i = 0; i < checkRadioNames.length; i++){
+                flag = $('input:radio[name=' + checkRadioNames[i] + ']:checked').length > 0;
+                if (!flag) {
+                    var msg = $($('input:radio[name=' + checkRadioNames[i] + ']')[0]).data('message');
+                    message = '"' + msg + '" 需要填写！';
+                    break;
+                }
+            }
+            // 质量认证
+            var rl10019Flag = $('input:radio[id=rl10019]:checked').length > 0;
+            if (rl10019Flag) {
+                var dt = $('input[id=rl10020]').val();
+                flag = dt != '';
+                if (!flag) {
+                    message = '"质量认证有效期" 需要填写！';
+                }
+                else {
+                    debugger;
+                    flag = $('#rl10022Container input:checkbox:checked').length > 0;
+                    var otherInfo = $('#rl10023').val();
+                    // 质量认证明细没有填写
+                    if (!flag && rlform1101.isNullOrWhitespace(otherInfo)) {
+                        message = '"质量认证明细" 需要填写！';
+                    }
+                }
+            }
+            if (!flag) {
+                rlform1101.messenger.showMessage(message);
+            }
+
+            return flag;
+        }
+
+
+        function refreshForm(data) {
+            var id = data.Pamrms;
+            location.href = '/AreasCode030/szrl100/Edit?id=' + id;
+        }
+
+        $(function () {
+            rlform1101.bindClick('btnSave', function () {
+                // 是否是工事分包商
+                var isGongshiFlag = $('input:checkbox[id=rl10006_1]:checked').length > 0;
+                var jBuildingIframe = $('#iframe_buildingIncCert');
+                var cWin = jBuildingIframe[0].contentWindow;
+                var flag = cWin.helpSubmitMainForm(isGongshiFlag);
+                if (!flag) {
+                    window.rlform1101.messenger.showMessage("选择工事分包商，建筑企业资质清单不能为空！");
+                    return;
+                }
+
+                var url = '/AreasCode030/szrl100/Save', formId = 'form100';
+                window.rlform1101.submitForm(formId, url, checkForm, refreshForm);
+            });
+
+            rlform1101.bindClick('btnUpdate', function () {
+                rlform1101.messenger.confirm('是否更新该版本信息？', function () {
+                    var url = '/AreasCode030/szrl100/NewVersion', formId = 'form100';
+                    window.rlform1101.submitForm(formId, url, checkForm, refreshForm);
+                });
+            });
+
+            rlform1101.bindClick('btnAdmit', function () {
+                rlform1101.messenger.confirm('是否承认该版本信息？', function () {
+                    var jrl10026Obj = $('input:radio[id=rl10026]:checked');
+                    var rl10026Flag = jrl10026Obj.length == 1;
+                    if (!rl10026Flag) {
+                        rlform1101.messenger.showMessage('"可否采用"需要选择！');
+                        return;
+                    }
+                    var rl10026Value = jrl10026Obj.val();
+                    alert(rl10026Value);
+                    return;
+
+                    var url = '/AreasCode030/szrl100/AdmitVersion', supplierId = $('#rl10001').val(), supplierCode = $('#rl10002').val();
+                    rlform1101.post(url, { id: supplierId, code: supplierCode, rl10026: rl10026Value }, function () {
+                        location.reload();
+                    });
+                });
+            });
+
+            rlform1101.bindClick('btnUpdateFinance', function () {
+                rlform1101.messenger.confirm('是否更新财务数据？', function () {
+                    var url = '/AreasCode030/szrl100/UpdateFinanceData', formId = 'form100';
+                    window.rlform1101.submitForm(formId, url, checkForm, refreshForm);
+                });
+            });
+
+            rlform1101.bindClick('btnRemove', removeVersion);
+
+            if (@ViewBag.LoadSupplierFlag){
+                var supplierJson = $('#input_hd_modelinfo_current').val();
+                var supplier = $.parseJSON(supplierJson);
+                $('#form100').form('load', supplier);
+
+                var versionsInfo = $('#input_hd_supplierversions').val();
+                var versionsJson = $.parseJSON(versionsInfo);
+                $('#input_cb_versions').combobox({ data: versionsJson.rows, valueField: 'id', textField: 'text', onSelect: changeVersion });
+
+                loadBottomSignInfo();
+
+                window.sdpk007uxWinClass.Init('@ViewBag.SupplierId', true);
+                window.sdpk007uxWinClass.Load();
+            }
+            else {
+                window.sdpk007uxWinClass.Init('-1', true);
+                window.sdpk007uxWinClass.Load();
+            }
+
+        });
+
+        function changeVersion(item) {
+            var currentId = $('#rl10001').val();
+            if (item.id != currentId) {
+                location.href = '/AreasCode030/szrl100/Edit?id=' + item.id;
+            }
+        }
+
+        function removeVersion() {
+            rlform1101.messenger.confirm('是否删除该版本信息？', function () {
+                var currentId = $('#rl10001').val();
+                rlform1101.post('/AreasCode030/szrl100/RemoveSupplierVersion', { id: currentId }, function (result) {
+                    window.close();
+                });
+            });
+        }
+
+        function loadBottomSignInfo() {
+            var idArr = ['rl10035', 'rl10037', 'rl10039' ],
+                dateIdArr = ['rl10036', 'rl10038', 'rl10040'];
+            for (var i = 0; i < idArr.length; i++) {
+                var text = $('#input_hd_' + idArr[i]).val();
+                $('label.label_' + idArr[i]).text(text);
+            }
+            for (var i = 0; i < dateIdArr.length; i++) {
+                var text = $('#input_hd_' + dateIdArr[i]).val();
+                try {
+                    var date = new Date(text);
+                    if (!isNaN(date)) {
+                        text = date.formatDt('yyyy-MM-dd');
+                    }
+                }
+                catch (e) { }
+                $('label.label_' + dateIdArr[i]).text(text);
+            }
+        }
+    </script>
+}
+
+@section Body {
+    <div data-options="region:'north'">
+        <div class="header">
+            <div class="left-layout">
+                <a hrer="javascript:;" class="btn-back">返回</a>
+                <h1>供应商列表</h1>
+            </div>
+            <div class="center-layout"></div>
+            <div class="right-layout">
+                <a href="javascript:;" id="btnUpdate" class="easyui-linkbutton">更新</a>
+                <a href="javascript:;" id="btnUpdateFinance" class="easyui-linkbutton">财务信息修改</a>
+                <input id="input_cb_versions" class="easyui-combobox" name="versions" data-options="valueField:'id',textField:'text'" editable="false" style="width: 100px;">
+                <a href="javascript:;" id="btnAdmit" class="easyui-linkbutton">承认</a>
+                <a href="javascript:;" id="btnRemove" class="easyui-linkbutton">删除</a>
+                <a href="javascript:;" id="btnSave" class="easyui-linkbutton">保存</a>
+            </div>
+        </div>
+    </div>
+    <form id="form100" method="post">
+        <div data-options="region:'center'">
+            <div class="easyui-layout">
+                <div data-options="region:'center'">
+
+                    <div id="tt" class="easyui-tabs">
+                        <div id="tb1" title="采购合同基本信息">
+                            <div class="nano">
+                                <div class="nano-content">
+                                    @Html.Partial("_ContractBaseInfo", null, this.ViewData)
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tb1" title="合同材料明细">
+                            <div class="nano">
+                                <div class="nano-content">
+                                    @Html.Partial("_ContractMaterialDetail", null, this.ViewData)
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tb1" title="验收支付计划">
+                            <div class="nano">
+                                <div class="nano-content">
+                                    @Html.Partial("_CheckPayPlan", null, this.ViewData)
+                                </div>
+                            </div>
+                        </div>
+                        <div title="附件">
+                            @Html.Partial("TComponent/FileUpload/_sdpk007_ux_Upload")
+                        </div>
+                        <div title="协调办公">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div style="display:none;">
+            <input id="input_hd_localBuildingIncCertInfo" name="buildingIncCert" type="hidden" />
+            <input type="hidden" name="rl10035" id="input_hd_rl10035" />
+            <input type="hidden" name="rl10036" id="input_hd_rl10036" />
+            <input type="hidden" name="rl10037" id="input_hd_rl10037" />
+            <input type="hidden" name="rl10038" id="input_hd_rl10038" />
+            <input type="hidden" name="rl10039" id="input_hd_rl10039" />
+            <input type="hidden" name="rl10040" id="input_hd_rl10040" />
+        </div>
+    </form>
+
+    <script type="text/javascript">
+        $(function () {
+            //var stateAction = $.parseJSON($('#input_hd_stateactions').val());
+            //var forbidBtnIds = stateAction.ForbidBtnIds;
+            //for (var i = 0; i < forbidBtnIds.length; i++) {
+            //    $("a.easyui-linkbutton[id=" + forbidBtnIds[i] + "]").linkbutton('disable');
+            //    $("select.easyui-combobox[id=" + forbidBtnIds[i] + "]").combobox('disable');
+            //    $("input.easyui-textbox[id=" + forbidBtnIds[i] + "]").textbox('disable');
+            //}
+            //if (stateAction.DisabledForm) {
+            //    rlform1101.disableForm('form100', true);
+            //}
+
+            @*if (@ViewBag.LoadSupplierFlag){
+                window.sdpk007uxWinClass.Init('@ViewBag.SupplierId', true);
+                window.sdpk007uxWinClass.Load();
+            }
+            else {
+                window.sdpk007uxWinClass.Init('-1', true);
+                window.sdpk007uxWinClass.Load();
+            }*@
+        });
+    </script>
+}

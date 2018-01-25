@@ -1,0 +1,12 @@
+﻿body { padding: 0; margin: 0; font-size: 12px; line-height: 18px; color: #454545; font-family: 'Microsoft YaHei',sans-serif; overflow-y: scroll; }
+a { text-decoration: none; }
+a.hover { color: #353ee1; }
+.panel-noscroll { overflow: visible; }
+
+.loader { position: fixed; top: 0; left: 0; bottom: 0; right: 0; background-color: #fff; z-index: 500; background-image: url(../Images/loading.gif); background-position: center center; background-repeat: no-repeat; }
+
+.wrapper { font-size: 0; letter-spacing: -5px; margin: 5px; }
+.widget-wrap { position: relative; display: inline-block; *display: inline; *zoom: 1; font-size: 12px; letter-spacing: normal; height: 450px; }
+.widget-container { position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; }
+.icon-refresh { background-image: url(../Images/refresh.png); }
+iframe { display: block; position: absolute; }

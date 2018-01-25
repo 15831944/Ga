@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+
+@section Body {
+    <body class="easyui-layout">
+        <div data-options="region:'center'">
+            <ul id="sdpj003Tree"></ul>
+        </div>
+    </body>
+}
+@section FooterScript {
+    <script type="text/javascript">
+        $('#sdpj003Tree').tree({
+            url: '/AreasCode030/Szrl888/GetModuleWeb',
+            animate: true,
+            onBeforeLoad: function (node, param) {
+                if (node == null)
+                    param.id = '-1';
+            },
+            onClick: function (node) {
+                
+                $(this).tree('expand', node.target);
+                if (node.attributes) {
+                    //alert(node.attributes.nodeType);
+
+                }
+            },
+            onCollapse: function (node) {
+                $(this).tree('collapseAll', node.target);
+            }
+        });
+    </script>
+}
+
+

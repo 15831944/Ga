@@ -1,0 +1,49 @@
+﻿@using PM2.Service.Code001
+@{
+    Layout = "~/Views/Shared/_EasyuiLayout.cshtml";
+}
+@section HeaderStyles {
+
+}
+
+@section Body {
+    <body>
+        当前登录人: @UserContext.Pj00402 <a href="/Home/LoginOut">[主站]用户登出</a>|---|<a href="/Home/SSOLoginOut">[分站]用户登出</a>
+    </body>
+    <br />
+    <br />
+    <br />
+    <br />
+    <a href="/AreasCode001/sdpj003/Index">部门树-加载数据测试</a>
+    <br />
+    <a href="/AreasCode030/sdbo001/Index2">作番人员设置</a>
+    <br />
+    <a href="/AreasCode030/sdbo003/Index">实行预算</a>
+
+    <br />
+    <a href="/AreasCode030/szrl025/Index">受注传票</a>
+    <br />
+
+    <a href="/AreasCode030/szrl100/Index">供应商信息管理</a>
+    <br />
+
+    <a href="/AreasCode030/szrl111/MaterialIndex">材料库</a>
+    <br />
+
+    <a href="/AreasCode030/szrl033/szrl033Index">验收登记</a>
+    <br />
+
+    <a href="/AreasCode030/abcd/Index">text</a><br />
+
+    <a href="/AreasCode030/szrl888/Index">压力测试</a>
+    <br />
+    <a href="/AreasCode019/FileUpload/Index">模块附件</a>
+    <br />
+    <a href="/AreasCode030/szrl116/Index">汇总表</a>
+<br />
+<a href="/AreasCode030/szrl030/Index">计划变更</a>
+
+<br />
+<a href="/AreasCode030/szrl035/Index">批量验收登记</a>
+
+}

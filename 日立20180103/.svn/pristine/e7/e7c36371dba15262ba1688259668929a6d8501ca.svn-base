@@ -1,0 +1,1289 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Gmail.DDD.Service;
+using Gmail.DDD.Extensions;
+using PM2.Models.Code030;
+using Gmail.DDD.DBContextScope;
+using Gmail.DDD.Repositorys;
+using PM2.Models.Code001;
+using Gmail.DDD.JsonConvert;
+using PM2.Service.Code001;
+using Gmail.DDD.PagedList;
+using Gmail.DDD.Mvc;
+using PM2.Repository.Code030;
+using System.Data.Entity;
+using Gmail.DDD.Config;
+using PM2.Models.Code030.Szrl105Model; 
+using PM2.Models.Code030.szrl100Model;
+
+namespace PM2.Service.Code030
+{
+    public class szrl121Server : Iszrl121Server
+    {
+        private IDbContextScopeFactory _scopeFactory;
+        private Iszrl121Repository_Facade _szrl121Repository;//szrl121.采购合同验收处理明细
+        private IEFRepository<szrl128> _szrl128Repository;//szrl128.采购合同验收处理
+
+        private IEFRepository<szrl107> _szrl107Repository;//szrl107.采购合同登记-验收支付计划
+        private IEFRepository<szrl004> _szrl004Repository;
+        private IEFRepository<Szrl105> _szrl105Repository;//szrl105.采购合同登记
+        private IEFRepository<szrl106> _szrl106Repository;//szrl106.采购合同登记-合同材料明细
+        private IEFRepository<szrl018> _szrl018Repository;//作番表
+        private IEFRepository<szrl100> _szrl100Repository;//供应商表
+        public szrl121Server(
+             IDbContextScopeFactory scopeFactory,
+             Iszrl121Repository_Facade szrl121Repository,
+             IEFRepository<szrl107> szrl107Repository,
+             IEFRepository<szrl004> szrl004Repository,
+             IEFRepository<Szrl105> szrl105Repository,
+             IEFRepository<szrl106> szrl106Repository,
+             IEFRepository<szrl018> szrl018Repository,
+             IEFRepository<szrl100> szrl100Repository,
+             IEFRepository<szrl128> szrl128Repository
+       )
+        {
+            this._scopeFactory = scopeFactory;
+            this._szrl121Repository = szrl121Repository;
+            this._szrl107Repository = szrl107Repository;
+            this._szrl004Repository = szrl004Repository;
+            this._szrl105Repository = szrl105Repository; 
+            this._szrl106Repository = szrl106Repository;
+            this._szrl018Repository = szrl018Repository;
+            this._szrl100Repository = szrl100Repository;
+            this._szrl128Repository = szrl128Repository;
+        }
+        //所有的逻辑都是取最新版本的数据
+        public IOperateResult QueryGridDataFor121(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID
+                    //有值则读取128、121表。 (取该采购合同下最大版本号)
+                    var _128lst = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid); 
+                    var IsHasVal = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid)
+                                    join b in this._szrl121Repository.GetModels(y => y.rl12102 == 1 || y.rl12102 == 2 || y.rl12102 == 3)
+                                    on a.rl12801 equals b.rl12124
+                                    where a.rl12813 == _128lst.Max(c => c.rl12813)
+                                    orderby b.rl12122
+                                    select new szrl121GridData
+                                    {
+                                        rl12101 = b.rl12101,
+                                        rl12102 = b.rl12102,
+                                        rl12103 = b.rl12103,
+                                        rl12104 = b.rl12104,
+                                        rl12105 = b.rl12105,
+                                        rl12106 = b.rl12106,
+                                        rl12107 = b.rl12107,
+                                        rl12108 = b.rl12108,
+                                        rl12109 = b.rl12109,
+                                        rl12110 = b.rl12110,
+                                        rl12111 = b.rl12111,
+                                        rl12122 = b.rl12122
+                                    }).ToList(); 
+                    //最新版本的采购合同实体
+                    var _105model = this._szrl105Repository.GetModels(a => a.rl10503 == Caigouhetongid && a.rl10571 == 1 && a.rl10572 == 1).ToList().FirstOrDefault();
+                    if (IsHasVal.Count() > 0)
+                    {
+                        #region 点处理生成表单数据
+                        var IsHandling = from a in this._szrl128Repository.GetModels(a => a.rl12802 == Caigouhetongid)
+                                         join b in this._szrl121Repository.GetModels(b => b.rl12102 == 1 || b.rl12102 == 2 || b.rl12102 == 3)
+                                         on a.rl12801 equals b.rl12124
+                                         where a.rl12813 == _128lst.Max(c => c.rl12813) && b.rl12111 == 0
+                                         select a;
+                        var query = IsHasVal;
+                        #region 来月数据添加到今回数据
+                        //这里判断来月的数据是否等于当前月份，有的话合并到【今回验收】里边，然后【来月以后验收预定】的本次计划全部清空（赋空串）
+                        var dt_now = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd"));  //这里要这样转是因为获取yyyy-MM-dd 00:00:00的数据
+                        var LastDayByThisMonth = LastDayOfMonth(dt_now);
+                        int y = 0;  //y条记录需要赋值为空
+                        if (IsHandling.Count() > 0) //提出济不需要 IsHandling.Count() > 0
+                        {
+                            for (var x = 0; x < query.Count(); x++)
+                            { 
+                                //这里要大于等于1的原因是第一条肯定是今回验收数据，第二条是本月再次验收预定数据，所以从第三条数据开始读起
+                                if (x > 1)
+                                {
+                                    if (!string.IsNullOrEmpty(query[x].rl12106))
+                                    {
+                                        var currentDataTime = Convert.ToDateTime(query[x].rl12106);
+                                        if (currentDataTime <= LastDayByThisMonth)
+                                        {
+                                            //如果来月的计划有属于本月的，那么今回的计划加上来月的计划
+                                            query[0].rl12107 += query[x].rl12107;  //比例
+                                            query[0].rl12108 += query[x].rl12108;  //金额   
+                                            query[0].rl12110 = query[x].rl12110;  //备注
+                                            y++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        #endregion
+
+                        #region 若y不等于0，记录往上滚动
+                        if (y != 0)
+                        {
+                            for (var x = 1; x <= y; x++)
+                            {
+                                for (var xx = 1; xx < query.Count(); xx++)
+                                {
+                                    if (xx + 1 <= query.Count() - 1)
+                                    {
+                                        //第x条记录往上滚动一条，最后一条赋值为空
+                                        query[xx].rl12106 = query[xx + 1].rl12106;     //验收日期
+                                        query[xx].rl12107 = query[xx + 1].rl12107;     //比例
+                                        query[xx].rl12108 = query[xx + 1].rl12108;     //金额
+                                        query[xx].rl12109 = query[xx + 1].rl12109;     //附件
+                                        query[xx].rl12110 = query[xx + 1].rl12110;     //备注
+                                        query[xx].rl12111 = query[xx + 1].rl12111;     //状态 
+                                    }
+                                }
+                            }
+                            for (var yy = 1; yy <= y; yy++)
+                            {
+                                //最后y条赋值为空 
+                                query[query.Count() - yy].rl12106 = "";
+                                query[query.Count() - yy].rl12107 = 0;       //(这个值随便给，因为不能给空串)
+                                query[query.Count() - yy].rl12108 = 0;       //(这个值随便给，因为不能给空串)
+                                query[query.Count() - yy].rl12109 = "";
+                                query[query.Count() - yy].rl12110 = "";
+                                query[query.Count() - yy].rl12111 = 0;        //(这个值随便给，因为不能给空串)
+                            }
+                        }
+                        #endregion
+
+                        #region 生成页面数据
+                        //手动排序，承认后，少一条本月数据，需要自己造一条
+                        //List<szrl121GridData> _121lst = new List<szrl121GridData>();
+                        //for (var x = 0; x < query.Count(); x++)
+                        //{
+                        //    szrl121GridData _121model = new szrl121GridData();
+                        //    if (x == 0)
+                        //    {
+                        //        if (query.Count() != 1 || query[x].rl12107 != 0)  //只有一条数据(并且比例为0)时代表已经全部校验完，不需要生成今月再度记录了
+                        //        {
+                        //            //今回検収(校验时间一定是当天)
+                        //            _121model.rl12101 = query[x].rl12101;
+                        //            _121model.rl12102 = query[x].rl12102;
+                        //            _121model.rl12103 = query[x].rl12103;
+                        //            _121model.rl12104 = query[x].rl12104;
+                        //            _121model.rl12105 = query[x].rl12105; 
+                        //            _121model.rl12106 = query[x].rl12106;
+                        //            _121model.rl12107 = query[x].rl12107;
+                        //            _121model.rl12108 = query[x].rl12108;
+                        //            _121model.rl12109 = query[x].rl12109;
+                        //            _121model.rl12110 = query[x].rl12110;
+                        //            _121model.rl12111 = query[x].rl12111;
+                        //            _121model.rl12122 = query[x].rl12122;
+                        //            _121model.rl12123 = query[x].rl12123;
+                        //            _121model.rl12124 = query[x].rl12124;
+                        //            _121lst.Add(_121model); 
+                        //        }
+                        //        else
+                        //        {
+                        //            //今回検収(校验时间一定是当天)
+                        //            _121model.rl12101 = query[x].rl12101;
+                        //            _121model.rl12102 = query[x].rl12102;
+                        //            _121model.rl12103 = query[x].rl12103;
+                        //            _121model.rl12104 = query[x].rl12104;
+                        //            _121model.rl12105 = query[x].rl12105;
+                        //            _121model.rl12106 = query[x].rl12106;
+                        //            _121model.rl12107 = query[x].rl12107;
+                        //            _121model.rl12108 = query[x].rl12108;
+                        //            _121model.rl12109 = query[x].rl12109;
+                        //            _121model.rl12110 = query[x].rl12110;
+                        //            _121model.rl12111 = 4;
+                        //            _121model.rl12122 = query[x].rl12122;
+                        //            _121model.rl12123 = query[x].rl12123;
+                        //            _121model.rl12124 = query[x].rl12124;
+                        //            _121lst.Add(_121model);
+                        //        }
+                        //    }
+                        //    else
+                        //    {
+                        //        //来月以後検収予定
+                        //        _121model.rl12101 = query[x].rl12101;
+                        //        _121model.rl12102 = query[x].rl12102;
+                        //        _121model.rl12103 = query[x].rl12103;
+                        //        _121model.rl12104 = query[x].rl12104;
+                        //        _121model.rl12105 = query[x].rl12105;
+                        //        _121model.rl12106 = query[x].rl12106;
+                        //        _121model.rl12107 = query[x].rl12107;
+                        //        _121model.rl12108 = query[x].rl12108;
+                        //        _121model.rl12109 = query[x].rl12109; 
+                        //        _121model.rl12110 = query[x].rl12110; 
+                        //        _121model.rl12111 = query[x].rl12111;
+                        //        _121model.rl12122 = query[x].rl12122;
+                        //        _121model.rl12123 = query[x].rl12123;
+                        //        _121model.rl12124 = query[x].rl12124;
+                        //        _121lst.Add(_121model);
+                        //    }
+                        //}
+                        //IsHasVal = _121lst;
+                        #endregion
+                        #endregion
+                        if (IsHandling.Count() > 0)   //提出济的不需要变更
+                        {
+                            //判断是否验收完了，验收完了就不要改变日期了，保留最后一次验收日期
+                            if (query.Count() == 2 && query[0].rl12104 == 0 && query[0].rl12107 == 0 && query[0].rl12105 == 0 && query[0].rl12108 == 0 && query[1].rl12104 == 0 && query[1].rl12107 == 0 && query[1].rl12105 == 0 && query[1].rl12108 == 0)
+                            {
+                                query.Remove(query[1]);
+                                query[0].rl12111 = 4;
+                            }
+                            else
+                            {
+                                //query[0].rl12103 = DateTime.Now.ToString("yyyy-MM-dd");
+                                query[0].rl12106 = DateTime.Now.ToString("yyyy-MM-dd");
+                                //query[1].rl12103 = DateTime.Now.ToString("yyyy-MM-dd");
+                                query[1].rl12106 = DateTime.Now.ToString("yyyy-MM-dd");
+                                //query[1].rl12107 = 0;
+                                //query[1].rl12108 = 0;
+                                //query[1].rl12109 = "";
+                                //query[1].rl12110 = "";
+                            }
+                        }
+                      
+                        IsHasVal = query;
+                        #region 尾行 
+                        var footer = new
+                        {
+                            rl12102 = "合计",
+                            rl12104 = 100,
+                            rl12105 = _105model.rl10522,
+                            rl12107 = 100,
+                            rl12108 = _105model.rl10522,
+                            rl12103 = "",
+                            rl12106 = "",
+                            //rl12109 ="",
+                            rl12110 = ""
+                            //rl12111 = ""
+                        };
+                        var footer_lst = new List<object>();
+                        footer_lst.Add(footer);
+                        #endregion
+                        return OperateResultFactory.GridOperateResult(IsHasVal, footer_lst); 
+                    }
+                    else
+                    {
+                        List<szrl121GridData2> query;
+                        _105model = _105model == null ? new Szrl105() { rl10501 = "" } : _105model; 
+                        query = (from a in this._szrl107Repository.GetModels(x => x.rl10702 == _105model.rl10501 && x.rl10704 != "预付款" && x.rl10704 != "")
+                                 orderby a.rl10704
+                                 select new szrl121GridData2
+                                 {
+                                     rl10704 = a.rl10704,
+                                     rl10705 = a.rl10705,
+                                     rl10706 = a.rl10706
+                                 }).ToList(); 
+                        //已经按照日期顺序排序
+                        List<szrl121> _121lst = new List<szrl121>();
+                        for (var x = 0; x < query.Count(); x++)
+                        {
+                            szrl121 _121model = new szrl121();
+                            if (x == 0)
+                            {
+                                //今回検収
+                                _121model.rl12101 = Guid.NewGuid().ToString();
+                                _121model.rl12102 = 1;
+                                if (query[x].rl10704.Length == 10)
+                                {
+                                    _121model.rl12103 = query[x].rl10704;
+                                }
+                                else
+                                {
+                                    _121model.rl12103 = query[x].rl10704 + "-01";
+                                }
+                                _121model.rl12104 = query[x].rl10705;
+                                _121model.rl12105 = query[x].rl10706;
+                                _121model.rl12106 = DateTime.Now.ToString("yyyy-MM-dd");
+                                _121model.rl12107 = query[x].rl10705;
+                                _121model.rl12108 = query[x].rl10706;
+                                _121model.rl12109 = "";
+                                _121model.rl12110 = "";
+                                _121model.rl12111 = 0;  
+                                _121lst.Add(_121model);
+                                //今月再度検収予定
+                                szrl121 _121model2 = new szrl121();
+                                _121model2.rl12101 = Guid.NewGuid().ToString();
+                                _121model2.rl12102 = 2;
+                                if(query[x].rl10704.Length == 10)
+                                {
+                                    _121model2.rl12103 = query[x].rl10704;
+                                }
+                                else
+                                { 
+                                    _121model2.rl12103 = query[x].rl10704 + "-01";
+                                } 
+                                _121model2.rl12104 = 0;
+                                _121model2.rl12105 = 0;
+                                _121model2.rl12106 = DateTime.Now.ToString("yyyy-MM-dd");
+                                _121model2.rl12107 = 0;
+                                _121model2.rl12108 = 0;
+                                _121model2.rl12109 = "";
+                                _121model2.rl12110 = "";
+                                _121model2.rl12111 = 0; 
+                                _121lst.Add(_121model2);
+                            }
+                            else
+                            {
+                                //来月以後検収予定
+                                _121model.rl12101 = Guid.NewGuid().ToString();
+                                _121model.rl12102 = 3;
+                                if(query[x].rl10704.Length == 10)
+                                {
+                                    _121model.rl12103 = query[x].rl10704;
+                                }
+                                else
+                                {
+                                    _121model.rl12103 = query[x].rl10704 + "-01";
+                                } 
+                                _121model.rl12104 = query[x].rl10705;
+                                _121model.rl12105 = query[x].rl10706;
+                                if (query[x].rl10704.Length == 10)
+                                {
+                                    _121model.rl12106 = query[x].rl10704;
+                                }
+                                else
+                                {
+                                    _121model.rl12106 = query[x].rl10704 + "-01";
+                                }                                
+                                _121model.rl12107 = query[x].rl10705;
+                                _121model.rl12108 = query[x].rl10706;
+                                _121model.rl12109 = "";
+                                _121model.rl12110 = "";
+                                _121model.rl12111 = 0; 
+                                _121lst.Add(_121model);
+                            }
+                        }
+                        #region 尾行 
+                        var footer = new
+                        {
+                            rl12102 = "合计",
+                            rl12104 = 100,
+                            rl12105 = _105model.rl10522,
+                            rl12107 = 100,
+                            rl12108 = _105model.rl10522,
+                            rl12103 = "",
+                            rl12106 = "",
+                            //rl12109 ="",
+                            rl12110 = ""
+                            //rl12111 = ""
+                        };
+                        var footer_lst = new List<object>();
+                        footer_lst.Add(footer);
+                        #endregion
+                        return OperateResultFactory.GridOperateResult(_121lst, footer_lst);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult Insert121(HttpCollection vParams)
+        {
+            try
+            {
+                List<szrl121> _121lst = vParams.GetValue<List<szrl121>>("BCJH_Grid_data", GetterType.JToken);
+                string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID 
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    //有承认的版本就insert
+                    //有没承认的版本就update
+                    //(取该采购合同下最大版本号的数据判断是否已经审核)
+                    var _128lst = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid);
+                    var IsHasVal = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid && y.rl12809 == 0)
+                                    where a.rl12813 == _128lst.Max(c => c.rl12813)
+                                    select a.rl12801).ToList().FirstOrDefault();
+                    if (_121lst.Count > 0)
+                    {
+                        if (!string.IsNullOrEmpty(IsHasVal)) //有没承认的版本就update
+                        {
+                            for (var i = 0; i < _121lst.Count; i++)
+                            {
+                                var a = _121lst[i].rl12101;
+                                var _query = this._szrl121Repository.GetModels(x => x.rl12101 == a).ToList().FirstOrDefault();
+                                if (_query != null)  //如果为空，可能是新增的一行
+                                {
+                                    this._szrl121Repository.Update(_query, _121lst[i], new CopySettings
+                                    {
+                                        NullValueHandling = NullValueHandling.Ignore,
+                                        DefaultValueHandling = DefaultValueHandling.Include
+                                    });
+                                }
+                                else
+                                {
+                                    //add
+                                    szrl121 _121model = new szrl121()
+                                    {
+                                        rl12101 = string.IsNullOrEmpty(_121lst[i].rl12101) ? Guid.NewGuid().ToString() : _121lst[i].rl12101,
+                                        rl12102 = _121lst[i].rl12102,
+                                        rl12103 = _121lst[i].rl12103,
+                                        rl12104 = _121lst[i].rl12104,
+                                        rl12105 = _121lst[i].rl12105,
+                                        rl12106 = _121lst[i].rl12106,
+                                        rl12107 = _121lst[i].rl12107,
+                                        rl12108 = _121lst[i].rl12108,
+                                        rl12109 = _121lst[i].rl12109,
+                                        rl12110 = _121lst[i].rl12110,
+                                        rl12111 = _121lst[i].rl12111,
+                                        rl12122 = i,
+                                        rl12123 = 2,
+                                        rl12124 = IsHasVal
+                                    };
+                                    this._szrl121Repository.Add(_121model);
+                                }
+                            }
+                        }
+                        else    //有承认的版本就insert
+                        {
+                            #region error !!!
+                            //if (IsHasVal.Count() > 0)
+                            //{
+                            //    for (var i = 0; i < _121lst.Count; i++)
+                            //    {
+                            //        //逻辑一：根据12103不为空，12106为空，(12107,12108等于0)，这里是update，【承认的时候才是del】
+                            //        if (!string.IsNullOrEmpty(_121lst[i].rl12103) && string.IsNullOrEmpty(_121lst[i].rl12106))
+                            //        {
+                            //            var a = _121lst[i].rl12101;
+                            //            var _query = this._szrl121Repository.GetModels(x => x.rl12101 == a).ToList().FirstOrDefault();
+                            //            _121lst[i].rl12122 = i; //排序字段
+                            //            _121lst[i].rl12113 = UserContext.Pj00401;
+                            //            _121lst[i].rl12114 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //            _121lst[i].rl12115 = "";
+                            //            _121lst[i].rl12116 = "";
+                            //            _121lst[i].rl12118 = UserContext.Pj00401;
+                            //            _121lst[i].rl12119 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //            _121lst[i].rl12123 = Convert.ToByte(type);
+                            //            _121lst[i].rl12111 = 1;
+                            //            this._szrl121Repository.Update(_query, _121lst[i], new CopySettings
+                            //            {
+                            //                NullValueHandling = NullValueHandling.Ignore,
+                            //                DefaultValueHandling = DefaultValueHandling.Include
+                            //            });
+                            //        }
+                            //        //逻辑二：如果12103，12106不为空，(12107,12108不得等于0)，直接update
+                            //        if (!string.IsNullOrEmpty(_121lst[i].rl12103) && !string.IsNullOrEmpty(_121lst[i].rl12106))
+                            //        {
+                            //            if (_121lst[i].rl12107 != 0 && _121lst[i].rl12108 != 0)
+                            //            {
+                            //                var a = _121lst[i].rl12101;
+                            //                var _query = this._szrl121Repository.GetModels(x => x.rl12101 == a).ToList().FirstOrDefault();
+                            //                if (_query != null) //等于null的话可能是今回记录，则要新增
+                            //                {
+                            //                    _121lst[i].rl12122 = i; //排序字段
+                            //                    _121lst[i].rl12113 = UserContext.Pj00401;
+                            //                    _121lst[i].rl12114 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //                    _121lst[i].rl12115 = "";
+                            //                    _121lst[i].rl12116 = "";
+                            //                    _121lst[i].rl12118 = UserContext.Pj00401;
+                            //                    _121lst[i].rl12119 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //                    _121lst[i].rl12123 = Convert.ToByte(type);
+                            //                    _121lst[i].rl12111 = 1;
+                            //                    this._szrl121Repository.Update(_query, _121lst[i], new CopySettings
+                            //                    {
+                            //                        NullValueHandling = NullValueHandling.Ignore,
+                            //                        DefaultValueHandling = DefaultValueHandling.Include
+                            //                    });
+                            //                }
+                            //                else
+                            //                {
+                            //                    _121lst[i].rl12122 = i; //排序字段
+                            //                    _121lst[i].rl12113 = UserContext.Pj00401;
+                            //                    _121lst[i].rl12114 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //                    _121lst[i].rl12115 = "";
+                            //                    _121lst[i].rl12116 = "";
+                            //                    _121lst[i].rl12118 = UserContext.Pj00401;
+                            //                    _121lst[i].rl12119 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //                    _121lst[i].rl12123 = Convert.ToByte(type);
+                            //                    _121lst[i].rl12111 = 1;
+                            //                    this._szrl121Repository.Add(_121lst[i]);
+                            //                }
+                            //            }
+                            //            else
+                            //            {
+                            //                _121lst[i].rl12122 = i; //排序字段
+                            //                _121lst[i].rl12113 = UserContext.Pj00401;
+                            //                _121lst[i].rl12114 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //                _121lst[i].rl12115 = "";
+                            //                _121lst[i].rl12116 = "";
+                            //                _121lst[i].rl12118 = UserContext.Pj00401;
+                            //                _121lst[i].rl12119 = DateTime.Now.ToString("yyyy-MM-dd");
+                            //                _121lst[i].rl12123 = Convert.ToByte(type);
+                            //                _121lst[i].rl12111 = 1;
+                            //                this._szrl121Repository.Add(_121lst[i]);
+                            //            }
+                            //        }
+                            //        //逻辑三：如果12103为空，12106不为空，(12107,12108不得等于0)，直接insert 
+                            //        if (string.IsNullOrEmpty(_121lst[i].rl12103) && !string.IsNullOrEmpty(_121lst[i].rl12106))
+                            //        {
+                            //            szrl121 _121model = new szrl121()
+                            //            {
+                            //                rl12101 = string.IsNullOrEmpty(_121lst[i].rl12101) ? Guid.NewGuid().ToString() : _121lst[i].rl12101,
+                            //                rl12102 = 3,
+                            //                rl12103 = _121lst[i].rl12106,
+                            //                rl12104 = _121lst[i].rl12107,
+                            //                rl12105 = _121lst[i].rl12108,
+                            //                rl12106 = _121lst[i].rl12106,
+                            //                rl12107 = _121lst[i].rl12107,
+                            //                rl12108 = _121lst[i].rl12108,
+                            //                rl12109 = _121lst[i].rl12109,
+                            //                rl12110 = _121lst[i].rl12110,
+                            //                rl12111 = 1,
+                            //                rl12113 = UserContext.Pj00401,
+                            //                rl12114 = DateTime.Now.ToString("yyyy-MM-dd"),
+                            //                rl12117 = 0,
+                            //                rl12118 = UserContext.Pj00401,
+                            //                rl12119 = DateTime.Now.ToString("yyyy-MM-dd"),
+                            //                rl12120 = string.IsNullOrEmpty(_121lst[i].rl12120) ? "" : _121lst[i].rl12120,
+                            //                rl12121 = string.IsNullOrEmpty(_121lst[i].rl12121) ? Caigouhetongid : _121lst[i].rl12121,
+                            //                rl12112 = 1,
+                            //                rl12115 = "",
+                            //                rl12116 = "",
+                            //                rl12122 = i,
+                            //                rl12123 = Convert.ToByte(type)
+                            //            };
+                            //            this._szrl121Repository.Add(_121model);
+                            //        }
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    for (var i = 0; i < _121lst.Count; i++)
+                            //    {
+                            //        szrl121 _121model = new szrl121()
+                            //        {
+                            //            rl12101 = string.IsNullOrEmpty(_121lst[i].rl12101) ? Guid.NewGuid().ToString() : _121lst[i].rl12101,
+                            //            rl12102 = _121lst[i].rl12102,
+                            //            rl12103 = _121lst[i].rl12103,
+                            //            rl12104 = _121lst[i].rl12104,
+                            //            rl12105 = _121lst[i].rl12105,
+                            //            rl12106 = _121lst[i].rl12106,
+                            //            rl12107 = _121lst[i].rl12107,
+                            //            rl12108 = _121lst[i].rl12108,
+                            //            rl12109 = _121lst[i].rl12109,
+                            //            rl12110 = _121lst[i].rl12110,
+                            //            rl12111 = 1,
+                            //            rl12113 = UserContext.Pj00401,
+                            //            rl12114 = DateTime.Now.ToString("yyyy-MM-dd"),
+                            //            rl12117 = 0,
+                            //            rl12118 = UserContext.Pj00401,
+                            //            rl12119 = DateTime.Now.ToString("yyyy-MM-dd"),
+                            //            rl12120 = _121lst[i].rl12120,
+                            //            rl12121 = _121lst[i].rl12121,
+                            //            rl12112 = 1,
+                            //            rl12115 = "",
+                            //            rl12116 = "",
+                            //            rl12122 = i,
+                            //            rl12123 = Convert.ToByte(type)
+                            //        };
+                            //        this._szrl121Repository.Add(_121model);
+                            //    }
+                            //}
+                            #endregion
+                            var _12801id = Guid.NewGuid().ToString();
+                            #region 获取最新版本号
+                            var _new128BBH = 0;
+                            var _new128BBH2 = this._szrl128Repository.GetModels(a => a.rl12802 == Caigouhetongid && a.rl12804 == 1 && a.rl12809 == 1).OrderByDescending(a => a.rl12813).FirstOrDefault();
+                            if (_new128BBH2 != null)
+                            {
+                                _new128BBH = Convert.ToInt32(_new128BBH2.rl12813) + 1;
+                            }
+                            else
+                            {
+                                _new128BBH = 0;
+                            }
+                            #endregion
+                            if (_new128BBH == 0)   //如果是第一个版本（0版本），直接插入即可
+                            {
+                                //主表
+                                szrl128 _128model = new szrl128()
+                                {
+                                    rl12801 = _12801id,
+                                    rl12802 = Caigouhetongid,
+                                    rl12803 = "",  //该字段没用的
+                                    rl12804 = 0,   //承认之后才是正式版本
+                                    rl12805 = UserContext.Pj00401,
+                                    rl12806 = DateTime.Now.ToString("yyyy-MM-dd"),
+                                    rl12807 = "",
+                                    rl12808 = "",
+                                    rl12809 = 0,   //承认之后才是已审核
+                                    rl12810 = UserContext.Pj00401,
+                                    rl12811 = DateTime.Now.ToString("yyyy-MM-dd"),
+                                    rl12812 = "",
+                                    rl12813 = _new128BBH
+                                };
+                                this._szrl128Repository.Add(_128model);
+                                //从表
+                                for (var i = 0; i < _121lst.Count; i++)
+                                {
+                                    szrl121 _121model = new szrl121()
+                                    {
+                                        rl12101 = string.IsNullOrEmpty(_121lst[i].rl12101) ? Guid.NewGuid().ToString() : _121lst[i].rl12101,
+                                        rl12102 = _121lst[i].rl12102,
+                                        rl12103 = _121lst[i].rl12103,
+                                        rl12104 = _121lst[i].rl12104,
+                                        rl12105 = _121lst[i].rl12105,
+                                        rl12106 = _121lst[i].rl12106,
+                                        rl12107 = _121lst[i].rl12107,
+                                        rl12108 = _121lst[i].rl12108,
+                                        rl12109 = _121lst[i].rl12109,
+                                        rl12110 = _121lst[i].rl12110,
+                                        rl12111 = _121lst[i].rl12111,
+                                        rl12122 = i,
+                                        rl12123 = 2,
+                                        rl12124 = _12801id
+                                    };
+                                    this._szrl121Repository.Add(_121model);
+                                }
+                            }
+                            else                   //如果是第二个版本开始，121插入的时候要newguid，承认的时候上一个版本的是否正式版本字段变为0
+                            { 
+                                // 主表
+                                szrl128 _128model = new szrl128()
+                                {
+                                    rl12801 = _12801id,
+                                    rl12802 = Caigouhetongid,
+                                    rl12803 = "",  //该字段没用的
+                                    rl12804 = 0,   //承认之后才是正式版本
+                                    rl12805 = UserContext.Pj00401,
+                                    rl12806 = DateTime.Now.ToString("yyyy-MM-dd"),
+                                    rl12807 = "",
+                                    rl12808 = "",
+                                    rl12809 = 0,   //承认之后才是已审核
+                                    rl12810 = UserContext.Pj00401,
+                                    rl12811 = DateTime.Now.ToString("yyyy-MM-dd"),
+                                    rl12812 = "",
+                                    rl12813 = _new128BBH
+                                };
+                                this._szrl128Repository.Add(_128model);
+                                //从表 这里只是加了从表的今回，今月，来月数据，验收济的数据也要添加
+                                for (var i = 0; i < _121lst.Count; i++)
+                                { 
+                                    szrl121 _121model = new szrl121()
+                                    {
+                                        //rl12101 = Guid.NewGuid().ToString(),
+                                        rl12102 = _121lst[i].rl12102,
+                                        rl12103 = _121lst[i].rl12103,
+                                        rl12104 = _121lst[i].rl12104,
+                                        rl12105 = _121lst[i].rl12105,
+                                        rl12106 = _121lst[i].rl12106,
+                                        rl12107 = _121lst[i].rl12107,
+                                        rl12108 = _121lst[i].rl12108,
+                                        rl12109 = _121lst[i].rl12109,
+                                        rl12110 = _121lst[i].rl12110,
+                                        rl12111 = _121lst[i].rl12111,
+                                        rl12122 = i,
+                                        rl12123 = 2,
+                                        rl12124 = _12801id
+                                    };
+                                    this._szrl121Repository.Add(_121model);
+                                }
+                                //添加验收济状态，数据不用变，直接添加即可
+                                var _rl12801 = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid)
+                                                where a.rl12813 == _128lst.Max(c => c.rl12813)
+                                                select a.rl12801).ToList().FirstOrDefault();
+                                var _121addlst = this._szrl121Repository.GetModels(a => a.rl12124 == _rl12801 && a.rl12102 == 0).ToList();
+                                foreach (var item in _121addlst)
+                                {
+                                    szrl121 _121model = new szrl121()
+                                    {
+                                        rl12101 = Guid.NewGuid().ToString(),
+                                        rl12102 = item.rl12102,
+                                        rl12103 = item.rl12103,
+                                        rl12104 = item.rl12104,
+                                        rl12105 = item.rl12105,
+                                        rl12106 = item.rl12106,
+                                        rl12107 = item.rl12107,
+                                        rl12108 = item.rl12108,
+                                        rl12109 = item.rl12109,
+                                        rl12110 = item.rl12110,
+                                        rl12111 = item.rl12111,
+                                        rl12122 = 0,
+                                        rl12123 = 2,
+                                        rl12124 = _128model.rl12801
+                                    };
+                                    this._szrl121Repository.Add(_121model);
+                                }
+                            }
+                        }
+                        scope.SaveChanges();
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+                    }
+                    else
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult Contro121Btn(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID
+                    //Caigouhetongid = "191EC691-B3E1-434B-9A28-9E80C08C7B46";
+                    //Caigouhetongid = this._szrl105Repository.GetModels(a => a.rl10503 == Caigouhetongid && a.rl10571 == 1 && a.rl10572 == 1).ToList().FirstOrDefault().rl10501;
+                    var IsHasVal = from a in this._szrl128Repository.GetModels(x => x.rl12802 == Caigouhetongid)
+                                   join b in this._szrl121Repository.GetModels(y => y.rl12111 == 2 || y.rl12111 == 3)
+                                   on a.rl12801 equals b.rl12124
+                                   select a; 
+                    if (IsHasVal.Count() > 0)
+                    {
+                        object obj = new { Status = "true", Msg = "上次验收未支付处理，请联系采购进行处理" };
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "", obj);
+                    }
+                    else
+                    {
+                        object obj = new { Status = "false", Msg = "" };
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "", obj);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult Hande121Btn(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+        public IOperateResult QueryTopGridDataFor121(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID
+                    var _128lst = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid);
+                    var query = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid)
+                                 join b in this._szrl121Repository.GetModels(b => b.rl12102 ==0)
+                                 on a.rl12801 equals b.rl12124
+                                 where a.rl12813 == _128lst.Max(c => c.rl12813) //这里就已经代表取最新版本的数据了
+                                 select new szrl121GridData
+                                 {
+                                     rl12101 = b.rl12101,
+                                     rl12102 = b.rl12102,
+                                     rl12103 = b.rl12103,
+                                     rl12104 = b.rl12104,
+                                     rl12105 = b.rl12105,
+                                     rl12106 = b.rl12106,
+                                     rl12107 = b.rl12107,
+                                     rl12108 = b.rl12108,
+                                     rl12109 = b.rl12109,
+                                     rl12110 = b.rl12110,
+                                     rl12111 = b.rl12111
+                                 }).ToList();
+                    #region 尾行
+                    decimal y_bfb = 0;
+                    decimal y_jine = 0;
+                    decimal b_bfb = 0;
+                    decimal b_jine = 0;
+                    foreach (var item in query)
+                    {
+                        y_bfb += item.rl12104;
+                        y_jine += item.rl12105;
+                        b_bfb += item.rl12107;
+                        b_jine += item.rl12108;
+                    }
+                    var footer = new
+                    {
+                        rl12102 = "累计検収済",
+                        rl12104 = y_bfb,
+                        rl12105 = y_jine,
+                        rl12107 = b_bfb,
+                        rl12108 = b_jine,
+                        rl12103 = "",
+                        rl12106 = "",
+                        rl12110 = ""
+                    };
+                    var footer_lst = new List<object>();
+                    footer_lst.Add(footer);
+                    #endregion 
+                    return OperateResultFactory.GridOperateResult(query, footer_lst);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<szrl121BasicData> BindBasicData(HttpCollection vParams)
+        {
+            try
+            {
+                string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    var banbenId = this._szrl105Repository.GetModels(a => a.rl10503 == Caigouhetongid && a.rl10571 == 1 && a.rl10572 == 1).FirstOrDefault().rl10501;
+                    var _szrl018s = this._szrl018Repository.GetModels();
+                    var _szrl100s = this._szrl100Repository.GetModels();
+                    List<szrl121BasicData> _105lst = (from c in this._szrl105Repository.GetModels(a => a.rl10501 == banbenId)
+                                                     join b in this._szrl106Repository.GetModels(k => k.rl10602 == banbenId)
+                                                     on c.rl10501 equals b.rl10602
+                                                     select new szrl121BasicData
+                                                     {
+                                                         rl10502 = (
+                                                             from k in _szrl018s
+                                                             where k.rl01801.Equals(c.rl10502)
+                                                             select k.rl01806).FirstOrDefault(),
+                                                         rl10505 = c.rl10505,
+                                                         rl10522 = c.rl10522,
+                                                         rl10510 = (
+                                                         from j in _szrl100s
+                                                         where j.rl10001.Equals(c.rl10510)
+                                                         select j.rl10003).FirstOrDefault(),
+                                                         rl10605 = b.rl10605
+                                                     }).ToList();
+                    
+                    return _105lst;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult AdmitByYSCL(HttpCollection vParams)
+        {
+            try
+            {
+                string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    //ps ： 承认的时候，当前版本的【是否为正式版本】字段要赋值为 0 
+                    var _oldrl12801 = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid && y.rl12809 == 1 && y.rl12804 == 1)
+                                      select a).ToList().FirstOrDefault();
+                    if (_oldrl12801 != null)
+                    {
+                        _oldrl12801.rl12804 = 0;
+                        this._szrl128Repository.Update(_oldrl12801);
+                    }
+                     
+                    var _128lst = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid);
+                    var _rl12801 = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid)
+                                    where a.rl12813 == _128lst.Max(c => c.rl12813)
+                                    select a).ToList().FirstOrDefault();
+                    //验收济状态为验收济的时候不需要更新，只需要更新今回，今月，来月的数据状态
+                    List<szrl121> query = this._szrl121Repository.GetModels(a => a.rl12124 == _rl12801.rl12801 && (a.rl12102 == 1 || a.rl12102 == 2 || a.rl12102 == 3)).ToList();
+                    foreach (var item in query)
+                    {
+                        item.rl12111 = 2;
+                        this._szrl121Repository.Update(item);
+                    }
+                    _rl12801.rl12804 = 1;
+                    _rl12801.rl12809 = 1;
+                    _rl12801.rl12807 = UserContext.Pj00401;
+                    _rl12801.rl12808 = DateTime.Now.ToString("yyyy-MM-dd");
+                    _rl12801.rl12810 = UserContext.Pj00401;
+                    _rl12801.rl12811 = DateTime.Now.ToString("yyyy-MM-dd");
+                    this._szrl128Repository.Update(_rl12801);
+
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult QueryOverTimeData(HttpCollection vParams)
+        {
+            try
+            {
+                string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    var query = this._szrl121Repository.QueryOverTimeData().ToList();
+                    #region 尾行
+                    decimal htje = 0;
+                    decimal ysje = 0;
+                    foreach (var item in query)
+                    {
+                        htje += item.rl10522;
+                        ysje += item.rl12108;
+                    }
+                    var footer = new
+                    {
+                        rl01806 = "合计",
+                        rl10522 = htje,
+                        rl12108 = ysje
+                    };
+                    var footer_lst = new List<object>();
+                    footer_lst.Add(footer);
+                    #endregion
+                    return OperateResultFactory.GridOperateResult(query, footer_lst); 
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        //public IOperateResult Update121(HttpCollection vParams)
+        //{
+        //    using (IDbContextScope scope = this._scopeFactory.CreateScope())
+        //    {
+        //        string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID 
+        //        string type = vParams.GetValue<string>("type");  //类型 0:K 1:B
+        //        var _type = Convert.ToByte(type);
+        //        var IsHasVal = this._szrl121Repository.GetModels(y => y.rl12121 == Caigouhetongid && (y.rl12102 == 1 || y.rl12102 == 2 || y.rl12102 == 3) && y.rl12123 == _type);
+        //        if (IsHasVal.Count() > 0)
+        //        {
+        //            var _105model = this._szrl105Repository.GetModels(a => a.rl10503 == Caigouhetongid && a.rl10571 == 1 && a.rl10572 == 1).ToList().FirstOrDefault();
+        //            //查询该采购合同id下的验收计划所有金额总和
+        //            var _121JinESum = this._szrl121Repository.GetModels(a => a.rl12121 == Caigouhetongid).Select(a => a.rl12108).Sum();
+        //            if (_105model.rl10522.ToString("f2") != _121JinESum.ToString("f2"))
+        //            {
+        //                //查询该采购合同id下所有记录（进行update操作）
+        //                var _121lst = this._szrl121Repository.GetModels(a => a.rl12121 == Caigouhetongid).OrderBy(a => a.rl12122).ToList();
+        //                decimal _121bfb = 0;  //已验收百分比
+        //                decimal _121jine = 0; //已验收金额
+        //                //上半部分的数据有多少比例跟金额
+        //                foreach (var item in _121lst)
+        //                {
+        //                    if (item.rl12102 == 0)
+        //                    {
+        //                        _121bfb += item.rl12107;
+        //                        _121jine += item.rl12108;
+        //                    }
+        //                }
+        //                decimal sybl = 100;
+        //                decimal syje = _105model.rl10522;
+        //                for (var i = 0; i < _121lst.Count(); i++)
+        //                {
+        //                    if (_121lst[i].rl12102 == 0)  //上半部分的数据
+        //                    {
+        //                        var bili = (_121lst[i].rl12108 / _105model.rl10522) * 100;
+        //                        _121lst[i].rl12104 = Convert.ToDecimal(bili.ToString("f2"));
+        //                        _121lst[i].rl12107 = Convert.ToDecimal(bili.ToString("f2"));
+        //                        sybl -= Convert.ToDecimal(bili.ToString("f2"));
+        //                        syje -= Convert.ToDecimal(_121lst[i].rl12108.ToString("f2"));
+        //                        this._szrl121Repository.Update(_121lst[i]);
+        //                    }
+        //                    else                      //下半部分的数据
+        //                    {
+        //                        if (i != _121lst.Count() - 1)
+        //                        {
+        //                            var je = (_121lst[i].rl12104 / 100) * (_105model.rl10522 - _121jine) / (100 - _121bfb);
+        //                            _121lst[i].rl12105 = Convert.ToDecimal(je.ToString("f2"));
+        //                            _121lst[i].rl12108 = Convert.ToDecimal(je.ToString("f2"));
+        //                            _121lst[i].rl12104 = Convert.ToDecimal((je / _105model.rl10522).ToString("f2"));
+        //                            _121lst[i].rl12107 = Convert.ToDecimal((je / _105model.rl10522).ToString("f2"));
+        //                            sybl -= Convert.ToDecimal((je / _105model.rl10522).ToString("f2"));
+        //                            syje -= Convert.ToDecimal(je.ToString("f2"));
+        //                            this._szrl121Repository.Update(_121lst[i]);
+        //                        }
+        //                        else   //最后一行
+        //                        {
+        //                            _121lst[i].rl12105 = Convert.ToDecimal(syje.ToString("f2"));
+        //                            _121lst[i].rl12108 = Convert.ToDecimal(syje.ToString("f2"));
+        //                            _121lst[i].rl12104 = Convert.ToDecimal(sybl.ToString("f2"));
+        //                            _121lst[i].rl12107 = Convert.ToDecimal(sybl.ToString("f2"));  
+        //                            this._szrl121Repository.Update(_121lst[i]);
+        //                        }
+        //                    } 
+        //                }
+        //            }
+        //            scope.SaveChanges();
+        //        }
+        //    }
+        //    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+        //}
+
+        public IOperateResult XQ_121(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID  
+                    var _105guid = this._szrl105Repository.GetModels(a => a.rl10503 == Caigouhetongid && a.rl10571 == 1 && a.rl10572 == 1).FirstOrDefault().rl10501;
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, _105guid);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+         
+        public IOperateResult HandeYSCL_121(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public IOperateResult DelBBH(HttpCollection vParams)
+        {
+            try
+            {
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID  
+                    //先获取最新版本128表，删除128表以及121表的记录
+                    var _128lst = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid);
+                    var IsHasVal = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid)
+                                    where a.rl12813 == _128lst.Max(c => c.rl12813) && a.rl12809 == 0
+                                    select a.rl12801).ToList().FirstOrDefault();
+                    if (!string.IsNullOrEmpty(IsHasVal))
+                    {
+                        var _128model = this._szrl128Repository.GetModels(a => a.rl12801 == IsHasVal).ToList().FirstOrDefault();
+                        var _121lst = this._szrl121Repository.GetModels(b => b.rl12124 == IsHasVal).ToList();
+                        this._szrl128Repository.Remove(_128model);
+                        this._szrl121Repository.RemoveRange(_121lst);
+                        scope.SaveChanges();
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+                    }
+                    else
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "当前版本已是最新，无法再删除！");
+                    } 
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+      
+
+
+        //public List<szrl128> VersioNnumber(HttpCollection vParams)
+        //{
+        //    try
+        //    {
+        //        using (IDbContextScope scope = this._scopeFactory.CreateScope())
+        //        {
+        //            string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID  
+        //            //var _128lst = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid);
+        //            List<szrl128> query_szrl128 = new List<szrl128>();
+        //            query_szrl128 = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid).OrderByDescending(a=>a.rl12813).ToList();
+        //            return query_szrl128;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw;
+        //    }
+        //}
+
+        /// <summary>
+        /// 支付计划
+        /// </summary>
+        /// <param name="caigouhetongid">采购合同ID</param>
+        /// <returns></returns>
+        public IOperateResult AdmitByPayPlan(HttpCollection vParams)
+        {
+            try
+            {
+                string Caigouhetongid = vParams.GetValue<string>("caigouhetongid"); //采购合同ID
+                using (IDbContextScope scope = this._scopeFactory.CreateScope())
+                {
+                    //第一步：拿到最新版本的（已审核）验收处理主表id
+                    var _128lst = this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid);
+                    var IsHasVal = (from a in this._szrl128Repository.GetModels(y => y.rl12802 == Caigouhetongid && y.rl12809 == 1 && y.rl12804 ==1)
+                                    where a.rl12813 == _128lst.Max(c => c.rl12813)
+                                    select a.rl12801).ToList().FirstOrDefault();
+                    //第二步：获取验收处理计划明细数据 
+                    if (!string.IsNullOrEmpty(IsHasVal))
+                    {
+                        var _121lst = this._szrl121Repository.GetModels(a => a.rl12124 == IsHasVal).OrderBy(b=>b.rl12122).ToList();
+                        var sort_index = 0;
+                        //第三步：开始处理计划数据 
+                        foreach (var item in _121lst)
+                        {                       
+                            //逻辑一先放第一的原因是，中间逻辑四会覆盖原计划导致逻辑四不会删除
+                            #region 逻辑一：根据12103不为空，12106为空，(12107,12108等于0)，del
+                            if (!string.IsNullOrEmpty(item.rl12103) && string.IsNullOrEmpty(item.rl12106) && item.rl12107 == 0 && item.rl12108 == 0)
+                            {
+                                this._szrl121Repository.Remove(item);
+                            }
+                            #endregion
+
+                            //今回検収 和 今月再度検収予定 肯定只有一条数据
+                            #region 逻辑二：对应的“今回検収”上移至到上半部分； rl12102 = 1
+                            if (item.rl12102 == 1)
+                            {
+                                item.rl12102 = 0; //今回検収变成验收济
+                                item.rl12103 = item.rl12106;
+                                item.rl12104 = item.rl12107;
+                                item.rl12105 = item.rl12108;
+                                item.rl12111 = 5; 
+                                this._szrl121Repository.Update(item); 
+                            }
+                            #endregion
+
+                            //从今回验收数据开始，状态全部变成未提交
+                            #region 逻辑三：今月再度検収予定部分的数据上移至今回検収中； rl12102 = 2
+                            if (item.rl12102 == 2)
+                            {
+                                item.rl12102 = 1; //今月再次变成今回验收
+                                item.rl12103 = item.rl12106;
+                                item.rl12104 = item.rl12107;
+                                item.rl12105 = item.rl12108; 
+                                item.rl12111 = 0;
+                                item.rl12122 = sort_index; //今回数据排序索引字段 第一条
+                                this._szrl121Repository.Update(item);
+                                sort_index++;
+                                //因为今回的变成已验收，今月的变成今回数据，需要新增一条今月数据
+                                szrl121 _newmodel = new szrl121()
+                                {
+                                    rl12101=Guid.NewGuid().ToString(),
+                                    rl12102 = 2,
+                                    rl12103 = item.rl12106,
+                                    rl12104 = 0,
+                                    rl12105 = 0,
+                                    rl12106 = item.rl12106,
+                                    rl12107 = 0,
+                                    rl12108 = 0,
+                                    rl12109 = "",
+                                    rl12110 = "",
+                                    rl12111 = 0,
+                                    rl12122 = sort_index, //今回数据排序索引字段 第二条
+                                    rl12123 = 2,
+                                    rl12124 = item.rl12124
+                                };
+                                this._szrl121Repository.Add(_newmodel);
+                                sort_index++;
+                            }
+                            #endregion
+
+                            #region 逻辑四：修正后的计划覆盖至左侧原定计划中; rl12103 = 3
+                            if (item.rl12102 == 3 && item.rl12122 == sort_index)
+                            {
+                                item.rl12102 = 3; //来月数据不变，只是覆盖左边的计划
+                                item.rl12103 = item.rl12106;
+                                item.rl12104 = item.rl12107;
+                                item.rl12105 = item.rl12108;
+                                item.rl12111 = 0;
+                                item.rl12122 = sort_index; //来月数据排序索引字段 第三、四、五···条
+                                this._szrl121Repository.Update(item);
+                                sort_index++;
+                            }
+                            #endregion 
+                        }
+                    }
+                    else
+                    {
+                        return OperateResultFactory.AjaxOperateResult(OperateResultType.Error, "");
+                    }  
+                    #region error !!!
+                    //逻辑四先放第一的原因是，中间逻辑三会覆盖原计划导致逻辑四不会删除
+                    #region 逻辑四：根据12103不为空，12106为空，(12107,12108等于0)，del
+                    //var _121lst2 = this._szrl121Repository.GetModels(y => y.rl12121 == Caigouhetongid).ToList();
+                    //foreach (var item in _121lst)
+                    //{
+                    //    if (!string.IsNullOrEmpty(item.rl12103) && string.IsNullOrEmpty(item.rl12106) && item.rl12107 == 0 && item.rl12108 == 0)
+                    //    {
+                    //        this._szrl121Repository.Remove(item);
+                    //    }
+                    //}
+                    #endregion
+                    //今回検収 和 今月再度検収予定 肯定只有一条数据
+                    #region 逻辑一：对应的“今回検収”上移至到上半部分； rl12102 = 1
+                    //szrl121 jinhui = this._szrl121Repository.GetModels(a => a.rl12102 == 1 && a.rl12121 == Caigouhetongid).ToList().FirstOrDefault();
+                    //jinhui.rl12102 = 0; //今回検収变成验收济
+                    //jinhui.rl12103 = jinhui.rl12106;
+                    //jinhui.rl12104 = jinhui.rl12107;
+                    //jinhui.rl12105 = jinhui.rl12108;
+                    //jinhui.rl12111 = 5;
+                    //this._szrl121Repository.Update(jinhui);
+                    #endregion
+                    #region 逻辑二：今月再度検収予定部分的数据上移至今回検収中； rl12102 = 2
+                    //szrl121 jinyue = this._szrl121Repository.GetModels(a => a.rl12102 == 2 && a.rl12121 == Caigouhetongid).ToList().FirstOrDefault();
+                    //jinyue.rl12102 = 1; //今月再次变成今回验收
+                    //jinyue.rl12103 = jinyue.rl12106;
+                    //jinyue.rl12104 = jinyue.rl12107;
+                    //jinyue.rl12105 = jinyue.rl12108;
+                    //jinyue.rl12111 = 0; 
+                    //this._szrl121Repository.Update(jinyue);
+                    #endregion
+                    #region 逻辑三：修正后的计划覆盖至左侧原定计划中; rl12103 = 3
+                    //List<szrl121> laiyue = this._szrl121Repository.GetModels(a => a.rl12102 == 3 && a.rl12121 == Caigouhetongid).ToList();
+                    //foreach (var item in laiyue)
+                    //{
+                    //    item.rl12102 = 3; //来月数据不变，只是覆盖左边的计划
+                    //    item.rl12103 = item.rl12106;
+                    //    item.rl12104 = item.rl12107;
+                    //    item.rl12105 = item.rl12108;
+                    //    item.rl12111 = 0; 
+                    //    this._szrl121Repository.Update(item);
+                    //}
+                    #endregion
+                    #endregion
+                    scope.SaveChanges();
+                    return OperateResultFactory.AjaxOperateResult(OperateResultType.Success, "");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 取得某月的第一天
+        /// </summary>
+        /// <param name="datetime">要取得月份第一天的时间</param>
+        /// <returns></returns>
+        private DateTime FirstDayOfMonth(DateTime datetime)
+        {
+            return datetime.AddDays(1 - datetime.Day);
+        }
+
+        /// <summary>
+        /// 取得某月的最后一天
+        /// </summary>
+        /// <param name="datetime">要取得月份最后一天的时间</param>
+        /// <returns></returns>
+        private DateTime LastDayOfMonth(DateTime datetime)
+        {
+            return datetime.AddDays(1 - datetime.Day).AddMonths(1).AddDays(-1);
+        }
+    }
+}
+
